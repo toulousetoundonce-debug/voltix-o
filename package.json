@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "smoke": "node ./scripts/smoke.mjs"
   },
   "dependencies": {
     "framer-motion": "^11.18.2",
@@ -23,7 +25,8 @@
     "autoprefixer": "10.4.19",
     "postcss": "^8.5.31",
     "tailwindcss": "3.4.4",
-    "typescript": "5.5.3"
+    "typescript": "5.5.3",
+    "vitest": "^2.1.8"
   },
   "optionalDependencies": {
     "@next/swc-win32-x64-msvc": "^15.5.28"
