@@ -26,7 +26,8 @@
     "postcss": "^8.5.31",
     "tailwindcss": "3.4.4",
     "typescript": "5.5.3",
-    "vitest": "^2.1.8"
+    "vite": "^6.4.4",
+    "vitest": "^4.1.12"
   },
   "optionalDependencies": {
     "@next/swc-win32-x64-msvc": "^15.5.28"

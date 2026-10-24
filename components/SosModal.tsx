@@ -56,21 +56,26 @@ interface ImageAnalysis {
 
 const inputCls =
   "w-full rounded-xl border border-white/10 bg-grid-dark px-4 py-3 text-base text-white placeholder:text-slate-500 focus:border-sos-red focus:outline-none focus:ring-2 focus:ring-sos-red/40";
+const MAX_COMPRESSED_IMAGE_CHARS = 4 * Math.ceil((4 * 1024 * 1024) / 3) + 23;
+const MAX_AUDIO_BYTES = Math.floor(5.5 * 1024 * 1024);
+const AUDIO_WARNING_BYTES = Math.floor(4.5 * 1024 * 1024);
 
 async function compressImage(file: File): Promise<string> {
   if (!file.type.startsWith("image/")) throw new Error("اختر ملف صورة صالحاً.");
   if (file.size > 15 * 1024 * 1024) throw new Error("حجم الصورة الأصلية يجب ألا يتجاوز 15 ميغابايت.");
   const image = await createImageBitmap(file);
   try {
-    const scale = Math.min(1, 1600 / Math.max(image.width, image.height));
+    const scale = Math.min(1, 1280 / Math.max(image.width, image.height));
     const canvas = document.createElement("canvas");
     canvas.width = Math.max(1, Math.round(image.width * scale));
     canvas.height = Math.max(1, Math.round(image.height * scale));
     const context = canvas.getContext("2d");
     if (!context) throw new Error("تعذّر تجهيز الصورة في المتصفح.");
     context.drawImage(image, 0, 0, canvas.width, canvas.height);
-    const compressed = canvas.toDataURL("image/jpeg", 0.78);
-    if (compressed.length > 7 * 1024 * 1024) throw new Error("الصورة كبيرة بعد الضغط؛ اختر صورة أصغر.");
+    const compressed = canvas.toDataURL("image/jpeg", 0.8);
+    if (compressed.length > MAX_COMPRESSED_IMAGE_CHARS) {
+      throw new Error("حجم الصورة بعد الضغط يجب ألا يتجاوز 4 ميغابايت.");
+    }
     return compressed;
   } finally {
     image.close();
@@ -98,7 +103,7 @@ export default function SosModal({ open, onClose }: { open: boolean; onClose: ()
   const [imageNotice, setImageNotice] = useState("");
   const [imagePreview, setImagePreview] = useState("");
   const [imageAnalysis, setImageAnalysis] = useState<ImageAnalysis | null>(null);
-  const [imageMode, setImageMode] = useState<"gemini" | "manual-review" | null>(null);
+  const [imageMode, setImageMode] = useState<"automated" | "manual-review" | null>(null);
   const recorderRef = useRef<MediaRecorder | null>(null);
   const recordingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
@@ -187,13 +192,26 @@ export default function SosModal({ open, onClose }: { open: boolean; onClose: ()
         stream.getTracks().forEach((track) => track.stop());
         return;
       }
-      const recorder = supportedType
-        ? new MediaRecorder(stream, { mimeType: supportedType })
-        : new MediaRecorder(stream);
+      const recorderOptions: MediaRecorderOptions = {
+        audioBitsPerSecond: 32_000,
+        ...(supportedType ? { mimeType: supportedType } : {}),
+      };
+      const recorder = new MediaRecorder(stream, recorderOptions);
       const chunks: BlobPart[] = [];
+      let recordedBytes = 0;
       recorderRef.current = recorder;
       recorder.ondataavailable = (event) => {
-        if (event.data.size > 0) chunks.push(event.data);
+        if (event.data.size > 0) {
+          chunks.push(event.data);
+          recordedBytes += event.data.size;
+          if (recordedBytes > AUDIO_WARNING_BYTES && recordedBytes <= MAX_AUDIO_BYTES) {
+            setVoiceMessage("التسجيل طويل، الرجاء إيقافه أو تقصيره.");
+          }
+          if (recordedBytes > MAX_AUDIO_BYTES && recorder.state !== "inactive") {
+            setVoiceMessage("تجاوز التسجيل الحد المسموح؛ جارٍ إيقافه.");
+            recorder.stop();
+          }
+        }
       };
       recorder.onerror = () => {
         stream.getTracks().forEach((track) => track.stop());
@@ -217,6 +235,10 @@ export default function SosModal({ open, onClose }: { open: boolean; onClose: ()
         const audioBlob = new Blob(chunks, { type: mimeType });
         if (!audioBlob.size) {
           setVoiceMessage("لم يتم التقاط صوت. حاول التسجيل مجدداً.");
+          return;
+        }
+        if (audioBlob.size > MAX_AUDIO_BYTES) {
+          setVoiceMessage("حجم التسجيل يتجاوز الحد المسموح (5.5 ميبيبايت). اختصر التسجيل وحاول مجدداً.");
           return;
         }
         if (!extension) {
@@ -258,7 +280,7 @@ export default function SosModal({ open, onClose }: { open: boolean; onClose: ()
           setVoiceBusy(false);
         }
       };
-      recorder.start();
+      recorder.start(1_000);
       setRecording(true);
       recordingTimerRef.current = setTimeout(() => stopRecording(), 15_000);
     } catch {
@@ -279,7 +301,11 @@ export default function SosModal({ open, onClose }: { open: boolean; onClose: ()
       const response = await fetch("/api/vision-check", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ imageBase64, emergencyType: emergencyType || undefined }),
+        body: JSON.stringify({
+          imageBase64,
+          emergencyType: emergencyType || undefined,
+          description: description || undefined,
+        }),
       });
       const result = (await response.json().catch(() => null)) as {
         ok: boolean;
@@ -295,7 +321,7 @@ export default function SosModal({ open, onClose }: { open: boolean; onClose: ()
         throw new Error(result.error ?? "تعذّر فحص الصورة.");
       }
       setImageAnalysis(result.result);
-      setImageMode(result.mode === "manual-review" ? "manual-review" : "gemini");
+      setImageMode(result.mode === "manual-review" ? "manual-review" : "automated");
       setImageNotice(
         result.mode === "manual-review"
           ? result.message ?? "ستُرفق الصورة للمراجعة الهندسية عند إرسال بلاغ SOS."
@@ -586,7 +612,7 @@ export default function SosModal({ open, onClose }: { open: boolean; onClose: ()
                   <h3 className="font-bold text-electric-blue">
                     {imageMode === "manual-review"
                       ? "إرشادات أمان أولية قبل المراجعة الهندسية"
-                      : "نتيجة تحليل الصورة عبر Gemini"}
+                      : "نتيجة الفحص الأولي للصورة"}
                   </h3>
                   <p className="leading-relaxed text-slate-200">{imageAnalysis.diagnosis}</p>
                   <p className="font-semibold text-amber-100">مستوى الخطر: {imageAnalysis.riskLevel}</p>

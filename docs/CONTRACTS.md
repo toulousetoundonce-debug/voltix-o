@@ -207,9 +207,7 @@ Success response:
     "category": "electrical-fault",
     "safetyAdvice": "نصيحة أمان فورية"
   },
-  "usedFallback": false,
-  "provider": "gemini",
-  "model": "gemini-2.5-flash"
+  "usedFallback": false
 }
 ```
 
@@ -227,7 +225,7 @@ Error response:
 Status codes:
 - 200: success
 - 400: bad multipart or missing audio
-- 413: audio too large
+- 413: audio exceeds 4 MiB
 - 415: unsupported audio type
 - 429: rate limit
 - 502/503/504: provider or timeout failures
@@ -251,13 +249,11 @@ Success response:
     "diagnosis": "تشخيص فني مختصر",
     "riskLevel": "خطر مرتفع",
     "recommendation": "توصية أمنية أولية"
-  },
-  "provider": "gemini",
-  "model": "gemini-2.5-flash"
+  }
 }
 ```
 
-When `GEMINI_API_KEY` is absent, the route returns a safe manual-review fallback:
+When the image analysis service is unavailable, the route returns a safe manual-review fallback:
 
 ```json
 {
@@ -268,7 +264,7 @@ When `GEMINI_API_KEY` is absent, the route returns a safe manual-review fallback
     "riskLevel": "متوسط",
     "recommendation": "لا تفتح اللوحة..."
   },
-  "message": "مفتاح تحليل الصور غير مضبوط؛ ستُرفق الصورة للمراجعة عند إرسال بلاغ SOS."
+  "message": "تعذّر إكمال الفحص الآلي الآن؛ ستبقى الصورة مرفقة للمراجعة الهندسية عند إرسال البلاغ."
 }
 ```
 
@@ -284,10 +280,36 @@ Error response:
 Status codes:
 - 200: success or manual-review fallback
 - 400: missing or malformed image
-- 413: oversized image
+- 413: image exceeds 4 MiB or the Netlify-safe request limit
 - 415: unsupported image type
 - 429: rate limit
 - 502/503/504: provider or timeout failures
+
+Provider and model metadata are intentionally omitted from both analysis responses so implementation details never reach the client.
+
+## DeepSeek Model IDs
+
+Verified against the official DeepSeek documentation on 2026-10-24:
+
+- The current documented vision-capable model ID is `deepseek-flash`. The Vision guide explicitly states it accepts images with text, including Base64 data URLs and public HTTPS URLs; supported formats are JPEG, PNG, GIF, and WebP.
+- The official pricing/quick-start page maps `deepseek-flash` to DeepSeek-V4.1-Flash-1017. The Change Log dated 2026-10-17 confirms this model update and that the API model name remains `deepseek-flash`.
+- The Change Log states that `deepseek-chat` and `deepseek-reasoner` were legacy API model names scheduled for discontinuation on 2026-07-24. They are not selected here.
+- The retired `deepseek-v4-flash-vision-exp` name may still route to the current Flash model for compatibility, but it is not used.
+
+References:
+- [DeepSeek Vision guide](https://api-docs.deepseek.com/guides/vision)
+- [DeepSeek models and pricing / quick start](https://api-docs.deepseek.com/quick_start/pricing)
+- [DeepSeek Change Log](https://api-docs.deepseek.com/updates/)
+
+The default optional vision model remains `deepseek-flash`; the feature flag is still off by default and no `.env*` file tracked by Git enables it.
+
+## Rate limits
+
+All six POST routes use a 60-second per-IP, per-route limit. Defaults are 5/minute for image and voice checks, 8/minute for SOS, 20/minute for chat, and 10/minute for quote and callback requests. A rejected request returns HTTP 429 with `Retry-After` and `X-RateLimit-Remaining`. The in-memory limiter is per instance and is not globally consistent on Netlify; use shared storage such as Upstash Redis before scaling.
+
+Voice uploads accept at most 5.5 MiB. The multipart request is rejected from `Content-Length` before reading if it exceeds 5,900,000 bytes. Images remain capped at 4 MiB.
+
+The client recorder requests Opus/WebM at 32 kbps, shows a warning after 4.5 MiB, and stops recording when it passes the 5.5 MiB limit.
 
 ## Invalid-payload error shape used in tests
 

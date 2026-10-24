@@ -1,30 +1,27 @@
 import { NextResponse } from "next/server";
 import { computeEstimate, CURRENCY, PROJECTS, TIERS } from "@/lib/pricing";
 import { quoteSchema } from "@/lib/schemas";
-import { deliver, getClientIp, isSameOrigin, rateLimit, readJsonBody } from "@/lib/security";
+import { deliver, isSameOrigin, readJsonBody } from "@/lib/security";
+import { checkRateLimit, rateLimitHeaders } from "@/lib/ratelimit";
 import { sendTelegramAlert } from "@/lib/telegram";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 const HEADERS = { "Cache-Control": "no-store" };
-const WINDOW_MS = 10 * 60 * 1000;
-const MAX_REQUESTS = 5;
-
 function fail(status: number, error: string, extra?: Record<string, unknown>, headers?: Record<string, string>) {
   return NextResponse.json({ ok: false, error, ...extra }, { status, headers: { ...HEADERS, ...headers } });
 }
 
 export async function POST(req: Request) {
+  const limit = checkRateLimit(req, "/api/quote");
+  if (!limit.allowed) {
+    return fail(429, "تم تجاوز عدد المحاولات المسموح بها. حاول لاحقاً.", undefined, {
+      ...rateLimitHeaders(limit),
+    });
+  }
   if (!isSameOrigin(req)) {
     return fail(403, "طلب غير مسموح به.");
-  }
-
-  const limit = rateLimit(`quote:${getClientIp(req)}`, MAX_REQUESTS, WINDOW_MS);
-  if (!limit.ok) {
-    return fail(429, "تم تجاوز عدد المحاولات المسموح بها. حاول لاحقاً.", undefined, {
-      "Retry-After": String(limit.retryAfter),
-    });
   }
 
   const body = await readJsonBody(req);

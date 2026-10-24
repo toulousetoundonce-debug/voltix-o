@@ -1,33 +1,34 @@
 import { NextResponse } from "next/server";
 import { sosSchema } from "@/lib/schemas";
 import { EMERGENCY_LABELS } from "@/lib/validation";
-import { deliver, getClientIp, isSameOrigin, rateLimit, readJsonBody } from "@/lib/security";
+import { deliver, isSameOrigin, readJsonBody } from "@/lib/security";
+import { checkRateLimit, rateLimitHeaders } from "@/lib/ratelimit";
 import { sendTelegramAlert, sendTelegramPhoto } from "@/lib/telegram";
+import { analyzeWithDeepSeek, type DeepSeekReport } from "@/lib/ai/deepseek";
+import { isDeepSeekEnabled } from "@/lib/ai/config";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 const HEADERS = { "Cache-Control": "no-store" };
-const WINDOW_MS = 10 * 60 * 1000;
-const MAX_REQUESTS = 6;
+const MAX_IMAGE_BASE64_LENGTH = 4 * Math.ceil((4 * 1024 * 1024) / 3);
 
 function fail(status: number, error: string, extra?: Record<string, unknown>, headers?: Record<string, string>) {
   return NextResponse.json({ ok: false, error, ...extra }, { status, headers: { ...HEADERS, ...headers } });
 }
 
 export async function POST(req: Request) {
+  const limit = checkRateLimit(req, "/api/sos");
+  if (!limit.allowed) {
+    return fail(429, "تم تجاوز عدد المحاولات المسموح بها. حاول لاحقاً أو اتصل بنا هاتفياً.", undefined, {
+      ...rateLimitHeaders(limit),
+    });
+  }
   if (!isSameOrigin(req)) {
     return fail(403, "طلب غير مسموح به.");
   }
 
-  const limit = rateLimit(`sos:${getClientIp(req)}`, MAX_REQUESTS, WINDOW_MS);
-  if (!limit.ok) {
-    return fail(429, "تم تجاوز عدد المحاولات المسموح بها. حاول لاحقاً أو اتصل بنا هاتفياً.", undefined, {
-      "Retry-After": String(limit.retryAfter),
-    });
-  }
-
-  const body = await readJsonBody(req, 8 * 1024 * 1024);
+  const body = await readJsonBody(req, 5_800_000);
   if (!body.ok) {
     return fail(body.status, body.error);
   }
@@ -42,8 +43,22 @@ export async function POST(req: Request) {
   if (data.website && data.website.trim() !== "") {
     return NextResponse.json({ ok: true, message: "تم استلام البلاغ." }, { headers: HEADERS });
   }
+  if (data.imageBase64 && data.imageBase64.split(",")[1].length > MAX_IMAGE_BASE64_LENGTH) {
+    return fail(413, "حجم صورة البلاغ بعد الضغط يجب ألا يتجاوز 4 ميغابايت.");
+  }
 
   const label = EMERGENCY_LABELS[data.emergencyType];
+  let textTriage: DeepSeekReport | undefined;
+  if (isDeepSeekEnabled() && data.description) {
+    try {
+      textTriage = await analyzeWithDeepSeek(
+        { description: data.description, emergencyType: data.emergencyType },
+        { timeoutMs: 2_000 },
+      );
+    } catch {
+      console.warn("[SOS] Optional text triage was unavailable.");
+    }
+  }
   const mapsUrl = data.location
     ? `https://www.google.com/maps?q=${data.location.lat},${data.location.lng}`
     : null;
@@ -67,6 +82,15 @@ export async function POST(req: Request) {
       ...(data.description ? { "وصف المشكلة": data.description } : {}),
       ...(data.voiceTranscript ? { "التفريغ الصوتي": data.voiceTranscript } : {}),
       ...(data.aiDiagnosis ? { "التشخيص الذكي": data.aiDiagnosis } : {}),
+      ...(textTriage
+        ? {
+            "ملخص الفرز الأولي": textTriage.summary,
+            "ملاحظات الفرز": textTriage.findings.join("\n"),
+            "الإجراءات الموصى بها": textTriage.recommended_actions.join("\n"),
+            "المعدات المطلوبة": textTriage.required_tools.join("\n"),
+            "الثقة": textTriage.confidence ?? "غير محددة",
+          }
+        : {}),
       ...(data.imageBase64 ? { "صورة العطل": "مرفقة للمراجعة الهندسية" } : {}),
       "رابط الموقع": mapsUrl ?? "غير مرفق",
     },

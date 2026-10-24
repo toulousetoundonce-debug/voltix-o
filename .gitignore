@@ -1,8 +1,9 @@
 node_modules
 .next
+.netlify
 out
-.env
-.env.local
+.env*
+!.env.example
 .env.*.local
 *.tsbuildinfo
 npm-debug.log*

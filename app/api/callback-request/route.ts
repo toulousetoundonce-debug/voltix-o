@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { callbackSchema } from "@/lib/schemas";
-import { getClientIp, isSameOrigin, rateLimit, readJsonBody } from "@/lib/security";
+import { isSameOrigin, readJsonBody } from "@/lib/security";
+import { checkRateLimit, rateLimitHeaders } from "@/lib/ratelimit";
 import { sendTelegramAlert } from "@/lib/telegram";
 
 export const runtime = "nodejs";
@@ -13,14 +14,11 @@ function fail(status: number, error: string, headers?: Record<string, string>) {
 }
 
 export async function POST(request: Request) {
-  if (!isSameOrigin(request)) return fail(403, "طلب غير مسموح به.");
-
-  const limit = rateLimit(`callback:${getClientIp(request)}`, 3, 10 * 60 * 1000);
-  if (!limit.ok) {
-    return fail(429, "وصلت إلى الحد المؤقت لطلبات الاتصال. حاول بعد قليل.", {
-      "Retry-After": String(limit.retryAfter),
-    });
+  const limit = checkRateLimit(request, "/api/callback-request");
+  if (!limit.allowed) {
+    return fail(429, "وصلت إلى الحد المؤقت لطلبات الاتصال. حاول بعد قليل.", rateLimitHeaders(limit));
   }
+  if (!isSameOrigin(request)) return fail(403, "طلب غير مسموح به.");
 
   const body = await readJsonBody(request);
   if (!body.ok) return fail(body.status, body.error);

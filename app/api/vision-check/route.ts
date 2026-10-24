@@ -1,14 +1,22 @@
 import { NextResponse } from "next/server";
-import { getClientIp, isSameOrigin, rateLimit, readJsonBody } from "@/lib/security";
+import { isSameOrigin, readJsonBody } from "@/lib/security";
+import { checkRateLimit, rateLimitHeaders } from "@/lib/ratelimit";
 import { EMERGENCY_VALUES, type EmergencyType } from "@/lib/validation";
+import { analyzeWithDeepSeek, sanitizeCustomerText } from "@/lib/ai/deepseek";
+import { isDeepSeekEnabled } from "@/lib/ai/config";
+import { sendTelegramAnalysisReport } from "@/lib/telegram";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
+const MAX_IMAGE_BYTES = 4 * 1024 * 1024;
+const MAX_IMAGE_BASE64_LENGTH = 4 * Math.ceil(MAX_IMAGE_BYTES / 3);
 const TIMEOUT_MS = 45_000;
 const HEADERS = { "Cache-Control": "no-store" };
 const MODEL = "gemini-2.5-flash";
+const MAX_REQUEST_BYTES = 5_800_000;
+const SAFE_IMAGE_ANALYSIS_ERROR =
+  "تعذّر تحليل الصورة حالياً، جرّب صورة أوضح أو أعد المحاولة لاحقاً.";
 
 interface VisionResult {
   diagnosis: string;
@@ -94,16 +102,16 @@ function engineeringGuidance(emergencyType: EmergencyType | null) {
 }
 
 export async function POST(request: Request) {
-  if (!isSameOrigin(request)) return fail(403, "طلب غير مسموح به.");
-  const limit = rateLimit(`vision-check:${getClientIp(request)}`, 5, 10 * 60 * 1000);
-  if (!limit.ok) {
+  const limit = checkRateLimit(request, "/api/vision-check");
+  if (!limit.allowed) {
     return NextResponse.json(
       { ok: false, error: "تم تجاوز عدد محاولات فحص الصور. حاول لاحقاً." },
-      { status: 429, headers: { ...HEADERS, "Retry-After": String(limit.retryAfter) } },
+      { status: 429, headers: { ...HEADERS, ...rateLimitHeaders(limit) } },
     );
   }
+  if (!isSameOrigin(request)) return fail(403, "طلب غير مسموح به.");
 
-  const body = await readJsonBody(request, 7 * 1024 * 1024);
+  const body = await readJsonBody(request, MAX_REQUEST_BYTES);
   if (!body.ok) return fail(body.status, body.error);
   if (!body.data || typeof body.data !== "object" || !("imageBase64" in body.data)) {
     return fail(400, "أرسل صورة للفحص.");
@@ -113,8 +121,8 @@ export async function POST(request: Request) {
   if (typeof imageBase64 !== "string") return fail(400, "صيغة الصورة غير صالحة.");
   const match = imageBase64.match(/^data:(image\/(?:jpeg|png|webp));base64,([A-Za-z0-9+/]+={0,2})$/);
   if (!match) return fail(415, "الصيغ المدعومة هي JPEG وPNG وWebP.");
-  if (match[2].length > Math.ceil((MAX_IMAGE_BYTES * 4) / 3)) {
-    return fail(413, "حجم الصورة بعد الضغط يجب ألا يتجاوز 5 ميغابايت.");
+  if (match[2].length > MAX_IMAGE_BASE64_LENGTH) {
+    return fail(413, "حجم الصورة بعد الضغط يجب ألا يتجاوز 4 ميغابايت.");
   }
 
   const submittedType =
@@ -123,6 +131,84 @@ export async function POST(request: Request) {
     EMERGENCY_VALUES.includes(body.data.emergencyType as EmergencyType)
       ? (body.data.emergencyType as EmergencyType)
       : null;
+  const submittedDescription =
+    "description" in body.data && typeof body.data.description === "string"
+      ? body.data.description.trim().slice(0, 1_500)
+      : "";
+
+  if (isDeepSeekEnabled()) {
+    try {
+      const report = await analyzeWithDeepSeek({
+        image: imageBase64,
+        description: submittedDescription,
+        emergencyType: submittedType ?? undefined,
+      });
+      const result: VisionResult = {
+        diagnosis: [report.summary, ...report.findings].filter(Boolean).join(" ").slice(0, 1_000),
+        riskLevel:
+          submittedType === "dangerous_short_circuit"
+            ? "خطر مرتفع"
+            : submittedType === "security_system_down"
+              ? "عادي"
+              : "متوسط",
+        recommendation: engineeringGuidance(submittedType).recommendation,
+      };
+      try {
+        const delivery = await sendTelegramAnalysisReport(
+          {
+            kind: "image",
+            receivedAt: new Date().toISOString(),
+            problem: submittedDescription || submittedType || "فحص صورة",
+            summary: report.summary,
+            findings: report.findings,
+            recommendedActions: report.recommended_actions,
+            requiredTools: report.required_tools,
+            confidence: report.confidence,
+          },
+          imageBase64,
+        );
+        if (!delivery.ok) console.warn("[VISION CHECK] Optional Telegram report was not delivered.");
+      } catch {
+        console.warn("[VISION CHECK] Optional Telegram report was not delivered.");
+      }
+      return NextResponse.json({ ok: true, result }, { headers: HEADERS });
+    } catch (error) {
+      const code =
+        error && typeof error === "object" && "code" in error && typeof error.code === "string"
+          ? error.code
+          : "unknown";
+      console.warn("[VISION CHECK] Optional analysis failed; using safe manual review.", { code });
+      const fallback = engineeringGuidance(submittedType);
+      try {
+        const delivery = await sendTelegramAnalysisReport(
+          {
+            kind: "image",
+            receivedAt: new Date().toISOString(),
+            problem: submittedDescription || submittedType || "فحص صورة",
+            summary: fallback.diagnosis,
+            findings: ["تعذّر إكمال الفحص الآلي."],
+            recommendedActions: [fallback.recommendation],
+            requiredTools: [],
+            confidence: "low",
+          },
+          imageBase64,
+        );
+        if (!delivery.ok) console.warn("[VISION CHECK] Optional fallback report was not delivered.");
+      } catch {
+        console.warn("[VISION CHECK] Optional fallback report was not delivered.");
+      }
+      return NextResponse.json(
+        {
+          ok: true,
+          mode: "manual-review",
+          result: fallback,
+          message: "تعذّر إكمال الفحص الآلي الآن؛ ستبقى الصورة مرفقة للمراجعة الهندسية عند إرسال البلاغ.",
+        },
+        { headers: HEADERS },
+      );
+    }
+  }
+
   const apiKey = process.env.GEMINI_API_KEY?.trim();
   if (!apiKey) {
     console.error("[VISION CHECK] GEMINI_API_KEY is not configured.");
@@ -184,7 +270,7 @@ export async function POST(request: Request) {
         response.status === 403 ||
         (response.status === 400 && /API key not valid|API_KEY_INVALID/i.test(providerError))
       ) {
-        return fail(503, "مفتاح Gemini غير صالح. حدّث GEMINI_API_KEY في .env.local بمفتاح Google AI Studio صالح.");
+        return fail(503, "تعذّر التحقق من إعداد خدمة الصور. حاول لاحقاً أو أرسل البلاغ للمراجعة.");
       }
       if (response.status === 429) {
         return NextResponse.json(
@@ -192,7 +278,7 @@ export async function POST(request: Request) {
           { status: 429, headers: HEADERS },
         );
       }
-      return fail(502, "تعذّر تحليل الصورة آلياً الآن. ستبقى الصورة مرفقة ويمكن إرسال البلاغ للمراجعة.");
+      return fail(502, SAFE_IMAGE_ANALYSIS_ERROR);
     }
 
     const responseBody: unknown = await response.json();
@@ -206,20 +292,22 @@ export async function POST(request: Request) {
       !generated.recommendation.trim()
     ) {
       console.error("[VISION CHECK] Gemini returned an invalid structured response.");
-      return fail(502, "وصل رد غير مكتمل من خدمة الصور. ستبقى الصورة مرفقة ويمكن إرسال البلاغ للمراجعة.");
+      return fail(502, SAFE_IMAGE_ANALYSIS_ERROR);
     }
 
     const result: VisionResult = {
-      diagnosis: generated.diagnosis.trim().slice(0, 1_000),
+      diagnosis: sanitizeCustomerText(generated.diagnosis, 1_000) || engineeringGuidance(submittedType).diagnosis,
       riskLevel: generated.riskLevel as VisionResult["riskLevel"],
-      recommendation: generated.recommendation.trim().slice(0, 1_000),
+      recommendation:
+        sanitizeCustomerText(generated.recommendation, 1_000) ||
+        "لا تفتح اللوحة أو تلمس الأسلاك؛ انتظر فحص مهندس مؤهل.",
     };
 
-    return NextResponse.json({ ok: true, result, provider: "gemini", model: MODEL }, { headers: HEADERS });
+    return NextResponse.json({ ok: true, result }, { headers: HEADERS });
   } catch (error) {
     if (controller.signal.aborted) return fail(504, "استغرق فحص الصورة وقتاً أطول من المتوقع.");
     console.error("[VISION CHECK] Gemini request failed.", error);
-    return fail(502, "تعذّر الاتصال بخدمة فحص الصور. ستبقى الصورة مرفقة لإرسالها مع البلاغ.");
+    return fail(502, SAFE_IMAGE_ANALYSIS_ERROR);
   } finally {
     clearTimeout(timeout);
   }

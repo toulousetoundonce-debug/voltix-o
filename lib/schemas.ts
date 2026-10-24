@@ -13,13 +13,13 @@ import {
 /** Required text field: capped, sanitised (XSS characters removed), then length-checked. */
 const cleanText = (min: number, max: number, message: string) =>
   z
-    .string({ required_error: message, invalid_type_error: message })
+    .string({ error: message })
     .max(500, message)
     .transform((value) => sanitize(value, max))
     .pipe(z.string().min(min, message));
 
 const phoneField = z
-  .string({ required_error: "رقم الهاتف مطلوب", invalid_type_error: "رقم الهاتف مطلوب" })
+  .string({ error: "رقم الهاتف مطلوب" })
   .max(40, "رقم الهاتف غير صالح")
   .transform((value) => sanitize(normalizePhoneNumber(value), 25))
   .pipe(z.string().refine((value) => /^\+?[1-9]\d{7,14}$/.test(value), "أدخل رقم هاتف صالحاً"));
@@ -54,9 +54,7 @@ export const sosSchema = z.object({
       )
       .optional(),
   ),
-  emergencyType: z.enum(EMERGENCY_VALUES, {
-    errorMap: () => ({ message: "اختر نوع الطوارئ" }),
-  }),
+  emergencyType: z.enum(EMERGENCY_VALUES, { error: "اختر نوع الطوارئ" }),
   location: z
     .object({
       lat: z.number().min(-90).max(90),
@@ -69,20 +67,18 @@ export const sosSchema = z.object({
 
 export const quoteSchema = z
   .object({
-    projectType: z.enum(PROJECT_TYPE_VALUES, {
-      errorMap: () => ({ message: "اختر نوع المشروع" }),
-    }),
+    projectType: z.enum(PROJECT_TYPE_VALUES, { error: "اختر نوع المشروع" }),
     area: z
-      .number({ invalid_type_error: "المساحة غير صالحة" })
+      .number({ error: "المساحة غير صالحة" })
       .int()
       .min(AREA_MIN, "المساحة غير صالحة")
       .max(AREA_MAX, "المساحة غير صالحة"),
     units: z
-      .number({ invalid_type_error: "القيمة غير صالحة" })
+      .number({ error: "القيمة غير صالحة" })
       .int()
       .min(1, "القيمة غير صالحة")
       .max(500, "القيمة غير صالحة"),
-    tier: z.enum(TIER_VALUES, { errorMap: () => ({ message: "اختر مستوى التجهيز" }) }),
+    tier: z.enum(TIER_VALUES, { error: "اختر مستوى التجهيز" }),
     fullName: cleanText(2, 80, "الاسم الكامل مطلوب"),
     phone: phoneField,
     aiDiagnosis: optionalText(AI_DIAGNOSIS_MAX_LENGTH, "التشخيص طويل جداً"),

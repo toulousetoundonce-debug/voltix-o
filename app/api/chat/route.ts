@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { chatSchema } from "@/lib/schemas";
-import { getClientIp, isSameOrigin, rateLimit, readJsonBody } from "@/lib/security";
+import { isSameOrigin, readJsonBody } from "@/lib/security";
+import { checkRateLimit, rateLimitHeaders } from "@/lib/ratelimit";
 import { sendTelegramAlert } from "@/lib/telegram";
 import { normalizeDigits } from "@/lib/validation";
 
@@ -9,8 +10,6 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 const HEADERS = { "Cache-Control": "no-store" };
-const WINDOW_MS = 10 * 60 * 1000;
-const MAX_REQUESTS = 12;
 const REQUEST_TIMEOUT_MS = 30_000;
 const MODEL = process.env.GROQ_MODEL || "openai/gpt-oss-20b";
 
@@ -68,19 +67,15 @@ function fail(status: number, error: string, extra?: Record<string, unknown>) {
 }
 
 export async function POST(request: Request) {
-  if (!isSameOrigin(request)) {
-    return fail(403, "طلب غير مسموح به.");
-  }
-
-  const limit = rateLimit(`chat:${getClientIp(request)}`, MAX_REQUESTS, WINDOW_MS);
-  if (!limit.ok) {
+  const limit = checkRateLimit(request, "/api/chat");
+  if (!limit.allowed) {
     return NextResponse.json(
       { ok: false, error: "وصلت إلى حد الرسائل المؤقت. حاول بعد قليل." },
-      {
-        status: 429,
-        headers: { ...HEADERS, "Retry-After": String(limit.retryAfter) },
-      },
+      { status: 429, headers: { ...HEADERS, ...rateLimitHeaders(limit) } },
     );
+  }
+  if (!isSameOrigin(request)) {
+    return fail(403, "طلب غير مسموح به.");
   }
 
   const body = await readJsonBody(request, 10_000);
