@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#07111f">
+    <title>مساعد Voltix</title>
+    <style>
+      :root { color-scheme: dark; font-family: system-ui, sans-serif; }
+      * { box-sizing: border-box; }
+      body { margin: 0; min-height: 100vh; background: #07111f; color: #e7edf5; }
+      main { width: min(100% - 2rem, 44rem); min-height: 100vh; margin: auto; display: flex; flex-direction: column; padding: 2rem 0; }
+      h1 { margin: 0; font-size: 1.25rem; }
+      #history { display: flex; flex: 1; flex-direction: column; gap: .75rem; padding: 1.5rem 0; }
+      .message { max-width: 88%; margin: 0; padding: .8rem 1rem; border-radius: 1rem; line-height: 1.8; white-space: pre-wrap; overflow-wrap: anywhere; }
+      .assistant { align-self: flex-start; background: #142235; }
+      .user { align-self: flex-end; background: #164e63; }
+      #status { min-height: 1.5rem; color: #fca5a5; font-size: .9rem; }
+      form { display: flex; gap: .75rem; align-items: end; }
+      textarea { flex: 1; min-height: 3rem; max-height: 10rem; resize: vertical; padding: .8rem; border: 1px solid #334155; border-radius: .8rem; background: #0f1b2b; color: inherit; font: inherit; }
+      button { min-height: 3rem; padding: .65rem 1rem; border: 0; border-radius: .8rem; background: #67e8f9; color: #08202a; font: inherit; font-weight: 700; cursor: pointer; }
+      button:disabled { opacity: .55; cursor: wait; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>مساعد Voltix</h1>
+      <div id="history" aria-live="polite" aria-relevant="additions text"></div>
+      <p id="status" role="status"></p>
+      <form id="chat-form">
+        <textarea id="message" name="message" maxlength="1500" placeholder="اكتب رسالتك..." aria-label="رسالتك" required></textarea>
+        <button id="send" type="submit">إرسال</button>
+      </form>
+    </main>
+    <script>
+      const form = document.querySelector("#chat-form");
+      const input = document.querySelector("#message");
+      const history = document.querySelector("#history");
+      const status = document.querySelector("#status");
+      const send = document.querySelector("#send");
+      const messages = [];
+
+      function addMessage(role, content) {
+        const item = document.createElement("p");
+        item.className = `message ${role}`;
+        item.textContent = content;
+        history.append(item);
+        return item;
+      }
+
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const content = input.value.trim();
+        if (!content || send.disabled) return;
+
+        const conversation = [...messages, { role: "user", content }].slice(-12);
+        while (conversation.reduce((total, message) => total + message.content.length, 0) > 6000) {
+          conversation.shift();
+        }
+        addMessage("user", content);
+        input.value = "";
+        status.textContent = "";
+        send.disabled = true;
+        let answer = "";
+        const assistantBubble = addMessage("assistant", "");
+
+        try {
+          const response = await fetch("/api/agent/chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ messages: conversation }),
+          });
+          if (!response.ok) {
+            const error = await response.json().catch(() => ({}));
+            throw new Error(error.error || "تعذّر الاتصال بالمساعد.");
+          }
+          if (!response.body) throw new Error("لا يدعم هذا المتصفح استقبال الرد المتدفق.");
+
+          const reader = response.body.getReader();
+          const decoder = new TextDecoder();
+          let buffer = "";
+          let dataLines = [];
+
+          function consumeEvent() {
+            if (!dataLines.length) return;
+            const data = dataLines.join("\n");
+            dataLines = [];
+            if (data === "[DONE]") return;
+            const event = JSON.parse(data);
+            if (event.error) throw new Error(event.error);
+            const delta = event.choices?.[0]?.delta?.content;
+            if (typeof delta === "string") {
+              answer += delta;
+              assistantBubble.textContent = answer;
+            }
+          }
+
+          while (true) {
+            const { value, done } = await reader.read();
+            buffer += decoder.decode(value, { stream: !done });
+            const lines = buffer.split(/\r?\n/);
+            buffer = lines.pop() || "";
+            for (const line of lines) {
+              if (!line) consumeEvent();
+              else if (line.startsWith("data:")) dataLines.push(line.slice(5).trimStart());
+            }
+            if (done) {
+              if (buffer.startsWith("data:")) dataLines.push(buffer.slice(5).trimStart());
+              consumeEvent();
+              break;
+            }
+          }
+          if (!answer) throw new Error("لم يصل نص جواب من المساعد.");
+          messages.splice(0, messages.length, ...conversation, { role: "assistant", content: answer });
+        } catch (error) {
+          assistantBubble.remove();
+          status.textContent = error instanceof Error ? error.message : "تعذّر الاتصال بالمساعد.";
+        } finally {
+          send.disabled = false;
+          input.focus();
+        }
+      });
+    </script>
+  </body>
+</html>

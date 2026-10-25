@@ -194,12 +194,10 @@ Status codes:
 ### Valid request
 
 This route expects `multipart/form-data` with a field named `audio` and an audio file.
-The server forwards the recording to `AUDIO_ANALYSIS_ENDPOINT` (default:
-`https://voltix-dpe94xwm0x88.edgeone.dev/`) as multipart fields `audio`, and optionally
-`emergencyType` and `description`. Set the endpoint in `.env.local` if the service requires a
-different path. Its JSON response must include `transcript` (or `text`) and an `analysis` object
-with `summary`, `urgency`, `category`, and `safetyAdvice`. If the service is unavailable, the
-existing server-side transcription and analysis pipeline is attempted as a fallback.
+The server validates and forwards the recording to Groq speech-to-text using `GROQ_STT_MODEL`
+and a filename extension matched to its MIME type. The transcript is summarized with
+`GROQ_TRIAGE_MODEL`; when `FEATURE_DEEPSEEK_PIPELINE=1`, optional DeepSeek text triage is used
+instead. If structured triage is unavailable, the route returns deterministic local safety advice.
 
 Success response:
 
@@ -217,7 +215,7 @@ Success response:
 }
 ```
 
-When the provider cannot return a reliable structured response, the route falls back to a deterministic local analysis and sets `usedFallback` to `true`.
+When transcription succeeds but structured triage is unavailable, the route falls back to deterministic local safety guidance and sets `usedFallback` to `true`. Telegram delivery is optional and does not invalidate a successful transcription response.
 
 Error response:
 
@@ -231,19 +229,17 @@ Error response:
 Status codes:
 - 200: success
 - 400: bad multipart or missing audio
-- 413: audio exceeds 4 MiB
+- 413: audio exceeds 5.5 MiB
 - 415: unsupported audio type
 - 429: rate limit
 - 502/503/504: provider or timeout failures
 
 ## 6) POST /api/vision-check
 
-The application compresses the selected image in the browser, then sends it to this same-origin route.
-The server forwards the image as multipart form data to `IMAGE_ANALYSIS_ENDPOINT` (defaults to
-`https://voltix-dpe94xwm0x88.edgeone.dev/`). The multipart fields are `image`, and optionally
-`emergencyType` and `description`. Configure a different path in `.env.local` if the service uses
-a route other than its root URL. The service response must contain `diagnosis`, `riskLevel`, and
-`recommendation` at its root or under `result`/`data`.
+The application compresses the selected image to WebP at no more than 150 KiB. If Supabase Storage
+is configured, the browser uploads it under the public `faults/` path and sends the validated URL;
+otherwise it sends the data URL directly to this same-origin route. The server analyzes the image
+with Groq Vision using `GROQ_VISION_MODEL`.
 
 ### Valid request
 
@@ -266,7 +262,7 @@ Success response:
 }
 ```
 
-When the image analysis service is unavailable, the route returns a safe manual-review fallback:
+When Groq Vision is unavailable, the route returns an explicit safe manual-review fallback:
 
 ```json
 {

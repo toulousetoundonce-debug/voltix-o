@@ -1,5 +1,10 @@
 import { z } from "zod";
-import { DEEPSEEK_BASE_URL, DEEPSEEK_TIMEOUT_MS, DEEPSEEK_VISION_MODEL } from "./config";
+import {
+  DEEPSEEK_BASE_URL,
+  DEEPSEEK_CHAT_MODEL,
+  DEEPSEEK_TIMEOUT_MS,
+  DEEPSEEK_VISION_MODEL,
+} from "./config";
 
 export const deepSeekReportSchema = z.object({
   summary: z.string().trim().min(1).max(240),
@@ -16,6 +21,7 @@ export interface DeepSeekInput {
   description?: string;
   transcript?: string;
   emergencyType?: string;
+  fieldReport?: boolean;
 }
 
 export class DeepSeekError extends Error {
@@ -89,6 +95,9 @@ function parseReport(text: string): DeepSeekReport | null {
 function userContent(input: DeepSeekInput) {
   const text = [
     input.emergencyType ? `نوع البلاغ: ${input.emergencyType}` : "",
+    input.fieldReport
+      ? "أنشئ تقريراً ميدانياً مختصراً: summary يذكر التشخيص الجذري المحتمل وحدود التأكد، recommended_actions يذكر أسرع حل هندسي آمن، وrequired_tools يذكر القطع/الأدوات المطلوبة."
+      : "",
     input.description ? `وصف البلاغ: ${redactSensitiveSpeech(input.description).slice(0, 1500)}` : "",
     input.transcript ? `تفريغ الصوت: ${redactSensitiveSpeech(input.transcript).slice(0, 1500)}` : "",
   ]
@@ -113,7 +122,7 @@ function userContent(input: DeepSeekInput) {
 
 export async function analyzeWithDeepSeek(
   input: DeepSeekInput,
-  options: { timeoutMs?: number } = {},
+  options: { timeoutMs?: number; model?: string } = {},
 ): Promise<DeepSeekReport> {
   const apiKey = process.env.DEEPSEEK_API_KEY?.trim();
   if (!apiKey) throw new DeepSeekError("DeepSeek is not configured.", "not_configured");
@@ -131,7 +140,7 @@ export async function analyzeWithDeepSeek(
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: DEEPSEEK_VISION_MODEL,
+        model: options.model ?? DEEPSEEK_VISION_MODEL,
         messages: [
           { role: "system", content: SYSTEM_PROMPT },
           { role: "user", content: userContent(input) },

@@ -1,13 +1,14 @@
 import { NextResponse } from "next/server";
-import { analyzeFaultImage, ImageAnalysisServiceError } from "@/lib/image-analysis-service";
 import { isSameOrigin, readJsonBody, sanitize } from "@/lib/security";
 import { checkRateLimit, rateLimitHeaders } from "@/lib/ratelimit";
 import { EMERGENCY_VALUES, type EmergencyType } from "@/lib/validation";
+import { analyzeFaultImageWithGroq, GroqVisionError } from "@/lib/ai/groq-vision";
+import { isSupabaseFaultImageUrl } from "@/lib/supabase-storage";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const MAX_IMAGE_BYTES = 4 * 1024 * 1024;
+const MAX_IMAGE_BYTES = 150 * 1024;
 const MAX_IMAGE_BASE64_LENGTH = 4 * Math.ceil(MAX_IMAGE_BYTES / 3);
 const MAX_REQUEST_BYTES = 5_800_000;
 const HEADERS = { "Cache-Control": "no-store" };
@@ -68,16 +69,26 @@ export async function POST(request: Request) {
 
   const body = await readJsonBody(request, MAX_REQUEST_BYTES);
   if (!body.ok) return fail(body.status, body.error);
-  if (!body.data || typeof body.data !== "object" || !("imageBase64" in body.data)) {
+  if (!body.data || typeof body.data !== "object") {
     return fail(400, "أرسل صورة للفحص.");
   }
 
-  const { imageBase64 } = body.data;
-  if (typeof imageBase64 !== "string") return fail(400, "صيغة الصورة غير صالحة.");
-  const match = imageBase64.match(/^data:(image\/(?:jpeg|png|webp));base64,([A-Za-z0-9+/]+={0,2})$/);
-  if (!match) return fail(415, "الصيغ المدعومة هي JPEG وPNG وWebP.");
-  if (match[2].length > MAX_IMAGE_BASE64_LENGTH) {
+  const imageBase64 = "imageBase64" in body.data ? body.data.imageBase64 : undefined;
+  const imageUrl = "imageUrl" in body.data ? body.data.imageUrl : undefined;
+  if (imageUrl !== undefined && (typeof imageUrl !== "string" || !isSupabaseFaultImageUrl(imageUrl))) {
+    return fail(400, "رابط الصورة غير صالح أو لا ينتمي إلى مساحة التخزين المهيأة.");
+  }
+  if (imageUrl === undefined && typeof imageBase64 !== "string") return fail(400, "أرسل صورة للفحص.");
+  const match =
+    typeof imageBase64 === "string"
+      ? imageBase64.match(/^data:(image\/(?:jpeg|png|webp));base64,([A-Za-z0-9+/]+={0,2})$/)
+      : null;
+  if (imageUrl === undefined && !match) return fail(415, "الصيغ المدعومة هي JPEG وPNG وWebP.");
+  if (match && match[2].length > MAX_IMAGE_BASE64_LENGTH) {
     return fail(413, "حجم الصورة بعد الضغط يجب ألا يتجاوز 4 ميغابايت.");
+  }
+  if (match && Buffer.from(match[2], "base64").byteLength > MAX_IMAGE_BYTES) {
+    return fail(413, "حجم الصورة بعد فك الترميز يتجاوز الحد المسموح.");
   }
 
   const submittedType =
@@ -92,28 +103,25 @@ export async function POST(request: Request) {
       : "";
 
   try {
-    const imageBytes = Uint8Array.from(Buffer.from(match[2], "base64"));
-    const result = await analyzeFaultImage({
-      image: new Blob([imageBytes], { type: match[1] }),
-      emergencyType: submittedType ?? undefined,
-      description: submittedDescription || undefined,
-    });
-    const diagnosis = sanitize(result.diagnosis, 1_000);
-    const recommendation = sanitize(result.recommendation, 1_000);
-    if (!diagnosis || !recommendation) throw new ImageAnalysisServiceError("invalid_response");
-    return NextResponse.json(
-      {
-        ok: true,
-        result: {
-          diagnosis,
-          riskLevel: result.riskLevel,
-          recommendation,
-        },
-      },
-      { headers: HEADERS },
-    );
+    if (typeof imageUrl === "string" || match) {
+      const image =
+        typeof imageUrl === "string"
+          ? imageUrl
+          : `data:${match![1]};base64,${match![2]}`;
+      const result = await analyzeFaultImageWithGroq({
+        image,
+        emergencyType: submittedType ?? undefined,
+        description: submittedDescription || undefined,
+      });
+      return NextResponse.json({ ok: true, result }, { headers: HEADERS });
+    }
+
+    return fail(400, "أرسل صورة صالحة للفحص.");
   } catch (error) {
-    const code = error instanceof ImageAnalysisServiceError ? error.code : "unknown";
+    const code =
+      error instanceof GroqVisionError
+        ? error.code
+        : "unknown";
     console.warn("[VISION CHECK] Image analysis request failed.", { code });
     return NextResponse.json(
       {

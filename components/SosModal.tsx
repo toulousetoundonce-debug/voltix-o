@@ -18,6 +18,7 @@ import ModalShell from "./ModalShell";
 import { firstFieldErrors, postJson } from "@/lib/client";
 import { SITE } from "@/lib/site";
 import { createWhatsAppHref, WHATSAPP_SOS_NUMBER } from "@/lib/whatsapp";
+import { uploadFaultImage } from "@/lib/supabase-storage";
 import {
   EMERGENCY_LABELS,
   EMERGENCY_VALUES,
@@ -63,27 +64,42 @@ const EMERGENCY_ICONS: Record<EmergencyType, LucideIcon> = {
   security_system_down: Video,
   control_panel_fault: Siren,
 };
-const MAX_COMPRESSED_IMAGE_CHARS = 4 * Math.ceil((4 * 1024 * 1024) / 3) + 23;
+const MAX_COMPRESSED_IMAGE_BYTES = 150 * 1024;
 const MAX_AUDIO_BYTES = Math.floor(5.5 * 1024 * 1024);
 const AUDIO_WARNING_BYTES = Math.floor(4.5 * 1024 * 1024);
 
-async function compressImage(file: File): Promise<string> {
+async function blobToDataUrl(blob: Blob): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => (typeof reader.result === "string" ? resolve(reader.result) : reject(new Error("تعذّر تجهيز معاينة الصورة.")));
+    reader.onerror = () => reject(new Error("تعذّر تجهيز معاينة الصورة."));
+    reader.readAsDataURL(blob);
+  });
+}
+
+async function compressImage(file: File): Promise<{ blob: Blob; dataUrl: string }> {
   if (!file.type.startsWith("image/")) throw new Error("اختر ملف صورة صالحاً.");
   if (file.size > 15 * 1024 * 1024) throw new Error("حجم الصورة الأصلية يجب ألا يتجاوز 15 ميغابايت.");
   const image = await createImageBitmap(file);
   try {
-    const scale = Math.min(1, 1280 / Math.max(image.width, image.height));
     const canvas = document.createElement("canvas");
-    canvas.width = Math.max(1, Math.round(image.width * scale));
-    canvas.height = Math.max(1, Math.round(image.height * scale));
     const context = canvas.getContext("2d");
     if (!context) throw new Error("تعذّر تجهيز الصورة في المتصفح.");
-    context.drawImage(image, 0, 0, canvas.width, canvas.height);
-    const compressed = canvas.toDataURL("image/jpeg", 0.8);
-    if (compressed.length > MAX_COMPRESSED_IMAGE_CHARS) {
-      throw new Error("حجم الصورة بعد الضغط يجب ألا يتجاوز 4 ميغابايت.");
+
+    let scale = Math.min(1, 1280 / Math.max(image.width, image.height));
+    for (let resize = 0; resize < 8; resize += 1) {
+      canvas.width = Math.max(1, Math.round(image.width * scale));
+      canvas.height = Math.max(1, Math.round(image.height * scale));
+      context.drawImage(image, 0, 0, canvas.width, canvas.height);
+      for (let quality = 0.88; quality >= 0.4; quality -= 0.08) {
+        const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/webp", quality));
+        if (blob?.type === "image/webp" && blob.size <= MAX_COMPRESSED_IMAGE_BYTES) {
+          return { blob, dataUrl: await blobToDataUrl(blob) };
+        }
+      }
+      scale *= 0.82;
     }
-    return compressed;
+    throw new Error("تعذّر ضغط الصورة إلى أقل من 150 كيلوبايت. اختر صورة أصغر أو أوضح.");
   } finally {
     image.close();
   }
@@ -109,6 +125,7 @@ export default function SosModal({ open, onClose }: { open: boolean; onClose: ()
   const [imageMessage, setImageMessage] = useState("");
   const [imageNotice, setImageNotice] = useState("");
   const [imagePreview, setImagePreview] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
   const [imageAnalysis, setImageAnalysis] = useState<ImageAnalysis | null>(null);
   const [imageMode, setImageMode] = useState<"automated" | "manual-review" | null>(null);
   const recorderRef = useRef<MediaRecorder | null>(null);
@@ -151,6 +168,7 @@ export default function SosModal({ open, onClose }: { open: boolean; onClose: ()
     setImageMessage("");
     setImageNotice("");
     setImagePreview("");
+    setImageUrl("");
     setImageAnalysis(null);
     setImageMode(null);
   };
@@ -254,6 +272,7 @@ export default function SosModal({ open, onClose }: { open: boolean; onClose: ()
         }
         const form = new FormData();
         form.append("audio", audioBlob, `recording.${extension}`);
+        if (phone.trim()) form.append("phone", phone.trim());
         if (emergencyType) form.append("emergencyType", emergencyType);
         if (description.trim()) form.append("description", description.trim());
         setVoiceBusy(true);
@@ -302,16 +321,20 @@ export default function SosModal({ open, onClose }: { open: boolean; onClose: ()
     setImageBusy(true);
     setImageMessage("");
     setImageNotice("");
+    setImagePreview("");
     setImageAnalysis(null);
     setImageMode(null);
+    setImageUrl("");
     try {
-      const imageBase64 = await compressImage(file);
-      setImagePreview(imageBase64);
+      const compressed = await compressImage(file);
+      setImagePreview(compressed.dataUrl);
+      const uploadedImageUrl = await uploadFaultImage(compressed.blob);
+      setImageUrl(uploadedImageUrl ?? "");
       const response = await fetch("/api/vision-check", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          imageBase64,
+          ...(uploadedImageUrl ? { imageUrl: uploadedImageUrl } : { imageBase64: compressed.dataUrl }),
           emergencyType: emergencyType || undefined,
           description: description || undefined,
         }),
@@ -382,7 +405,7 @@ export default function SosModal({ open, onClose }: { open: boolean; onClose: ()
 
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (status === "submitting") return;
+    if (status === "submitting" || imageBusy || voiceBusy || recording) return;
 
     const found = validate();
     setErrors(found);
@@ -408,7 +431,7 @@ export default function SosModal({ open, onClose }: { open: boolean; onClose: ()
         .join("\n")
         .slice(0, 1_500),
       voiceTranscript,
-      imageBase64: imagePreview || undefined,
+      ...(imageUrl ? { imageUrl } : { imageBase64: imagePreview || undefined }),
       location: coords ? { lat: coords.lat, lng: coords.lng, accuracy: coords.accuracy } : null,
       website: honeypot,
     });
@@ -723,7 +746,7 @@ export default function SosModal({ open, onClose }: { open: boolean; onClose: ()
             </div>
 
             <p className="mt-2 text-xs leading-relaxed text-slate-400">
-              عند اختيار صورة، تُرسل النسخة المضغوطة لفحص العطل. تجنّب إرفاق معلومات شخصية ظاهرة في الصورة.
+              تُضغط الصورة إلى WebP أقل من 150 كيلوبايت. عند ضبط Supabase تُرفع إلى مساحة عامة ليتمكن محرك التحليل وفريق الصيانة من عرضها؛ تجنّب إظهار بيانات شخصية فيها.
             </p>
             {imageBusy ? (
               <p role="status" aria-live="polite" className="sos-pro-assist-message">

@@ -54,6 +54,7 @@ export const sosSchema = z.object({
       )
       .optional(),
   ),
+  imageUrl: z.string().url("رابط صورة البلاغ غير صالح").max(2_048).optional(),
   emergencyType: z.enum(EMERGENCY_VALUES, { error: "اختر نوع الطوارئ" }),
   location: z
     .object({

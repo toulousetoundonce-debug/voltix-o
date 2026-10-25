@@ -18,6 +18,7 @@ const LIMITS: Record<string, { env: string; defaultLimit: number }> = {
   "/api/voice-sos": { env: "RATE_LIMIT_VOICE_PER_MINUTE", defaultLimit: 5 },
   "/api/sos": { env: "RATE_LIMIT_SOS_PER_MINUTE", defaultLimit: 8 },
   "/api/chat": { env: "RATE_LIMIT_CHAT_PER_MINUTE", defaultLimit: 20 },
+  "/api/agent/chat": { env: "RATE_LIMIT_AGENT_CHAT_PER_MINUTE", defaultLimit: 10 },
   "/api/quote": { env: "RATE_LIMIT_QUOTE_PER_MINUTE", defaultLimit: 10 },
   "/api/callback-request": { env: "RATE_LIMIT_CALLBACK_PER_MINUTE", defaultLimit: 10 },
 };

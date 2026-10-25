@@ -1,0 +1,11 @@
+.git
+.next
+.netlify
+node_modules
+.venv
+out
+coverage
+.env*
+!.env.example
+npm-debug.log*
+*.tsbuildinfo

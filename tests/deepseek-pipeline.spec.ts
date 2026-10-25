@@ -34,6 +34,7 @@ const makeRequest = (url: string, body: unknown) =>
 describe("optional server-side triage pipeline", () => {
   beforeEach(() => {
     vi.stubEnv("FEATURE_DEEPSEEK_PIPELINE", "1");
+    vi.stubEnv("RATE_LIMIT_VOICE_PER_MINUTE", "100");
     vi.stubEnv("DEEPSEEK_API_KEY", "test-deepseek-key");
     vi.stubEnv("GROQ_API_KEY", "test-groq-key");
     vi.stubEnv("TELEGRAM_BOT_TOKEN", "test-telegram-token");
@@ -79,25 +80,20 @@ describe("optional server-side triage pipeline", () => {
     expect(result.findings).toHaveLength(1);
   });
 
-  it("sends a compressed image as multipart form data and returns the analysis", async () => {
+  it("sends a compressed image as an inline data URL to Groq Vision and returns the analysis", async () => {
     const fetchMock = vi.fn(async (url: string | URL | Request, init?: RequestInit) => {
-      expect(String(url)).toBe("https://images.example.test/analyze");
+      expect(String(url)).toBe("https://api.groq.com/openai/v1/chat/completions");
       expect(init?.method).toBe("POST");
-      expect(init?.headers).toBeUndefined();
-      const form = init?.body as FormData;
-      expect(form.get("emergencyType")).toBe("control_panel_fault");
-      expect(form.get("description")).toBe("فحص لوحة توزيع");
-      const image = form.get("image");
-      expect(image).toBeInstanceOf(Blob);
-      if (!(image instanceof Blob)) throw new Error("Expected the image multipart field to be a Blob.");
-      expect(image.type).toBe("image/png");
+      const payload = JSON.parse(String(init?.body));
+      expect(payload.model).toBe("qwen/qwen3.8-27b");
+      expect(payload.messages[1].content[0].text).toContain("control_panel_fault");
+      expect(payload.messages[1].content[1].image_url.url).toBe("data:image/png;base64,AAAA");
       return makeResponse({
-        ok: true,
-        result: {
+        choices: [{ message: { content: JSON.stringify({
           diagnosis: "يظهر تلف محتمل في القاطع.",
-          riskLevel: "high",
+          riskLevel: "خطر مرتفع",
           recommendation: "ابتعد عن اللوحة واتصل بفني مؤهل.",
-        },
+        }) } }],
       });
     });
     vi.stubGlobal("fetch", fetchMock);
@@ -169,10 +165,8 @@ describe("optional server-side triage pipeline", () => {
     expect(body.ok).toBe(true);
     expect(body.mode).toBe("manual-review");
     expect(JSON.stringify(body)).not.toMatch(/deepseek|gemini|provider|model|unavailable/i);
-    expect(logSpy).toHaveBeenCalledWith(
-      "[VISION CHECK] Image analysis request failed.",
-      { code: "http" },
-    );
+    expect(logSpy).toHaveBeenCalledWith("[GROQ VISION] Provider rejected image request.", { status: 503 });
+    expect(logSpy).toHaveBeenCalledWith("[VISION CHECK] Image analysis request failed.", { code: "http" });
     expect(JSON.stringify(logSpy.mock.calls)).not.toContain("test-deepseek-key");
     logSpy.mockRestore();
   });
@@ -198,34 +192,32 @@ describe("optional server-side triage pipeline", () => {
     expect(body.ok).toBe(true);
     expect(body.mode).toBe("manual-review");
     expect(JSON.stringify(body)).not.toContain("private provider rejection detail");
+    expect(logSpy).toHaveBeenCalledWith("[GROQ VISION] Provider rejected image request.", { status: 400 });
     expect(logSpy).toHaveBeenCalledWith("[VISION CHECK] Image analysis request failed.", { code: "http" });
     expect(JSON.stringify(logSpy.mock.calls)).not.toMatch(/edgeone|deepseek|gemini|\bai\b/i);
     expect(fetchMock).toHaveBeenCalledOnce();
     logSpy.mockRestore();
   });
 
-  it("forwards recorded audio and context to the configured analysis endpoint", async () => {
+  it("transcribes audio with Groq and sends the structured report to Telegram", async () => {
     const fetchMock = vi.fn(async (url: string | URL | Request, init?: RequestInit) => {
       const target = String(url);
-      if (target === "https://audio.example.test/analyze") {
-        expect(init?.method).toBe("POST");
-        expect(init?.headers).toBeUndefined();
+      if (target.includes("/audio/transcriptions")) {
         const form = init?.body as FormData;
-        expect(form.get("emergencyType")).toBe("control_panel_fault");
-        expect(form.get("description")).toBe("صوت غير معتاد قرب اللوحة");
-        const audio = form.get("audio");
-        expect(audio).toBeInstanceOf(File);
-        return makeResponse({
-          transcript: "أسمع طقطقة قرب لوحة الكهرباء.",
-          analysis: {
-            summary: "صوت طقطقة قرب اللوحة يحتاج إلى فحص.",
-            urgency: "medium",
-            category: "electrical-fault",
-            safetyAdvice: "ابتعد عن اللوحة ولا تفتحها؛ اطلب فحص فني مؤهل.",
-          },
-        });
+        expect(form.get("model")).toBe("whisper-large-v3-turbo");
+        expect((form.get("file") as File).name).toBe("voice-report.webm");
+        return makeResponse({ text: "أسمع طقطقة قرب لوحة الكهرباء." });
       }
-      if (target.includes("api.telegram.org")) return makeResponse({ ok: true, result: {} });
+      if (target.includes("api.deepseek.com")) {
+        return makeResponse({ choices: [{ message: { content: JSON.stringify(report) } }] });
+      }
+      if (target.includes("api.telegram.org")) {
+        const telegramPayload = JSON.parse(String(init?.body));
+        expect(telegramPayload.reply_markup.inline_keyboard[0][0].url).toBe(
+          "https://wa.me/213551234567?text=" + encodeURIComponent("مرحباً، نتواصل معك بخصوص بلاغ العطل المرسل إلى Voltix Dynamics."),
+        );
+        return makeResponse({ ok: true, result: {} });
+      }
       throw new Error("Unexpected network target in test.");
     });
     vi.stubGlobal("fetch", fetchMock);
@@ -233,6 +225,7 @@ describe("optional server-side triage pipeline", () => {
     form.set("audio", new File([new Uint8Array([1, 2, 3])], "voice.webm", { type: "audio/webm" }));
     form.set("emergencyType", "control_panel_fault");
     form.set("description", "صوت غير معتاد قرب اللوحة");
+    form.set("phone", "0551234567");
     const response = await voicePost(
       new Request("http://localhost:3000/api/voice-sos", {
         method: "POST",
@@ -243,9 +236,41 @@ describe("optional server-side triage pipeline", () => {
     const body = await response.json();
     expect(response.status).toBe(200);
     expect(body.transcript).toBe("أسمع طقطقة قرب لوحة الكهرباء.");
-    expect(body.analysis.summary).toContain("صوت طقطقة");
+    expect(body.analysis.summary).toBe(report.summary);
     expect(body.usedFallback).toBe(false);
-    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(fetchMock).toHaveBeenCalledTimes(3);
+  });
+
+  it("uses Groq triage when optional DeepSeek is disabled", async () => {
+    vi.stubEnv("FEATURE_DEEPSEEK_PIPELINE", "0");
+    const fetchMock = vi.fn(async (url: string | URL | Request, init?: RequestInit) => {
+      const target = String(url);
+      if (target.includes("/audio/transcriptions")) return makeResponse({ text: "القاطع يفصل عند تشغيل المضخة." });
+      if (target === "https://api.groq.com/openai/v1/chat/completions") {
+        const payload = JSON.parse(String(init?.body));
+        expect(payload.model).toBe("qwen/qwen3.8-27b");
+        expect(payload.messages[1].content).toContain("القاطع يفصل");
+        return makeResponse({ choices: [{ message: { content: JSON.stringify(report) } }] });
+      }
+      if (target.includes("api.telegram.org")) return makeResponse({ ok: true, result: {} });
+      throw new Error("Unexpected network target in test.");
+    });
+    vi.stubGlobal("fetch", fetchMock);
+    const form = new FormData();
+    form.set("audio", new File([new Uint8Array([1])], "voice.webm", { type: "audio/webm" }));
+    const response = await voicePost(
+      new Request("http://localhost:3000/api/voice-sos", {
+        method: "POST",
+        headers: { origin: "http://localhost:3000", "x-forwarded-host": "localhost:3000" },
+        body: form,
+      }),
+    );
+    const body = await response.json();
+    expect(response.status).toBe(200);
+    expect(body.ok).toBe(true);
+    expect(body.usedFallback).toBe(false);
+    expect(body.analysis.summary).toBe(report.summary);
+    expect(fetchMock).toHaveBeenCalledTimes(3);
   });
 
   it("transcribes voice before triage and returns no provider metadata", async () => {
@@ -321,7 +346,7 @@ describe("optional server-side triage pipeline", () => {
     expect(response.status).toBe(502);
     expect(body.error).toContain("تعذّر تفريغ التسجيل الصوتي");
     expect(JSON.stringify(body)).not.toContain("private upstream detail");
-    expect(logSpy).toHaveBeenCalledWith("[VOICE SOS] Speech transcription failed.");
+    expect(logSpy).toHaveBeenCalledWith("[VOICE SOS] Speech transcription failed.", { code: "provider_error" });
     logSpy.mockRestore();
   });
 

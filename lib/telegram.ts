@@ -1,4 +1,5 @@
 import { Buffer } from "node:buffer";
+import { isSupabaseFaultImageUrl } from "@/lib/supabase-storage";
 
 interface GpsCoords {
   lat: number;
@@ -214,6 +215,7 @@ export async function sendTelegramAlert(
   title: string,
   details: Record<string, unknown>,
   gpsCoords?: GpsCoords,
+  whatsappUrl?: string,
 ): Promise<TelegramDeliveryResult> {
   const token = getBotToken();
   if (!token) {
@@ -252,10 +254,42 @@ export async function sendTelegramAlert(
         text: lines.join("\n"),
         parse_mode: "HTML",
         disable_web_page_preview: true,
+        ...(whatsappUrl && /^https:\/\/wa\.me\/\d{8,15}(?:\?[^\s]*)?$/.test(whatsappUrl)
+          ? {
+              reply_markup: {
+                inline_keyboard: [[{ text: "مراسلة العميل عبر واتساب", url: whatsappUrl }]],
+              },
+            }
+          : {}),
       }),
     true,
   );
   console.info("[TELEGRAM] Message delivery result.", result);
+  return result;
+}
+
+export async function sendTelegramPhotoUrl(
+  imageUrl: string,
+  caption: string,
+  preferredChatId?: string,
+): Promise<TelegramDeliveryResult> {
+  const token = getBotToken();
+  if (!token) return { ok: false, reason: "لم يتم ضبط TELEGRAM_BOT_TOKEN." };
+  if (!isSupabaseFaultImageUrl(imageUrl)) return { ok: false, reason: "رابط صورة البلاغ غير صالح." };
+
+  const result = await sendToRecipient(
+    token,
+    "sendPhoto",
+    (chatId) =>
+      JSON.stringify({
+        chat_id: chatId,
+        photo: imageUrl,
+        caption: caption.slice(0, 900),
+      }),
+    true,
+    preferredChatId,
+  );
+  console.info("[TELEGRAM] Public image delivery result.", result);
   return result;
 }
 
@@ -294,6 +328,7 @@ export async function sendTelegramPhoto(
 export async function sendTelegramAnalysisReport(
   report: TelegramAnalysisReport,
   imageDataUrl?: string,
+  whatsappUrl?: string,
 ): Promise<TelegramDeliveryResult> {
   const token = getBotToken();
   if (!token) return { ok: false, reason: "Telegram is not configured." };
@@ -362,6 +397,13 @@ export async function sendTelegramAnalysisReport(
         text: lines.join("\n"),
         parse_mode: "HTML",
         disable_web_page_preview: true,
+        ...(whatsappUrl && /^https:\/\/wa\.me\/\d{8,15}(?:\?[^\s]*)?$/.test(whatsappUrl)
+          ? {
+              reply_markup: {
+                inline_keyboard: [[{ text: "مراسلة العميل عبر واتساب", url: whatsappUrl }]],
+              },
+            }
+          : {}),
       }),
     true,
     recipient,
