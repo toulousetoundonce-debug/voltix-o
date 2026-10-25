@@ -77,24 +77,23 @@ This repository is a Next.js 15 + React 18 + TypeScript + Tailwind app for Volti
 ### POST /api/voice-sos
 - Method: POST
 - Validation: `multipart/form-data` required; `audio` file must be present, non-empty, under 14MB, and one of the supported audio MIME types (`audio/aac`, `audio/mp3`, `audio/mpeg`, `audio/mp4`, `audio/ogg`, `audio/wav`, `audio/webm`, `audio/x-m4a`, `audio/x-wav`).
-- Success contract: `{ ok: true, transcript: string, analysis: { summary, urgency, category, safetyAdvice }, usedFallback: boolean, provider: "gemini", model: string }`
+- Success contract: `{ ok: true, transcript: string, analysis: { summary, urgency, category, safetyAdvice }, usedFallback: boolean }`
 - Status codes: 403, 413, 415, 429, 400, 500, 502, 503, 504.
-- External calls: Google Gemini `generateContent` endpoint using `GEMINI_API_KEY`.
+- External calls: multipart recording request to `AUDIO_ANALYSIS_ENDPOINT`, with the existing server-side transcription/analysis pipeline used as fallback.
 - Timeouts: 45s abort controller.
-- Error handling: if the provider returns an unusable structured JSON, it falls back to deterministic guidance based on transcript content; `usedFallback` indicates that state.
+- Error handling: if the endpoint fails, the existing transcription and analysis services are attempted.
 - Rate limit: fixed window per client IP key in memory.
-- Hardcoded model name: `MODEL = "gemini-2.5-flash"`.
 
 ### POST /api/vision-check
 - Method: POST
 - Validation: JSON body requires `imageBase64`; supported MIME types are `image/jpeg`, `image/png`, `image/webp`; maximum payload size is enforced at roughly 5MB.
-- Success contract: `{ ok: true, result: { diagnosis, riskLevel, recommendation }, provider: "gemini", model: string }`
-- Status codes: 403, 413, 415, 429, 400, 502, 503, 504.
-- External calls: Google Gemini `generateContent` endpoint using `GEMINI_API_KEY`.
+- Success contract: `{ ok: true, result: { diagnosis, riskLevel, recommendation } }`
+- Fallback contract: `{ ok: true, mode: "manual-review", result, message }` when the image service is unavailable or returns an invalid response.
+- Status codes: 403, 413, 415, 429, 400; upstream failures return the manual-review contract.
+- External calls: multipart image request to `IMAGE_ANALYSIS_ENDPOINT`, defaulting to the configured image inspection endpoint.
 - Timeouts: 45s abort controller.
-- Error handling: if the key is missing, it responds with a `manual-review` mode and still returns a safe default engineering guidance object rather than failing the request.
+- Error handling: upstream failures are logged using a generic failure code and return safe engineering guidance; the original image remains attached to the SOS form.
 - Rate limit: fixed window per client IP key in memory.
-- Hardcoded model name: `MODEL = "gemini-2.5-flash"`.
 
 ## Environment variables and client exposure
 
@@ -102,6 +101,8 @@ This repository is a Next.js 15 + React 18 + TypeScript + Tailwind app for Volti
 - `GROQ_API_KEY`
 - `GROQ_MODEL`
 - `GEMINI_API_KEY`
+- `IMAGE_ANALYSIS_ENDPOINT`
+- `AUDIO_ANALYSIS_ENDPOINT`
 - `SOS_WEBHOOK_URL`
 - `QUOTE_WEBHOOK_URL`
 - `TELEGRAM_BOT_TOKEN`
@@ -111,8 +112,9 @@ All of the above are server-only values; they are never prefixed with `NEXT_PUBL
 
 ### Public values already exposed
 - `NEXT_PUBLIC_SITE_URL`
-- `NEXT_PUBLIC_CONTACT_PHONE`
-- `NEXT_PUBLIC_CONTACT_EMAIL`
+- `NEXT_PUBLIC_CONTACT_EMAIL` (defaults to `imadnasri15@gmail.com`)
+
+The official contact and WhatsApp phone number is defined in `lib/site.ts` as `+213796886772`.
 
 ### Not present in the codebase
 - No active database credential references in tracked files.

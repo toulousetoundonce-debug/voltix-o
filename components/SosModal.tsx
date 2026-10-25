@@ -10,7 +10,10 @@ import {
   Siren,
   Video,
   Mic,
+  Factory,
+  Zap,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import ModalShell from "./ModalShell";
 import { firstFieldErrors, postJson } from "@/lib/client";
 import { SITE } from "@/lib/site";
@@ -54,8 +57,12 @@ interface ImageAnalysis {
   recommendation: string;
 }
 
-const inputCls =
-  "w-full rounded-xl border border-white/10 bg-grid-dark px-4 py-3 text-base text-white placeholder:text-slate-500 focus:border-sos-red focus:outline-none focus:ring-2 focus:ring-sos-red/40";
+const EMERGENCY_ICONS: Record<EmergencyType, LucideIcon> = {
+  industrial_line_down: Factory,
+  dangerous_short_circuit: Zap,
+  security_system_down: Video,
+  control_panel_fault: Siren,
+};
 const MAX_COMPRESSED_IMAGE_CHARS = 4 * Math.ceil((4 * 1024 * 1024) / 3) + 23;
 const MAX_AUDIO_BYTES = Math.floor(5.5 * 1024 * 1024);
 const AUDIO_WARNING_BYTES = Math.floor(4.5 * 1024 * 1024);
@@ -247,6 +254,8 @@ export default function SosModal({ open, onClose }: { open: boolean; onClose: ()
         }
         const form = new FormData();
         form.append("audio", audioBlob, `recording.${extension}`);
+        if (emergencyType) form.append("emergencyType", emergencyType);
+        if (description.trim()) form.append("description", description.trim());
         setVoiceBusy(true);
         try {
           const response = await fetch("/api/voice-sos", { method: "POST", body: form });
@@ -263,7 +272,7 @@ export default function SosModal({ open, onClose }: { open: boolean; onClose: ()
           setDescription(transcript);
           setVoiceMessage(
             result.usedFallback
-              ? "تم تفريغ التسجيل، لكن التحليل الآلي غير مكتمل؛ أُضيف النص إلى البلاغ مع تنبيه أمان احترازي."
+              ? "تم تفريغ التسجيل، لكن التحليل غير مكتمل؛ أُضيف النص إلى البلاغ مع تنبيه أمان احترازي."
               : result.usedFallbackModel
                 ? "تم تفريغ التسجيل وتحليله بنموذج بديل متاح. أُضيف النص إلى تفاصيل البلاغ."
                 : "تم تفريغ التسجيل وتحليله. أُضيف النص إلى تفاصيل البلاغ.",
@@ -366,7 +375,6 @@ export default function SosModal({ open, onClose }: { open: boolean; onClose: ()
 
   const validate = (): Record<string, string> => {
     const next: Record<string, string> = {};
-    if (fullName.trim().length < 2) next.fullName = "أدخل اسمك الكامل";
     if (!isValidPhone(phone)) next.phone = "أدخل رقم هاتف صالحاً";
     if (!emergencyType) next.emergencyType = "اختر نوع الطوارئ";
     return next;
@@ -435,23 +443,26 @@ export default function SosModal({ open, onClose }: { open: boolean; onClose: ()
     ...(voiceAnalysis ? [`ملخص التسجيل: ${voiceAnalysis.summary}`] : []),
   ].join("\n");
   const whatsappHref = createWhatsAppHref(WHATSAPP_SOS_NUMBER, whatsappMessage);
+  const directDanger =
+    emergencyType === "dangerous_short_circuit" ||
+    /شرر|دخان|حريق|احتراق|يحترق|صعق|ماس|انفجار/.test(description);
 
   const footer =
     status === "success" ? (
       <button
         type="button"
         onClick={handleClose}
-        className="w-full rounded-xl bg-white/10 px-5 py-3.5 text-base font-bold text-white transition hover:bg-white/20"
+        className="sos-pro-submit"
       >
         إغلاق
       </button>
     ) : (
-      <div className="space-y-2">
+      <div className="sos-pro-footer-actions">
         <button
           type="submit"
           form="sos-form"
           disabled={submitting || voiceBusy || imageBusy || recording}
-          className="flex w-full items-center justify-center gap-2 rounded-xl bg-sos-red px-5 py-3.5 text-base font-extrabold text-white shadow-glow-red transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60"
+          className="sos-pro-submit"
         >
           {submitting ? (
             <>
@@ -471,7 +482,7 @@ export default function SosModal({ open, onClose }: { open: boolean; onClose: ()
           href={whatsappHref}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-[#25D366]/40 bg-[#25D366]/10 px-4 py-2.5 text-sm font-bold text-[#75f0a2] transition hover:bg-[#25D366]/20"
+          className="sos-pro-whatsapp"
         >
           💬 إرسال البلاغ عبر واتساب مباشرة
         </a>
@@ -494,6 +505,7 @@ export default function SosModal({ open, onClose }: { open: boolean; onClose: ()
       icon={<Siren className="h-7 w-7 text-sos-red" aria-hidden="true" />}
       footer={footer}
       scrollKey={status}
+      panelClassName="sos-modal-pro"
     >
       {status === "success" ? (
         <div className="py-6 text-center" role="status">
@@ -513,14 +525,21 @@ export default function SosModal({ open, onClose }: { open: boolean; onClose: ()
           ) : null}
         </div>
       ) : (
-        <form id="sos-form" onSubmit={onSubmit} noValidate className="space-y-4">
-          <p className="flex gap-2 rounded-xl border border-sos-red/30 bg-sos-red/10 p-3 text-sm leading-relaxed text-red-100">
-            <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-sos-red" aria-hidden="true" />
-            عند وجود شرر أو دخان أو رائحة احتراق: ابتعد عن مصدر الخطر وافصل التيار إن كان ذلك آمناً، ثم اتصل بخدمات الإنقاذ المحلية.
-          </p>
+        <form id="sos-form" onSubmit={onSubmit} noValidate className="sos-pro-form">
+          <div className={`sos-pro-safety${directDanger ? " is-danger" : ""}`} role={directDanger ? "alert" : "note"}>
+            <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0" aria-hidden="true" />
+            <div>
+              <strong>{directDanger ? "خطر مباشر: تصرّف الآن" : "سلامتك أولاً"}</strong>
+              <p>
+                {directDanger
+                  ? "ابتعد عن المكان ولا تلمس أي سلك أو جهاز. افصل التيار إن كان ذلك آمناً، واتصل بخدمات الإنقاذ المحلية قبل إكمال البلاغ."
+                  : "عند وجود شرر أو دخان أو رائحة احتراق، ابتعد عن مصدر الخطر وافصل التيار إن كان ذلك آمناً، ثم اتصل بخدمات الإنقاذ المحلية."}
+              </p>
+            </div>
+          </div>
 
           {status === "error" && message ? (
-            <div role="alert" className="rounded-xl border border-red-400/40 bg-red-500/10 p-3 text-sm text-red-100">
+            <div role="alert" className="sos-pro-error">
               <p>{message}</p>
               {SITE.phoneHref ? (
                 <a href={SITE.phoneHref} className="mt-2 inline-flex min-h-11 items-center font-bold underline underline-offset-4">
@@ -530,46 +549,138 @@ export default function SosModal({ open, onClose }: { open: boolean; onClose: ()
             </div>
           ) : null}
 
-          <section className="surface space-y-3 rounded-2xl p-4" aria-label="المساعدة الذكية للبلاغ">
-            <div>
+          <fieldset className="sos-pro-fieldset">
+            <legend className="sos-pro-label">
+              ما نوع الطوارئ؟ <span className="text-sos-red">*</span>
+            </legend>
+            <div className="sos-pro-types">
+              {EMERGENCY_VALUES.map((value) => {
+                const Icon = EMERGENCY_ICONS[value];
+                const selected = emergencyType === value;
+                return (
+                  <label
+                    key={value}
+                    className={`sos-pro-type${value === "dangerous_short_circuit" ? " is-danger" : ""}${selected ? " is-selected" : ""}`}
+                  >
+                    <input
+                      type="radio"
+                      name="emergencyType"
+                      value={value}
+                      checked={selected}
+                      aria-invalid={Boolean(errors.emergencyType)}
+                      aria-describedby={errors.emergencyType ? "sos-type-err" : undefined}
+                      onChange={() => {
+                        setEmergencyType(value);
+                        setErrors((previous) => ({ ...previous, emergencyType: "" }));
+                      }}
+                    />
+                    <span className="sos-pro-type-card">
+                      <Icon className="h-6 w-6" aria-hidden="true" />
+                      <span>{EMERGENCY_LABELS[value]}</span>
+                    </span>
+                  </label>
+                );
+              })}
+            </div>
+            {errors.emergencyType ? (
+              <p id="sos-type-err" className="sos-pro-field-error">
+                {errors.emergencyType}
+              </p>
+            ) : null}
+          </fieldset>
+
+          <div>
+            <label htmlFor="sos-phone" className="sos-pro-label">
+              رقم هاتفك <span className="text-sos-red">*</span>
+            </label>
+            <input
+              id="sos-phone"
+              name="phone"
+              type="tel"
+              inputMode="tel"
+              autoComplete="tel"
+              dir="ltr"
+              maxLength={25}
+              required
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              aria-invalid={Boolean(errors.phone)}
+              aria-describedby={errors.phone ? "sos-phone-err" : "sos-phone-hint"}
+              className="sos-pro-input text-left"
+              placeholder="0550 00 00 00"
+            />
+            <p id="sos-phone-hint" className="sos-pro-hint">
+              سنتصل بك على هذا الرقم. اكتبه كما تستعمله عادةً.
+            </p>
+            {errors.phone ? (
+              <p id="sos-phone-err" className="sos-pro-field-error">
+                {errors.phone}
+              </p>
+            ) : null}
+          </div>
+
+          <div>
+            <label htmlFor="sos-name" className="sos-pro-label">
+              الاسم <span className="text-slate-400">(اختياري)</span>
+            </label>
+            <input
+              id="sos-name"
+              name="fullName"
+              type="text"
+              autoComplete="name"
+              maxLength={80}
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              aria-invalid={Boolean(errors.fullName)}
+              aria-describedby={errors.fullName ? "sos-name-err" : undefined}
+              className="sos-pro-input"
+              placeholder="مثال: محمد العلمي"
+            />
+            {errors.fullName ? (
+              <p id="sos-name-err" className="sos-pro-field-error">{errors.fullName}</p>
+            ) : null}
+          </div>
+
+          <div>
+            <label htmlFor="sos-description" className="sos-pro-label">
+              تفاصيل تساعدنا على الوصول أسرع <span className="text-slate-400">(اختياري)</span>
+            </label>
+            <textarea
+              id="sos-description"
+              name="description"
+              rows={3}
+              maxLength={SOS_DESCRIPTION_MAX_LENGTH}
+              value={description}
+              onChange={(event) => setDescription(event.target.value)}
+              className="sos-pro-input resize-y"
+              placeholder="صف العطل باختصار..."
+            />
+          </div>
+
+          <section className="sos-pro-assist" aria-label="أدوات إضافية للبلاغ">
+            <p className="sos-pro-assist-title">أضف معلومات تساعد الفريق</p>
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
               <button
                 type="button"
                 onClick={startOrStopRecording}
                 disabled={voiceBusy}
-                className={`flex w-full items-center justify-center gap-2 rounded-xl border px-4 py-3 text-sm font-bold transition disabled:opacity-60 ${
+                className={`sos-pro-tool ${
                   recording
-                    ? "border-sos-red/50 bg-sos-red/15 text-red-100"
-                    : "border-white/15 text-white hover:bg-white/10"
+                    ? "is-recording"
+                    : ""
                 }`}
               >
                 {voiceBusy ? (
-                  <Loader2 className="h-5 w-5 animate-spin" aria-hidden="true" />
+                  <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
                 ) : (
-                  <Mic className="h-5 w-5 text-electric-blue" aria-hidden="true" />
+                  <Mic className="h-4 w-4" aria-hidden="true" />
                 )}
                 {voiceBusy
                   ? "جارٍ تحليل التسجيل..."
                   : recording
                     ? "إيقاف التسجيل وإرساله"
-                    : "🎤 اشرح العطل بصوتك (15 ثانية)"}
+                    : "صوت"}
               </button>
-              {voiceMessage ? (
-                <p role="status" className="mt-2 rounded-lg bg-white/5 p-2.5 text-sm text-slate-300">
-                  {voiceMessage}
-                </p>
-              ) : null}
-              {voiceAnalysis ? (
-                <div className="mt-2 space-y-2 rounded-xl border border-electric-blue/25 bg-electric-blue/5 p-3 text-sm">
-                  <p className="font-bold text-electric-blue">ملخص البلاغ: {voiceAnalysis.summary}</p>
-                  <p className="leading-relaxed text-amber-100">
-                    نصيحة الأمان الفورية: {voiceAnalysis.safetyAdvice}
-                  </p>
-                  <p className="text-slate-400">مستوى الاستعجال: {voiceAnalysis.urgency}</p>
-                </div>
-              ) : null}
-            </div>
-
-            <div>
               <input
                 ref={imageInputRef}
                 type="file"
@@ -586,17 +697,51 @@ export default function SosModal({ open, onClose }: { open: boolean; onClose: ()
                 type="button"
                 onClick={() => imageInputRef.current?.click()}
                 disabled={imageBusy}
-                className="flex w-full items-center justify-center gap-2 rounded-xl border border-white/15 px-4 py-3 text-sm font-bold text-white transition hover:bg-white/10 disabled:opacity-60"
+                aria-busy={imageBusy}
+                className="sos-pro-tool"
               >
                 {imageBusy ? (
-                  <Loader2 className="h-5 w-5 animate-spin text-electric-blue" aria-hidden="true" />
+                  <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
                 ) : (
-                  <Video className="h-5 w-5 text-electric-blue" aria-hidden="true" />
+                  <Video className="h-4 w-4" aria-hidden="true" />
                 )}
-                {imageBusy ? "جارٍ ضغط الصورة وفحصها..." : "📷 فحص ذكي للوحة الكهرباء / العطل"}
+                {imageBusy ? "جارٍ الفحص..." : "صورة"}
               </button>
+              <button
+                type="button"
+                onClick={requestLocation}
+                disabled={geo === "loading"}
+                className="sos-pro-tool"
+              >
+                {geo === "loading" ? (
+                  <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                ) : (
+                  <LocateFixed className="h-4 w-4" aria-hidden="true" />
+                )}
+                {geo === "ok" ? "تم تحديد موقعي" : "موقعي"}
+              </button>
+            </div>
+
+            <p className="mt-2 text-xs leading-relaxed text-slate-400">
+              عند اختيار صورة، تُرسل النسخة المضغوطة لفحص العطل. تجنّب إرفاق معلومات شخصية ظاهرة في الصورة.
+            </p>
+            {imageBusy ? (
+              <p role="status" aria-live="polite" className="sos-pro-assist-message">
+                جارٍ تحليل الصورة...
+              </p>
+            ) : null}
+            {voiceMessage ? (
+              <p role="status" className="sos-pro-assist-message">{voiceMessage}</p>
+            ) : null}
+            {voiceAnalysis ? (
+              <div className="sos-pro-analysis">
+                <p className="font-bold text-electric-blue">ملخص البلاغ: {voiceAnalysis.summary}</p>
+                <p className="leading-relaxed text-amber-100">نصيحة الأمان الفورية: {voiceAnalysis.safetyAdvice}</p>
+                <p className="text-slate-400">مستوى الاستعجال: {voiceAnalysis.urgency}</p>
+              </div>
+            ) : null}
               {imageMessage ? (
-                <p role="alert" className="mt-2 rounded-lg bg-amber-500/10 p-2.5 text-sm text-amber-100">
+                <p role="alert" className="sos-pro-assist-message is-warning">
                   {imageMessage}
                 </p>
               ) : null}
@@ -608,7 +753,7 @@ export default function SosModal({ open, onClose }: { open: boolean; onClose: ()
                 />
               ) : null}
               {imageAnalysis ? (
-                <div className="mt-3 space-y-2 rounded-xl border border-electric-blue/25 bg-electric-blue/5 p-3 text-sm">
+                <div className="sos-pro-analysis">
                   <h3 className="font-bold text-electric-blue">
                     {imageMode === "manual-review"
                       ? "إرشادات أمان أولية قبل المراجعة الهندسية"
@@ -627,117 +772,9 @@ export default function SosModal({ open, onClose }: { open: boolean; onClose: ()
                   ) : null}
                 </div>
               ) : null}
-            </div>
           </section>
 
           <div>
-            <label htmlFor="sos-description" className="mb-1.5 block text-sm font-semibold text-slate-200">
-              وصف المشكلة
-            </label>
-            <textarea
-              id="sos-description"
-              name="description"
-              rows={3}
-              maxLength={SOS_DESCRIPTION_MAX_LENGTH}
-              value={description}
-              onChange={(event) => setDescription(event.target.value)}
-              className={inputCls}
-              placeholder="صف العطل باختصار، أو استخدم التسجيل الصوتي لتعبئة الحقل تلقائياً."
-            />
-          </div>
-
-          <div>
-            <label htmlFor="sos-name" className="mb-1.5 block text-sm font-semibold text-slate-200">
-              الاسم الكامل
-            </label>
-            <input
-              id="sos-name"
-              name="fullName"
-              type="text"
-              autoComplete="name"
-              maxLength={80}
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-              aria-invalid={Boolean(errors.fullName)}
-              aria-describedby={errors.fullName ? "sos-name-err" : undefined}
-              className={inputCls}
-              placeholder="مثال: محمد العلمي"
-            />
-            {errors.fullName ? (
-              <p id="sos-name-err" className="mt-1 text-sm text-red-300">
-                {errors.fullName}
-              </p>
-            ) : null}
-          </div>
-
-          <div>
-            <label htmlFor="sos-phone" className="mb-1.5 block text-sm font-semibold text-slate-200">
-              رقم الهاتف
-            </label>
-            <input
-              id="sos-phone"
-              name="phone"
-              type="tel"
-              inputMode="tel"
-              autoComplete="tel"
-              dir="ltr"
-              maxLength={25}
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              aria-invalid={Boolean(errors.phone)}
-              aria-describedby={errors.phone ? "sos-phone-err" : undefined}
-              className={`${inputCls} text-left`}
-              placeholder="0550 00 00 00"
-            />
-            <p className="mt-1 text-xs text-slate-400">اكتب رقمك المحلي كما تستعمله عادةً، مثال: 0550 00 00 00.</p>
-            {errors.phone ? (
-              <p id="sos-phone-err" className="mt-1 text-sm text-red-300">
-                {errors.phone}
-              </p>
-            ) : null}
-          </div>
-
-          <div>
-            <label htmlFor="sos-type" className="mb-1.5 block text-sm font-semibold text-slate-200">
-              نوع الطوارئ
-            </label>
-            <select
-              id="sos-type"
-              name="emergencyType"
-              value={emergencyType}
-              onChange={(e) => setEmergencyType(e.target.value as EmergencyType | "")}
-              aria-invalid={Boolean(errors.emergencyType)}
-              aria-describedby={errors.emergencyType ? "sos-type-err" : undefined}
-              className={inputCls}
-            >
-              <option value="">اختر نوع الطوارئ...</option>
-              {EMERGENCY_VALUES.map((value) => (
-                <option key={value} value={value}>
-                  {EMERGENCY_LABELS[value]}
-                </option>
-              ))}
-            </select>
-            {errors.emergencyType ? (
-              <p id="sos-type-err" className="mt-1 text-sm text-red-300">
-                {errors.emergencyType}
-              </p>
-            ) : null}
-          </div>
-
-          <div>
-            <button
-              type="button"
-              onClick={requestLocation}
-              disabled={geo === "loading"}
-              className="flex w-full items-center justify-center gap-2 rounded-xl border border-white/15 px-4 py-3 text-sm font-bold text-white transition hover:bg-white/10 disabled:opacity-60"
-            >
-              {geo === "loading" ? (
-                <Loader2 className="h-5 w-5 animate-spin" aria-hidden="true" />
-              ) : (
-                <LocateFixed className="h-5 w-5 text-electric-blue" aria-hidden="true" />
-              )}
-              {geo === "ok" ? "تحديث موقعي الجغرافي" : "إرفاق موقعي الجغرافي (اختياري)"}
-            </button>
             <p className="mt-1.5 min-h-5 text-sm" role="status" aria-live="polite">
               {geo === "ok" && coords ? (
                 <span className="text-emerald-300">تم التقاط الموقع (دقة تقريبية ±{coords.accuracy} م)</span>

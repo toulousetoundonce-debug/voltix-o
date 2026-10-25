@@ -194,6 +194,12 @@ Status codes:
 ### Valid request
 
 This route expects `multipart/form-data` with a field named `audio` and an audio file.
+The server forwards the recording to `AUDIO_ANALYSIS_ENDPOINT` (default:
+`https://voltix-dpe94xwm0x88.edgeone.dev/`) as multipart fields `audio`, and optionally
+`emergencyType` and `description`. Set the endpoint in `.env.local` if the service requires a
+different path. Its JSON response must include `transcript` (or `text`) and an `analysis` object
+with `summary`, `urgency`, `category`, and `safetyAdvice`. If the service is unavailable, the
+existing server-side transcription and analysis pipeline is attempted as a fallback.
 
 Success response:
 
@@ -232,6 +238,13 @@ Status codes:
 
 ## 6) POST /api/vision-check
 
+The application compresses the selected image in the browser, then sends it to this same-origin route.
+The server forwards the image as multipart form data to `IMAGE_ANALYSIS_ENDPOINT` (defaults to
+`https://voltix-dpe94xwm0x88.edgeone.dev/`). The multipart fields are `image`, and optionally
+`emergencyType` and `description`. Configure a different path in `.env.local` if the service uses
+a route other than its root URL. The service response must contain `diagnosis`, `riskLevel`, and
+`recommendation` at its root or under `result`/`data`.
+
 ### Valid request
 
 ```json
@@ -260,11 +273,11 @@ When the image analysis service is unavailable, the route returns a safe manual-
   "ok": true,
   "mode": "manual-review",
   "result": {
-    "diagnosis": "لم تتوفر حالياً نتيجة تحليل بصري آلي. ستُرفق الصورة للمراجعة الهندسية؛ هذه الإرشادات لا تصف ما يظهر في الصورة.",
+    "diagnosis": "لم يكتمل فحص الصورة. هذه إرشادات أمان عامة ولا تصف ما يظهر فيها؛ ستبقى الصورة مرفقة للمراجعة الهندسية عند إرسال البلاغ.",
     "riskLevel": "متوسط",
     "recommendation": "لا تفتح اللوحة..."
   },
-  "message": "تعذّر إكمال الفحص الآلي الآن؛ ستبقى الصورة مرفقة للمراجعة الهندسية عند إرسال البلاغ."
+  "message": "تعذّر إكمال فحص الصورة الآن؛ ستبقى الصورة مرفقة للمراجعة الهندسية عند إرسال البلاغ."
 }
 ```
 

@@ -1,13 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Menu, MoonStar, SunMedium, X, Zap } from "lucide-react";
+import { Menu, MoonStar, SunMedium, X } from "lucide-react";
 import { useSiteActions } from "./SiteActionsProvider";
+import BrandLogo from "./BrandLogo";
 
 const LINKS = [
   { href: "#services", label: "الخدمات" },
   { href: "#why-us", label: "لماذا Voltix" },
   { href: "#portfolio", label: "أعمالنا" },
+  { href: "/achievements.html", label: "إنجازاتنا" },
   { href: "#contact", label: "تواصل معنا" },
 ] as const;
 
@@ -37,9 +39,7 @@ export default function Navbar() {
     <header className="sticky top-0 z-40 border-b border-white/10 bg-grid-dark/80 backdrop-blur-md">
       <nav aria-label="التنقل الرئيسي" className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-3 px-4 sm:px-6">
         <a href="#main" className="flex min-h-11 items-center gap-2.5" aria-label="Voltix Dynamics - الصفحة الرئيسية">
-          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-electric-blue text-grid-dark shadow-glow-blue">
-            <Zap className="h-5 w-5" aria-hidden="true" fill="currentColor" />
-          </span>
+          <BrandLogo priority />
           <span dir="ltr" className="text-lg font-black tracking-tight text-white">
             Voltix <span className="text-electric-blue">Dynamics</span>
           </span>

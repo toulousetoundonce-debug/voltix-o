@@ -1,30 +1,37 @@
+"use client";
+
 import { Linkedin, MessageCircleMore } from "lucide-react";
 import Image from "next/image";
+import { useState } from "react";
+
+const IMAGE_PLACEHOLDER = "/images/team/placeholder.svg";
 
 const MEMBERS = [
   {
     name: "المهندس ياسين",
     role: "مهندس كهرباء معتمد NF C 15-100",
-    image: "https://ui-avatars.com/api/?name=ياسين+الهدادي&background=0ea5e9&color=fff&size=300",
+    image: "/images/team/yassine.jpg",
   },
   {
-    name: "المهندسة سارة",
-    role: "مهندسة شبكات وأمن سيبراني",
-    image: "https://ui-avatars.com/api/?name=سارة+حسن&background=8b5cf6&color=fff&size=300",
+    name: "الخبير عماد",
+    role: "خبير الأمن السيبراني",
+    image: "/images/team/emad.png",
   },
   {
     name: "الأستاذ كمال",
     role: "فني أتمتة ولوحات PLC",
-    image: "https://ui-avatars.com/api/?name=كمال+زايد&background=0ea5e9&color=fff&size=300",
+    image: "/images/team/kamal.jpg",
   },
   {
-    name: "المهندس رامي",
+    name: "Electrician Billal",
     role: "خبير أنظمة CCTV و VLAN",
-    image: "https://ui-avatars.com/api/?name=رامي+حمد&background=22c55e&color=fff&size=300",
+    image: "/images/team/billal.png",
   },
 ] as const;
 
 export default function TeamSection() {
+  const [failedImages, setFailedImages] = useState<Record<string, boolean>>({});
+
   return (
     <section id="team" className="mx-auto max-w-7xl px-4 py-20 sm:px-6">
       <div className="mb-10 text-center">
@@ -40,13 +47,16 @@ export default function TeamSection() {
           >
             <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-grid-dark/90 p-3">
               <Image
-                src={member.image}
+                src={failedImages[member.image] ? IMAGE_PLACEHOLDER : member.image}
                 alt={member.name}
                 width={300}
                 height={300}
                 unoptimized
                 sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 25vw"
                 className="h-52 w-full rounded-2xl object-cover"
+                onError={() =>
+                  setFailedImages((current) => ({ ...current, [member.image]: true }))
+                }
               />
 
               <div className="absolute inset-x-5 bottom-5 flex items-center justify-center gap-2 opacity-0 transition duration-300 group-hover:opacity-100 group-focus-within:opacity-100">

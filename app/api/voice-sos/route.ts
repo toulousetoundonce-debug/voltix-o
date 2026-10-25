@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
-import { isSameOrigin } from "@/lib/security";
+import { isSameOrigin, sanitize } from "@/lib/security";
 import { checkRateLimit, rateLimitHeaders } from "@/lib/ratelimit";
 import { analyzeWithDeepSeek, sanitizeCustomerText } from "@/lib/ai/deepseek";
 import { GROQ_STT_MODEL, isDeepSeekEnabled } from "@/lib/ai/config";
 import { sendTelegramAnalysisReport } from "@/lib/telegram";
+import { analyzeFaultAudio, AudioAnalysisServiceError } from "@/lib/audio-analysis-service";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -168,6 +169,35 @@ export async function POST(request: Request) {
   }
   const mimeType = audio.type.toLowerCase().split(";")[0];
   if (!AUDIO_TYPES.has(mimeType)) return fail(415, "صيغة الصوت غير مدعومة. استخدم WebM أو MP4 أو OGG أو WAV.");
+
+  const emergencyTypeValue = form.get("emergencyType");
+  const descriptionValue = form.get("description");
+  try {
+    const result = await analyzeFaultAudio({
+      audio,
+      emergencyType:
+        typeof emergencyTypeValue === "string" ? sanitize(emergencyTypeValue, 80) : undefined,
+      description:
+        typeof descriptionValue === "string" ? sanitize(descriptionValue, MAX_TRANSCRIPT_LENGTH) : undefined,
+    });
+    const transcript = sanitizeCustomerText(result.transcript, MAX_TRANSCRIPT_LENGTH);
+    if (!transcript) throw new AudioAnalysisServiceError("invalid_response");
+    const fallback = fallbackAnalysis(transcript);
+    const analysis = {
+      summary: sanitizeCustomerText(result.analysis.summary, 500) || fallback.summary,
+      urgency: result.analysis.urgency,
+      category: result.analysis.category,
+      safetyAdvice: sanitizeCustomerText(result.analysis.safetyAdvice, 500) || fallback.safetyAdvice,
+    } satisfies VoiceAnalysis;
+    await sendAnalysisReport(transcript, analysis);
+    return NextResponse.json(
+      { ok: true, transcript, analysis, usedFallback: result.usedFallback },
+      { headers: HEADERS },
+    );
+  } catch (error) {
+    const code = error instanceof AudioAnalysisServiceError ? error.code : "unknown";
+    console.warn("[VOICE SOS] Audio analysis request failed; using the existing speech fallback.", { code });
+  }
 
   if (isDeepSeekEnabled()) {
     let transcript = "";

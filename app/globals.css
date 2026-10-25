@@ -49,6 +49,620 @@ body {
   overflow: hidden;
 }
 
+.sos-modal-pro {
+  max-width: 40rem !important;
+  border-color: rgba(255, 43, 43, 0.35);
+  border-radius: 1.5rem;
+  background: linear-gradient(180deg, #141d33, #0e1526);
+  box-shadow: 0 30px 80px -20px #000, 0 -1px 60px -24px rgba(255, 43, 43, 0.55);
+}
+
+.sos-modal-pro > header {
+  align-items: center;
+  padding: 1rem 1.25rem;
+  background: linear-gradient(100deg, rgba(255, 43, 43, 0.055), transparent 65%);
+}
+
+.sos-modal-pro > header > div:first-child {
+  align-items: center;
+}
+
+.sos-modal-pro > header > div:first-child > span {
+  display: grid;
+  width: 2.9rem;
+  height: 2.9rem;
+  margin-top: 0;
+  place-items: center;
+  border: 1px solid rgba(255, 43, 43, 0.35);
+  border-radius: 0.9rem;
+  background: rgba(255, 43, 43, 0.14);
+  box-shadow: inset 0 0 0 1px rgba(255, 43, 43, 0.1), 0 0 24px -4px rgba(255, 43, 43, 0.35);
+}
+
+.sos-modal-pro > header h2 {
+  font-size: 1.25rem;
+  font-weight: 900;
+}
+
+.sos-modal-pro > header p {
+  font-size: 0.82rem;
+}
+
+.sos-modal-pro > header > button {
+  height: 2.6rem;
+  width: 2.6rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(7, 13, 26, 0.5);
+}
+
+.sos-modal-pro > div:nth-child(2) {
+  padding: 1rem 1.25rem;
+}
+
+.sos-modal-pro > div:last-child {
+  padding: 0.8rem 1.25rem max(0.8rem, env(safe-area-inset-bottom));
+  background: rgba(7, 13, 26, 0.75);
+}
+
+.sos-pro-form {
+  display: grid;
+  gap: 1rem;
+}
+
+.sos-pro-safety {
+  display: flex;
+  gap: 0.8rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid rgba(255, 43, 43, 0.3);
+  border-radius: 1rem;
+  background: rgba(255, 43, 43, 0.09);
+  color: #ffd9d9;
+  font-size: 0.84rem;
+  line-height: 1.7;
+}
+
+.sos-pro-safety > svg {
+  color: #ff2b2b;
+}
+
+.sos-pro-safety strong {
+  display: block;
+  color: #fff;
+  font-size: 0.93rem;
+}
+
+.sos-pro-safety p {
+  margin-top: 0.1rem;
+}
+
+.sos-pro-safety.is-danger {
+  border-color: #ff2b2b;
+  background: rgba(255, 43, 43, 0.2);
+  animation: sos-pro-glow 1.6s infinite;
+}
+
+@keyframes sos-pro-glow {
+  50% { box-shadow: 0 0 0 0.35rem rgba(255, 43, 43, 0.14); }
+}
+
+.sos-pro-error,
+.sos-pro-assist-message {
+  padding: 0.75rem 0.85rem;
+  border: 1px solid rgba(248, 113, 113, 0.3);
+  border-radius: 0.8rem;
+  background: rgba(239, 68, 68, 0.1);
+  color: #fee2e2;
+  font-size: 0.85rem;
+}
+
+.sos-pro-fieldset {
+  min-width: 0;
+  border: 0;
+  padding: 0;
+}
+
+.sos-pro-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  padding: 0;
+  color: #f1f5f9;
+  font-size: 0.91rem;
+  font-weight: 800;
+}
+
+.sos-pro-types {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.55rem;
+}
+
+@media (min-width: 560px) {
+  .sos-pro-types {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.sos-pro-type {
+  position: relative;
+  min-width: 0;
+  cursor: pointer;
+}
+
+.sos-pro-type > input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.sos-pro-type-card {
+  display: flex;
+  min-height: 5.2rem;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  padding: 0.65rem 0.4rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.9rem;
+  background: #070d1a;
+  color: #94a3b8;
+  font-size: 0.72rem;
+  font-weight: 800;
+  line-height: 1.5;
+  text-align: center;
+  transition: border-color 180ms ease, color 180ms ease, background 180ms ease, box-shadow 180ms ease;
+}
+
+.sos-pro-type-card > svg {
+  color: #00e5ff;
+}
+
+.sos-pro-type:hover .sos-pro-type-card {
+  border-color: rgba(255, 255, 255, 0.28);
+  color: #e8edf7;
+}
+
+.sos-pro-type.is-selected .sos-pro-type-card {
+  border-color: #00e5ff;
+  background: rgba(0, 229, 255, 0.1);
+  box-shadow: 0 0 0 1px #00e5ff, 0 8px 24px -10px #00e5ff;
+  color: #fff;
+}
+
+.sos-pro-type.is-danger.is-selected .sos-pro-type-card {
+  border-color: #ff2b2b;
+  background: rgba(255, 43, 43, 0.14);
+  box-shadow: 0 0 0 1px #ff2b2b, 0 8px 24px -10px #ff2b2b;
+}
+
+.sos-pro-type.is-danger .sos-pro-type-card > svg {
+  color: #ff6868;
+}
+
+.sos-pro-type > input:focus-visible + .sos-pro-type-card {
+  outline: 3px solid #fff;
+  outline-offset: 2px;
+}
+
+.sos-pro-input {
+  width: 100%;
+  padding: 0.78rem 0.9rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.9rem;
+  background: #070d1a;
+  color: #e8edf7;
+  font: inherit;
+  font-size: 0.96rem;
+  transition: border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.sos-pro-input::placeholder {
+  color: #64748b;
+}
+
+.sos-pro-input:focus {
+  border-color: #00e5ff;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 229, 255, 0.15);
+}
+
+.sos-pro-input[aria-invalid="true"] {
+  border-color: #ff2b2b;
+}
+
+.sos-pro-hint {
+  margin-top: 0.35rem;
+  color: #94a3b8;
+  font-size: 0.76rem;
+}
+
+.sos-pro-field-error {
+  margin-top: 0.35rem;
+  color: #ff8a8a;
+  font-size: 0.81rem;
+  font-weight: 700;
+}
+
+.sos-pro-assist {
+  display: grid;
+  gap: 0.65rem;
+  padding: 0.85rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 1rem;
+  background: rgba(7, 13, 26, 0.6);
+}
+
+.sos-pro-assist-title {
+  color: #cbd5e1;
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.sos-pro-tool {
+  display: flex;
+  min-height: 2.85rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  padding: 0.55rem 0.4rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.85rem;
+  background: #070d1a;
+  color: #e8edf7;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 800;
+  transition: border-color 180ms ease, background 180ms ease, color 180ms ease;
+}
+
+.sos-pro-tool:not(:disabled) {
+  cursor: pointer;
+}
+
+.sos-pro-tool:hover:not(:disabled),
+.sos-pro-tool:focus-visible {
+  border-color: rgba(0, 229, 255, 0.6);
+  outline: none;
+}
+
+.sos-pro-tool > svg {
+  color: #00e5ff;
+}
+
+.sos-pro-tool:disabled {
+  cursor: progress;
+  opacity: 0.65;
+}
+
+.sos-pro-tool.is-recording {
+  border-color: rgba(255, 43, 43, 0.6);
+  background: rgba(255, 43, 43, 0.15);
+}
+
+.sos-pro-tool.is-recording > svg {
+  color: #ff6868;
+  animation: sos-pro-blink 1s infinite;
+}
+
+@keyframes sos-pro-blink {
+  50% { opacity: 0.25; }
+}
+
+.sos-pro-assist-message.is-warning {
+  border-color: rgba(251, 191, 36, 0.25);
+  background: rgba(245, 158, 11, 0.1);
+  color: #fef3c7;
+}
+
+.sos-pro-analysis {
+  display: grid;
+  gap: 0.5rem;
+  padding: 0.8rem;
+  border: 1px solid rgba(0, 229, 255, 0.2);
+  border-radius: 0.8rem;
+  background: rgba(0, 229, 255, 0.04);
+  font-size: 0.84rem;
+}
+
+.sos-pro-footer-actions {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.sos-pro-submit,
+.sos-pro-whatsapp {
+  display: flex;
+  width: 100%;
+  min-height: 3.25rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 0.7rem 1rem;
+  border: 1px solid transparent;
+  border-radius: 0.9rem;
+  font: inherit;
+  font-size: 0.98rem;
+  font-weight: 900;
+  text-decoration: none;
+  transition: transform 180ms ease, filter 180ms ease, background 180ms ease;
+}
+
+.sos-pro-submit {
+  color: #fff;
+  background: linear-gradient(180deg, #ff4d4d, #ff2b2b 50%, #c40f0f);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 12px 30px -10px rgba(255, 43, 43, 0.7);
+  cursor: pointer;
+}
+
+.sos-pro-submit:hover {
+  filter: brightness(1.08);
+}
+
+.sos-pro-submit:active {
+  transform: scale(0.98);
+}
+
+.sos-pro-submit:disabled {
+  cursor: progress;
+  opacity: 0.65;
+}
+
+.sos-pro-whatsapp {
+  min-height: 2.8rem;
+  border-color: rgba(37, 211, 102, 0.35);
+  background: rgba(37, 211, 102, 0.08);
+  color: #75f0a2;
+  font-size: 0.86rem;
+}
+
+.sos-pro-whatsapp:hover {
+  background: rgba(37, 211, 102, 0.16);
+}
+
+@media (max-width: 639px) {
+  .sos-modal-pro {
+    max-height: 96dvh;
+    border-radius: 1.5rem 1.5rem 0 0;
+  }
+
+  .sos-modal-pro > div:nth-child(2) {
+    padding: 0.85rem 1rem;
+  }
+
+  .sos-modal-pro > div:last-child {
+    padding: 0.7rem 1rem max(0.7rem, env(safe-area-inset-bottom));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sos-pro-safety,
+  .sos-pro-tool,
+  .sos-pro-tool > svg,
+  .sos-pro-submit,
+  .sos-pro-whatsapp,
+  .sos-pro-type-card,
+  .sos-pro-input {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+@property --vx-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+.vx-cta-row {
+  --vx-red: #ff2b2b;
+  --vx-red-dark: #b30d0d;
+  --vx-cyan: #00e5ff;
+  --vx-cyan-dark: #00b4d0;
+  --vx-ink: #03111a;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 2.5rem;
+}
+
+.vx-btn {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: inline-flex;
+  min-height: 4.5rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.9rem;
+  padding: 0.9rem 1.6rem;
+  border: 0;
+  border-radius: 1.15rem;
+  font: inherit;
+  font-size: 1.15rem;
+  font-weight: 900;
+  line-height: 1.25;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.25s;
+}
+
+.vx-btn:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 4px;
+}
+
+.vx-btn:active {
+  transform: scale(0.96);
+}
+
+.vx-btn::after {
+  position: absolute;
+  top: -20%;
+  bottom: -20%;
+  left: 0;
+  width: 45%;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+  content: "";
+  pointer-events: none;
+  transform: translateX(-160%) skewX(-20deg);
+}
+
+.vx-sos {
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+  background:
+    radial-gradient(120% 140% at 50% -20%, rgba(255, 255, 255, 0.28), transparent 55%),
+    linear-gradient(180deg, #ff4d4d 0%, var(--vx-red) 45%, var(--vx-red-dark) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    inset 0 -3px 0 rgba(0, 0, 0, 0.18),
+    0 16px 40px -8px rgba(255, 43, 43, 0.75),
+    0 0 60px -10px rgba(255, 43, 43, 0.6);
+}
+
+.vx-sos::before {
+  position: absolute;
+  inset: 0;
+  padding: 2px;
+  border-radius: inherit;
+  background: conic-gradient(from var(--vx-angle), transparent 0 60%, rgba(255, 255, 255, 0.25) 78%, #fff 96%, transparent 100%);
+  content: "";
+  pointer-events: none;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: vx-orbit 3s linear infinite;
+}
+
+.vx-calc {
+  color: var(--vx-ink);
+  background:
+    radial-gradient(120% 140% at 50% -20%, rgba(255, 255, 255, 0.55), transparent 55%),
+    linear-gradient(180deg, #6ff5ff 0%, var(--vx-cyan) 50%, var(--vx-cyan-dark) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.7),
+    inset 0 -3px 0 rgba(0, 70, 90, 0.25),
+    0 14px 34px -10px rgba(0, 229, 255, 0.65),
+    0 0 46px -12px rgba(0, 229, 255, 0.5);
+}
+
+.vx-ico {
+  display: grid;
+  width: 2.7rem;
+  height: 2.7rem;
+  flex: none;
+  place-items: center;
+  border-radius: 0.85rem;
+}
+
+.vx-ico svg {
+  width: 1.45rem;
+  height: 1.45rem;
+}
+
+.vx-sos .vx-ico {
+  background: rgba(255, 255, 255, 0.18);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.3);
+}
+
+.vx-calc .vx-ico {
+  background: rgba(3, 17, 26, 0.12);
+  box-shadow: inset 0 0 0 1px rgba(3, 17, 26, 0.18);
+}
+
+.vx-zap {
+  animation: vx-zap 3.2s infinite;
+}
+
+.vx-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.2rem;
+  text-align: start;
+}
+
+.vx-text small {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  opacity: 0.95;
+}
+
+.vx-live {
+  width: 0.55rem;
+  height: 0.55rem;
+  flex: none;
+  border-radius: 50%;
+  background: #4ade80;
+  animation: vx-live 1.8s infinite;
+}
+
+@keyframes vx-orbit {
+  to { --vx-angle: 360deg; }
+}
+
+@keyframes vx-zap {
+  0%, 84%, 100% { opacity: 1; transform: scale(1); }
+  86% { opacity: 0.35; }
+  88% { opacity: 1; transform: scale(1.2); }
+  91% { opacity: 0.5; }
+  94% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes vx-live {
+  0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.7); }
+  70%, 100% { box-shadow: 0 0 0 0.5rem rgba(74, 222, 128, 0); }
+}
+
+@media (min-width: 640px) {
+  .vx-cta-row {
+    flex-direction: row;
+    align-items: center;
+    gap: 1.25rem;
+  }
+
+  .vx-btn {
+    min-width: 19.5rem;
+    font-size: 1.2rem;
+  }
+}
+
+@media (hover: hover) {
+  .vx-btn:hover {
+    filter: brightness(1.08);
+    transform: translateY(-4px) scale(1.03);
+  }
+
+  .vx-btn:hover::after {
+    transition: transform 0.8s ease;
+    transform: translateX(330%) skewX(-20deg);
+  }
+
+  .vx-btn:hover:active {
+    transform: scale(0.96);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vx-btn,
+  .vx-btn::before,
+  .vx-btn::after,
+  .vx-zap,
+  .vx-live {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
 .cyber-glass-card {
   position: relative;
   isolation: isolate;
@@ -510,9 +1124,10 @@ body > a:focus-visible {
   box-shadow: var(--elevation-2), 0 0 24px rgb(var(--electric-glow) / 0.24);
 }
 
-@media (max-width: 360px) {
+@media (max-width: 640px) {
   .whatsapp-launcher {
-    width: 3.5rem;
+    width: 2.75rem;
+    min-height: 2.75rem;
     justify-content: center;
     padding-inline: 0;
   }

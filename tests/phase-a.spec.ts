@@ -73,6 +73,10 @@ describe("lib/schemas", () => {
     expect(parsed.phone).toBe("+213551234567");
     expect(parsed.description).toBeUndefined();
     expect(parsed.location).toEqual({ lat: 36.7, lng: 3.1, accuracy: 18 });
+    expect(sosSchema.parse({
+      phone: "0551234567",
+      emergencyType: "security_system_down",
+    }).fullName).toBeUndefined();
   });
 
   it("rejects invalid final chat turns and malformed quote payloads", () => {

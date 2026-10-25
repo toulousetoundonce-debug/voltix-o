@@ -1,12 +1,12 @@
 import AIFloatingChat from "@/components/AIFloatingChat";
 import ComparisonSection from "@/components/ComparisonSection";
-import ControlCenterSection from "@/components/ControlCenterSection";
 import DiagnosticRadarSection from "@/components/DiagnosticRadarSection";
 import Footer from "@/components/Footer";
 import HeroSection from "@/components/HeroSection";
 import Navbar from "@/components/Navbar";
 import PortfolioSection from "@/components/PortfolioSection";
 import Reveal from "@/components/Reveal";
+import SmartTableauSimulatorLauncher from "@/components/SmartTableauSimulatorLauncher";
 import ServicesBentoGrid from "@/components/ServicesBentoGrid";
 import SiteActionsProvider from "@/components/SiteActionsProvider";
 import TeamSection from "@/components/TeamSection";
@@ -21,7 +21,7 @@ export default function HomePage() {
           <HeroSection />
         </Reveal>
         <Reveal>
-          <ControlCenterSection />
+          <SmartTableauSimulatorLauncher />
         </Reveal>
         <Reveal>
           <DiagnosticRadarSection />

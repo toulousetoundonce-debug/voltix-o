@@ -38,7 +38,7 @@ const optionalText = (max: number, message: string) =>
 const honeypot = z.string().max(200).optional();
 
 export const sosSchema = z.object({
-  fullName: cleanText(2, 80, "الاسم الكامل مطلوب"),
+  fullName: optionalText(80, "الاسم طويل جداً"),
   phone: phoneField,
   description: optionalText(SOS_DESCRIPTION_MAX_LENGTH, "وصف العطل طويل جداً"),
   aiDiagnosis: optionalText(AI_DIAGNOSIS_MAX_LENGTH, "التشخيص طويل جداً"),

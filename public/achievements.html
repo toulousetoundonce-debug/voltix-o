@@ -1,0 +1,2071 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إنجازاتنا وسابقة الأعمال | Voltix Dynamics للأتمتة والهندسة الكهربائية</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts: Cairo & Tajawal for Arabic, Inter & JetBrains Mono for Technical Specs/LTR Numbers -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+
+    <!-- FontAwesome 6.4.0 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Tailwind Configuration -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Cairo', 'Tajawal', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'Inter', 'monospace'],
+                        ltr: ['Inter', 'sans-serif']
+                    },
+                    colors: {
+                        voltix: {
+                            navy: '#0a192f',       /* Deep Engineering Navy */
+                            slate: '#0f172a',      /* Slate 900 */
+                            lightNavy: '#112240',  /* Secondary Navy */
+                            blue: '#1d4ed8',       /* Cobalt Engineering Blue */
+                            accent: '#2563eb',     /* Royal Corporate Blue */
+                            sky: '#0284c7',        /* Technical Cyan-Blue */
+                            surface: '#f8fafc',    /* Crisp Light Background */
+                            border: '#e2e8f0'      /* Clean Corporate Border */
+                        }
+                    },
+                    boxShadow: {
+                        'corporate': '0 4px 20px -2px rgba(10, 25, 47, 0.06), 0 2px 6px -1px rgba(10, 25, 47, 0.04)',
+                        'corporate-lg': '0 20px 35px -5px rgba(10, 25, 47, 0.12), 0 8px 15px -6px rgba(10, 25, 47, 0.06)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Core Typography & RTL Rules */
+        body {
+            background-color: #f8fafc;
+            color: #0f172a;
+            font-family: 'Cairo', 'Tajawal', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        /* Strict LTR utility for numbers, voltages, cable cross-sections, and KPIs */
+        .tech-ltr {
+            direction: ltr;
+            unicode-bidi: embed;
+            display: inline-block;
+            font-family: 'JetBrains Mono', 'Inter', monospace;
+        }
+
+        /* Subtle Engineering Blueprint Grid Pattern */
+        .blueprint-grid {
+            background-size: 36px 36px;
+            background-image:
+                linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+        }
+
+        .blueprint-grid-light {
+            background-size: 32px 32px;
+            background-image:
+                linear-gradient(to right, rgba(15, 23, 42, 0.035) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(15, 23, 42, 0.035) 1px, transparent 1px);
+        }
+
+        /* Card Image Zoom & Overlay */
+        .project-card .img-container img {
+            transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .project-card:hover .img-container img {
+            transform: scale(1.06);
+        }
+
+        .card-gradient-overlay {
+            background: linear-gradient(to top, rgba(10, 25, 47, 0.96) 0%, rgba(10, 25, 47, 0.55) 45%, rgba(10, 25, 47, 0.15) 100%);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #94a3b8;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+
+        /* Smooth Filter Transitions */
+        .project-item {
+            transition: opacity 0.35s ease, transform 0.35s ease;
+        }
+        .project-item.hidden-card {
+            display: none;
+        }
+
+        /* Modal Backdrop Blur */
+        .modal-backdrop {
+            background-color: rgba(10, 25, 47, 0.78);
+            backdrop-filter: blur(6px);
+        }
+
+        /* Print Styles for Portfolio PDF Export */
+        @media print {
+            body {
+                background: #ffffff !important;
+                color: #000000 !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .print-break-inside {
+                break-inside: avoid;
+            }
+            header {
+                background: #0a192f !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+        }
+    </style>
+</head>
+<body class="selection:bg-voltix-blue selection:text-white">
+
+    <!-- Top Technical Verification Strip -->
+    <div class="bg-voltix-navy text-slate-300 text-xs border-b border-slate-800 py-2.5 px-4 no-print">
+        <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-2">
+            <div class="flex items-center gap-4">
+                <span class="inline-flex items-center gap-1.5 text-emerald-400 font-semibold">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    معايير هندسية مطابقة لـ <span class="tech-ltr text-white font-bold">NF C 15-100 / IEC</span>
+                </span>
+                <span class="hidden sm:inline text-slate-600">|</span>
+                <span class="hidden sm:inline text-slate-300">
+                    تجهيزات معتمدة: <strong class="text-white font-mono">Schneider Electric • Legrand • Energical</strong>
+                </span>
+            </div>
+            <div class="flex items-center gap-4 mr-auto sm:mr-0">
+                <span class="text-slate-400 hidden md:inline">
+                    <i class="fa-solid fa-location-dot text-blue-400 ml-1"></i> سطيف • العلمة • عنابة • كامل التراب الوطني
+                </span>
+                <a href="https://agent-6adc1aa9903cfe471f--regal-paprenjak-99fa25.netlify.app/#contact" class="text-blue-400 hover:text-white font-semibold transition-colors">
+                    الدعم الهندسي المباشر <i class="fa-solid fa-arrow-left mr-1 text-[10px]"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Corporate Navigation Bar -->
+    <nav class="bg-white/95 backdrop-blur-md border-b border-slate-200 sticky top-0 z-40 shadow-sm no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+
+                <!-- Brand Logo (Links back to main Voltix platform) -->
+                <a href="/" class="flex items-center gap-3.5 group focus:outline-none">
+                    <div class="w-11 h-11 bg-voltix-navy text-white flex items-center justify-center rounded-lg shadow-md group-hover:bg-voltix-blue transition-colors">
+                        <i class="fa-solid fa-bolt-lightning text-xl text-blue-400 group-hover:text-white transition-colors"></i>
+                    </div>
+                    <div class="flex flex-col">
+                        <div class="flex items-center gap-1.5">
+                            <span class="font-black text-2xl tracking-tight text-voltix-navy leading-none font-ltr">VOLTIX</span>
+                            <span class="font-semibold text-sm text-blue-700 tracking-widest uppercase font-ltr">DYNAMICS</span>
+                        </div>
+                        <span class="text-[11px] text-slate-500 font-bold mt-1">الأتمتة الذكية والهندسة الكهربائية</span>
+                    </div>
+                </a>
+
+                <!-- Desktop Navigation Links -->
+                <div class="hidden lg:flex items-center space-x-7 space-x-reverse">
+                    <a href="/" class="text-slate-600 hover:text-voltix-navy font-bold text-sm transition-colors py-2">
+                        الرئيسية
+                    </a>
+                    <a href="/#services" class="text-slate-600 hover:text-voltix-navy font-bold text-sm transition-colors py-2">
+                        خدماتنا الهندسية
+                    </a>
+                    <!-- Active Tab: إنجازاتنا -->
+                    <a href="#projects-showcase" class="text-voltix-blue font-extrabold text-sm py-2 relative flex items-center gap-1.5">
+                        <span class="w-1.5 h-1.5 rounded-full bg-voltix-blue"></span>
+                        إنجازاتنا
+                        <span class="absolute bottom-0 right-0 left-0 h-0.5 bg-voltix-blue rounded-full"></span>
+                    </a>
+                    <a href="#engineering-standards" class="text-slate-600 hover:text-voltix-navy font-bold text-sm transition-colors py-2">
+                        المعايير والمواصفات
+                    </a>
+                    <a href="#scope-estimator" class="text-slate-600 hover:text-voltix-navy font-bold text-sm transition-colors py-2">
+                        موصي التجهيز التقني
+                    </a>
+                    <a href="/#contact" class="text-slate-600 hover:text-voltix-navy font-bold text-sm transition-colors py-2">
+                        تواصل معنا
+                    </a>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="hidden md:flex items-center gap-3">
+                    <button onclick="window.print()" class="border border-slate-300 hover:border-voltix-navy text-slate-700 hover:text-voltix-navy px-4 py-2.5 rounded-lg font-bold text-xs transition-all flex items-center gap-2 bg-slate-50 hover:bg-white" title="طباعة أو حفظ سابقة الأعمال كملف PDF">
+                        <i class="fa-solid fa-file-pdf text-red-600 text-sm"></i>
+                        <span>تصدير سابقة الأعمال <span class="tech-ltr">(PDF)</span></span>
+                    </button>
+                    <button onclick="openConsultationModal('استشارة هندسية عامة')" class="bg-voltix-navy hover:bg-voltix-blue text-white px-5 py-2.5 rounded-lg font-bold text-xs transition-all shadow-sm hover:shadow-md flex items-center gap-2">
+                        <span>اطلب دراسة مشروعك</span>
+                        <i class="fa-solid fa-arrow-left text-xs"></i>
+                    </button>
+                </div>
+
+                <!-- Mobile Hamburger Button -->
+                <div class="lg:hidden flex items-center gap-2">
+                    <button id="mobile-menu-btn" class="w-10 h-10 rounded-lg border border-slate-200 flex items-center justify-center text-voltix-navy hover:bg-slate-100 focus:outline-none" aria-label="القائمة">
+                        <i class="fa-solid fa-bars text-lg" id="mobile-menu-icon"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Dropdown -->
+        <div id="mobile-menu" class="hidden lg:hidden bg-white border-b border-slate-200 px-4 pt-3 pb-6 space-y-3 shadow-lg">
+            <a href="/" class="block py-2 px-3 rounded-lg text-slate-700 hover:bg-slate-100 font-bold text-sm">الرئيسية</a>
+            <a href="/#services" class="block py-2 px-3 rounded-lg text-slate-700 hover:bg-slate-100 font-bold text-sm">خدماتنا الهندسية</a>
+            <a href="#projects-showcase" class="block py-2 px-3 rounded-lg bg-blue-50 text-voltix-blue font-extrabold text-sm">إنجازاتنا وسابقة الأعمال</a>
+            <a href="#engineering-standards" class="block py-2 px-3 rounded-lg text-slate-700 hover:bg-slate-100 font-bold text-sm">معايير التأسيس الهندسي</a>
+            <a href="#scope-estimator" class="block py-2 px-3 rounded-lg text-slate-700 hover:bg-slate-100 font-bold text-sm">موصي التجهيز التقني السريع</a>
+            <a href="/#contact" class="block py-2 px-3 rounded-lg text-slate-700 hover:bg-slate-100 font-bold text-sm">تواصل معنا</a>
+            <div class="pt-3 border-t border-slate-100 flex flex-col sm:flex-row gap-2.5">
+                <button onclick="window.print()" class="w-full py-2.5 px-4 rounded-lg border border-slate-300 text-slate-700 font-bold text-xs flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-file-pdf text-red-600"></i> تصدير سابقة الأعمال (PDF)
+                </button>
+                <button onclick="openConsultationModal('استشارة هندسية عبر الجوال')" class="w-full py-2.5 px-4 rounded-lg bg-voltix-navy text-white font-bold text-xs flex items-center justify-center gap-2">
+                    اطلب دراسة مشروعك <i class="fa-solid fa-arrow-left"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section: Authority & Engineering Precision -->
+    <header class="relative bg-voltix-navy text-white pt-16 pb-28 md:py-28 overflow-hidden blueprint-grid border-b-4 border-voltix-blue">
+        <!-- Subtle Radial Lighting -->
+        <div class="absolute top-0 left-1/4 w-96 h-96 bg-blue-600/15 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute bottom-0 right-10 w-80 h-80 bg-sky-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+
+                <!-- Right Column: Content (7 cols) -->
+                <div class="lg:col-span-7">
+                    <div class="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-blue-950/90 border border-blue-700/50 text-blue-300 text-xs font-bold mb-6">
+                        <i class="fa-solid fa-shield-halved text-blue-400"></i>
+                        <span>سجل الإنجازات الهندسية الموثقة | <span class="tech-ltr">B2B & Smart Residential</span></span>
+                    </div>
+
+                    <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black leading-[1.2] mb-6 tracking-tight">
+                        نُهندس الطاقة بذكاء، <br>
+                        <span class="text-transparent bg-clip-text bg-gradient-to-l from-blue-400 via-sky-300 to-white">ونبني بنية تحتية تدوم.</span>
+                    </h1>
+
+                    <p class="text-slate-300 text-base sm:text-lg leading-relaxed mb-8 max-w-2xl font-normal border-r-4 border-voltix-blue pr-4">
+                        من تجهيز المراكز التجارية الكبرى مثل <strong class="text-white">Lilisunter بالعلمة</strong>، إلى شبكات محطات الدفع بالطريق السيار في <strong class="text-white">عنابة</strong>، وصولاً إلى منظومات <strong class="text-white">المنازل الذكية وخزائن التحكم الصناعي بسطيف</strong>؛ تضع <span class="tech-ltr font-semibold text-white">Voltix Dynamics</span> بصمتها بمعايير قياسية صارمة وتجهيزات عالمية أصلية.
+                    </p>
+
+                    <!-- Technical Capability Pills -->
+                    <div class="flex flex-wrap gap-2.5 mb-9">
+                        <span class="px-3 py-1.5 rounded-md bg-slate-800/90 border border-slate-700 text-xs font-medium text-slate-200 flex items-center gap-2">
+                            <i class="fa-solid fa-bolt text-amber-400"></i>
+                            توزيع ثلاثي الأطوار <span class="tech-ltr text-blue-300 font-semibold">380V / 400V AC</span>
+                        </span>
+                        <span class="px-3 py-1.5 rounded-md bg-slate-800/90 border border-slate-700 text-xs font-medium text-slate-200 flex items-center gap-2">
+                            <i class="fa-solid fa-Sliders text-emerald-400"></i>
+                            تمديدات معيارية <span class="tech-ltr text-emerald-300 font-semibold">2.5mm² & 1.5mm²</span>
+                        </span>
+                        <span class="px-3 py-1.5 rounded-md bg-slate-800/90 border border-slate-700 text-xs font-medium text-slate-200 flex items-center gap-2">
+                            <i class="fa-solid fa-microchip text-sky-400"></i>
+                            أتمتة ذكية <span class="tech-ltr text-sky-300 font-semibold">ESP32 & Zigbee 3.0</span>
+                        </span>
+                    </div>
+
+                    <!-- Primary Hero CTAs -->
+                    <div class="flex flex-wrap items-center gap-4 no-print">
+                        <a href="#projects-showcase" class="bg-voltix-blue hover:bg-blue-600 text-white px-7 py-3.5 rounded-lg font-extrabold text-sm transition-all shadow-lg shadow-blue-900/40 flex items-center gap-2.5">
+                            <span>استكشف المشاريع المنفذة</span>
+                            <i class="fa-solid fa-arrow-down text-xs"></i>
+                        </a>
+                        <a href="#engineering-standards" class="bg-slate-800/80 hover:bg-slate-800 text-white border border-slate-600 px-6 py-3.5 rounded-lg font-bold text-sm transition-all flex items-center gap-2">
+                            <i class="fa-solid fa-scale-balanced text-blue-400"></i>
+                            <span>مقارنة التأسيس الهندسي</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Left Column: Live Featured Engineering Card Summary (5 cols) -->
+                <div class="lg:col-span-5">
+                    <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-6 shadow-2xl relative overflow-hidden">
+                        <div class="flex items-center justify-between border-b border-slate-800 pb-4 mb-5">
+                            <div class="flex items-center gap-2.5">
+                                <span class="w-3 h-3 rounded-full bg-emerald-400"></span>
+                                <span class="text-xs font-bold text-slate-300">بطاقة التوثيق الهندسي الميداني</span>
+                            </div>
+                            <span class="tech-ltr text-xs font-mono text-blue-400 bg-blue-950/80 px-2.5 py-1 rounded border border-blue-800/60">
+                                ID: VLTX-DZ-2026
+                            </span>
+                        </div>
+
+                        <!-- Highlighted Real Reference Items -->
+                        <div class="space-y-3.5">
+                            <div onclick="openProjectModal('lilisunter')" class="p-3.5 rounded-lg bg-slate-800/60 hover:bg-slate-800 border border-slate-700/70 cursor-pointer transition-all group flex items-start justify-between gap-3">
+                                <div>
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <span class="text-[11px] font-bold px-2 py-0.5 rounded bg-blue-500/20 text-blue-300">مركز تجاري</span>
+                                        <span class="text-xs text-slate-400">العلمة، سطيف</span>
+                                    </div>
+                                    <h3 class="text-sm font-bold text-white group-hover:text-blue-300 transition-colors">المركز التجاري Lilisunter</h3>
+                                    <p class="text-xs text-slate-400 mt-1">توزيع قوى، لوحات Schneider، وإنارة تجارية عالية الكفاءة</p>
+                                </div>
+                                <i class="fa-solid fa-arrow-up-right-from-square text-slate-500 group-hover:text-blue-400 text-xs mt-1"></i>
+                            </div>
+
+                            <div onclick="openProjectModal('annaba-highway')" class="p-3.5 rounded-lg bg-slate-800/60 hover:bg-slate-800 border border-slate-700/70 cursor-pointer transition-all group flex items-start justify-between gap-3">
+                                <div>
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <span class="text-[11px] font-bold px-2 py-0.5 rounded bg-amber-500/20 text-amber-300">بنية تحتية</span>
+                                        <span class="text-xs text-slate-400">ولاية عنابة</span>
+                                    </div>
+                                    <h3 class="text-sm font-bold text-white group-hover:text-blue-300 transition-colors">محطة دفع الرسوم بالطريق السيار</h3>
+                                    <p class="text-xs text-slate-400 mt-1">تغذية مسارات العبور، أنظمة UPS، وحماية قياسية <span class="tech-ltr">IP66</span></p>
+                                </div>
+                                <i class="fa-solid fa-arrow-up-right-from-square text-slate-500 group-hover:text-blue-400 text-xs mt-1"></i>
+                            </div>
+
+                            <div onclick="openProjectModal('setif-smarthome')" class="p-3.5 rounded-lg bg-slate-800/60 hover:bg-slate-800 border border-slate-700/70 cursor-pointer transition-all group flex items-start justify-between gap-3">
+                                <div>
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <span class="text-[11px] font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300">أتمتة ذكية</span>
+                                        <span class="text-xs text-slate-400">ولاية سطيف</span>
+                                    </div>
+                                    <h3 class="text-sm font-bold text-white group-hover:text-blue-300 transition-colors">الفلل والمنازل الذكية المتكاملة</h3>
+                                    <p class="text-xs text-slate-400 mt-1">تأسيس <span class="tech-ltr">2.5mm² / 1.5mm²</span> مع أتمتة <span class="tech-ltr">Zigbee 3.0 & ESP32</span></p>
+                                </div>
+                                <i class="fa-solid fa-arrow-up-right-from-square text-slate-500 group-hover:text-blue-400 text-xs mt-1"></i>
+                            </div>
+                        </div>
+
+                        <!-- Bottom Brand Assurance -->
+                        <div class="mt-5 pt-4 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
+                            <span>انقر على أي مشروع لعرض الملف الهندسي</span>
+                            <span class="tech-ltr text-emerald-400 font-semibold"><i class="fa-solid fa-circle-check ml-1"></i> 100% Verified</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </header>
+
+    <!-- KPI Metrics Bar (Zero RTL Flip Bugs with strict .tech-ltr) -->
+    <section class="relative z-20 -mt-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
+        <div class="bg-white rounded-xl shadow-corporate-lg border border-slate-200 p-6 md:p-8">
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 divide-y lg:divide-y-0 lg:divide-x lg:divide-x-reverse divide-slate-200" id="kpi-stats-bar">
+
+                <!-- KPI 1 -->
+                <div class="pt-4 lg:pt-0 px-2 text-center lg:text-right flex flex-col justify-between">
+                    <div class="flex items-center justify-center lg:justify-between mb-2">
+                        <span class="text-xs font-bold uppercase tracking-wider text-slate-400">مشاريع تجارية وصناعية</span>
+                        <div class="hidden lg:flex w-9 h-9 rounded-lg bg-blue-50 text-voltix-blue items-center justify-center">
+                            <i class="fa-solid fa-building-shield"></i>
+                        </div>
+                    </div>
+                    <div class="text-3xl sm:text-4xl font-black text-voltix-navy my-1">
+                        <span class="tech-ltr">+<span class="kpi-counter" data-target="120">120</span></span>
+                    </div>
+                    <p class="text-xs text-slate-500 font-medium">منشأة تجارية، معرض، وورشة صناعية مجهزة بالكامل</p>
+                </div>
+
+                <!-- KPI 2 -->
+                <div class="pt-4 lg:pt-0 lg:pr-6 px-2 text-center lg:text-right flex flex-col justify-between">
+                    <div class="flex items-center justify-center lg:justify-between mb-2">
+                        <span class="text-xs font-bold uppercase tracking-wider text-slate-400">أتمتة المنازل والفلل</span>
+                        <div class="hidden lg:flex w-9 h-9 rounded-lg bg-emerald-50 text-emerald-600 items-center justify-center">
+                            <i class="fa-solid fa-house-signal"></i>
+                        </div>
+                    </div>
+                    <div class="text-3xl sm:text-4xl font-black text-voltix-navy my-1">
+                        <span class="tech-ltr">+<span class="kpi-counter" data-target="65">65</span></span>
+                    </div>
+                    <p class="text-xs text-slate-500 font-medium">فيلا ومنزل ذكي بنظام <span class="tech-ltr font-semibold">Zigbee 3.0 & ESP32</span></p>
+                </div>
+
+                <!-- KPI 3 -->
+                <div class="pt-4 lg:pt-0 lg:pr-6 px-2 text-center lg:text-right flex flex-col justify-between">
+                    <div class="flex items-center justify-center lg:justify-between mb-2">
+                        <span class="text-xs font-bold uppercase tracking-wider text-slate-400">خزائن ولوحات توزيع</span>
+                        <div class="hidden lg:flex w-9 h-9 rounded-lg bg-amber-50 text-amber-600 items-center justify-center">
+                            <i class="fa-solid fa-server"></i>
+                        </div>
+                    </div>
+                    <div class="text-3xl sm:text-4xl font-black text-voltix-navy my-1">
+                        <span class="tech-ltr">+<span class="kpi-counter" data-target="340">340</span></span>
+                    </div>
+                    <p class="text-xs text-slate-500 font-medium">لوحة <span class="tech-ltr font-semibold">TGBT / Coffret</span> بقواطع <span class="tech-ltr font-semibold">Schneider & Legrand</span></p>
+                </div>
+
+                <!-- KPI 4 -->
+                <div class="pt-4 lg:pt-0 lg:pr-6 px-2 text-center lg:text-right flex flex-col justify-between">
+                    <div class="flex items-center justify-center lg:justify-between mb-2">
+                        <span class="text-xs font-bold uppercase tracking-wider text-slate-400">مطابقة معايير السلامة</span>
+                        <div class="hidden lg:flex w-9 h-9 rounded-lg bg-sky-50 text-sky-600 items-center justify-center">
+                            <i class="fa-solid fa-check-double"></i>
+                        </div>
+                    </div>
+                    <div class="text-3xl sm:text-4xl font-black text-emerald-600 my-1">
+                        <span class="tech-ltr"><span class="kpi-counter" data-target="100">100</span>%</span>
+                    </div>
+                    <p class="text-xs text-slate-500 font-medium">اختبار العزل، التأريض، والحماية التفاضلية <span class="tech-ltr font-semibold">30mA</span></p>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Interactive Projects Showcase Section -->
+    <section id="projects-showcase" class="py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        <!-- Section Header -->
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-6">
+            <div>
+                <div class="inline-flex items-center gap-2 text-voltix-blue font-extrabold text-xs uppercase tracking-wider mb-2">
+                    <span class="w-6 h-0.5 bg-voltix-blue"></span>
+                    <span>سابقة الأعمال الميدانية الموثقة</span>
+                </div>
+                <h2 class="text-3xl sm:text-4xl font-black text-voltix-navy">مشاريع حقيقية بهندسة متقنة</h2>
+                <p class="text-slate-600 text-sm sm:text-base mt-2 max-w-2xl">
+                    استعرض أبرز المشاريع التي قام فريق <span class="tech-ltr font-bold text-voltix-navy">Voltix Dynamics</span> بدراستها وتنفيذها. يمكنك تصفية المشاريع حسب القطاع أو البحث المباشر عن المعدات والمدن.
+                </p>
+            </div>
+
+            <!-- Active Counter Badge -->
+            <div class="bg-white border border-slate-200 rounded-lg px-4 py-2.5 shadow-sm flex items-center gap-3 self-start md:self-end">
+                <span class="w-2.5 h-2.5 rounded-full bg-voltix-blue"></span>
+                <span class="text-xs font-bold text-slate-600">المشاريع المعروضة حالياً:</span>
+                <span id="active-projects-count" class="tech-ltr font-black text-sm bg-blue-50 text-voltix-blue px-2.5 py-0.5 rounded border border-blue-200">6 / 6</span>
+            </div>
+        </div>
+
+        <!-- Interactive Filter & Search Control Bar -->
+        <div class="bg-white rounded-xl shadow-corporate border border-slate-200 p-4 sm:p-5 mb-10 no-print">
+            <div class="flex flex-col lg:flex-row justify-between gap-4 items-stretch lg:items-center">
+
+                <!-- Category Filter Buttons -->
+                <div class="flex flex-wrap gap-2" id="category-filters">
+                    <button data-category="all" class="filter-btn active-filter bg-voltix-navy text-white px-4 py-2.5 rounded-lg font-bold text-xs transition-all flex items-center gap-2 shadow-sm">
+                        <i class="fa-solid fa-layer-group"></i>
+                        <span>الكل</span>
+                        <span class="tech-ltr text-[11px] bg-white/20 px-1.5 py-0.2 rounded">6</span>
+                    </button>
+                    <button data-category="commercial" class="filter-btn bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2.5 rounded-lg font-bold text-xs transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-store text-blue-600"></i>
+                        <span>مراكز تجارية</span>
+                        <span class="tech-ltr text-[11px] bg-slate-200 text-slate-700 px-1.5 py-0.2 rounded">2</span>
+                    </button>
+                    <button data-category="infrastructure" class="filter-btn bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2.5 rounded-lg font-bold text-xs transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-road-bridge text-amber-600"></i>
+                        <span>بنية تحتية وطرق سيارة</span>
+                        <span class="tech-ltr text-[11px] bg-slate-200 text-slate-700 px-1.5 py-0.2 rounded">1</span>
+                    </button>
+                    <button data-category="smarthome" class="filter-btn bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2.5 rounded-lg font-bold text-xs transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-house-laptop text-emerald-600"></i>
+                        <span>منازل ذكية وفلل</span>
+                        <span class="tech-ltr text-[11px] bg-slate-200 text-slate-700 px-1.5 py-0.2 rounded">2</span>
+                    </button>
+                    <button data-category="industrial" class="filter-btn bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2.5 rounded-lg font-bold text-xs transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-gears text-indigo-600"></i>
+                        <span>أتمتة ولوحات صناعية</span>
+                        <span class="tech-ltr text-[11px] bg-slate-200 text-slate-700 px-1.5 py-0.2 rounded">1</span>
+                    </button>
+                </div>
+
+                <!-- Live Search Input -->
+                <div class="relative flex-grow max-w-md">
+                    <i class="fa-solid fa-magnifying-glass absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                    <input
+                        type="text"
+                        id="project-search-input"
+                        placeholder="ابحث بالمدينة (سطيف، العلمة، عنابة) أو التقنية (Schneider, Zigbee, 2.5mm)..."
+                        class="w-full pr-10 pl-9 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-xs sm:text-sm text-voltix-navy placeholder-slate-400 focus:outline-none focus:border-voltix-blue focus:bg-white transition-all font-medium"
+                    >
+                    <button id="clear-search-btn" class="hidden absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-red-500 text-sm" title="مسح البحث">
+                        <i class="fa-solid fa-circle-xmark"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Quick Technical Filter Tags -->
+            <div class="mt-3.5 pt-3 border-t border-slate-100 flex items-center flex-wrap gap-2">
+                <span class="text-[11px] font-bold text-slate-400 ml-1"><i class="fa-solid fa-tags ml-1"></i>وسوم سريعة:</span>
+                <button onclick="setQuickSearch('Lilisunter')" class="text-[11px] font-mono bg-slate-100 hover:bg-blue-50 hover:text-voltix-blue text-slate-600 px-2.5 py-1 rounded transition-colors">Lilisunter</button>
+                <button onclick="setQuickSearch('العلمة')" class="text-[11px] bg-slate-100 hover:bg-blue-50 hover:text-voltix-blue text-slate-600 px-2.5 py-1 rounded transition-colors">العلمة</button>
+                <button onclick="setQuickSearch('عنابة')" class="text-[11px] bg-slate-100 hover:bg-blue-50 hover:text-voltix-blue text-slate-600 px-2.5 py-1 rounded transition-colors">عنابة</button>
+                <button onclick="setQuickSearch('Schneider')" class="text-[11px] font-mono bg-slate-100 hover:bg-blue-50 hover:text-voltix-blue text-slate-600 px-2.5 py-1 rounded transition-colors">Schneider Electric</button>
+                <button onclick="setQuickSearch('Legrand')" class="text-[11px] font-mono bg-slate-100 hover:bg-blue-50 hover:text-voltix-blue text-slate-600 px-2.5 py-1 rounded transition-colors">Legrand</button>
+                <button onclick="setQuickSearch('Zigbee')" class="text-[11px] font-mono bg-slate-100 hover:bg-blue-50 hover:text-voltix-blue text-slate-600 px-2.5 py-1 rounded transition-colors">Zigbee 3.0</button>
+                <button onclick="setQuickSearch('2.5mm')" class="text-[11px] font-mono bg-slate-100 hover:bg-blue-50 hover:text-voltix-blue text-slate-600 px-2.5 py-1 rounded transition-colors">2.5mm² / 1.5mm²</button>
+                <button onclick="setQuickSearch('TGBT')" class="text-[11px] font-mono bg-slate-100 hover:bg-blue-50 hover:text-voltix-blue text-slate-600 px-2.5 py-1 rounded transition-colors">Armoires TGBT</button>
+            </div>
+        </div>
+
+        <!-- Projects Grid (6 Authentic Engineering Projects) -->
+        <div id="projects-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-7">
+
+            <!-- PROJECT 1: Lilisunter Commercial Center (Flagship - Spans 7 cols on Desktop) -->
+            <article
+                class="project-item project-card lg:col-span-7 bg-white rounded-xl border border-slate-200 shadow-corporate hover:shadow-corporate-lg overflow-hidden flex flex-col justify-between transition-all duration-300 print-break-inside"
+                data-category="commercial"
+                data-keywords="المركز التجاري lilisunter العلمة سطيف مراكز تجارية schneider electric legrand 380v 400v led"
+            >
+                <div>
+                    <!-- Image Container -->
+                    <div class="img-container relative h-64 sm:h-72 w-full bg-voltix-navy overflow-hidden cursor-pointer" onclick="openProjectModal('lilisunter')">
+                        <img
+                            src="https://images.unsplash.com/photo-1519567241046-7f570eee3ce6?auto=format&fit=crop&w=1200&q=85"
+                            alt="المركز التجاري Lilisunter – العلمة، سطيف"
+                            class="w-full h-full object-cover"
+                            onerror="handleImageFallback(this, 'LILISUNTER COMMERCIAL CENTER', '380V/400V • SCHNEIDER • LEGRAND')"
+                        >
+                        <div class="absolute inset-0 card-gradient-overlay"></div>
+
+                        <!-- Top Badges -->
+                        <div class="absolute top-4 right-4 left-4 flex justify-between items-center">
+                            <span class="bg-blue-600 text-white text-xs font-extrabold px-3 py-1.5 rounded-md shadow-md flex items-center gap-1.5">
+                                <i class="fa-solid fa-star text-amber-300"></i> مشروع مرجعي رائد • مراكز تجارية
+                            </span>
+                            <span class="tech-ltr bg-slate-900/85 backdrop-blur-sm text-slate-200 text-xs font-mono px-2.5 py-1 rounded border border-white/15">
+                                380V / 400V AC
+                            </span>
+                        </div>
+
+                        <!-- Bottom Image Title Info -->
+                        <div class="absolute bottom-4 right-4 left-4 flex items-end justify-between text-white">
+                            <div>
+                                <div class="flex items-center gap-2 text-xs text-blue-300 font-bold mb-1">
+                                    <i class="fa-solid fa-location-dot"></i>
+                                    <span>العلمة، ولاية سطيف</span>
+                                    <span>•</span>
+                                    <span class="text-emerald-400"><i class="fa-solid fa-circle-check ml-1"></i>تم التسليم والتشغيل</span>
+                                </div>
+                                <h3 class="text-xl sm:text-2xl font-black leading-snug">المركز التجاري Lilisunter – العلمة، سطيف</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card Body -->
+                    <div class="p-6">
+                        <p class="text-slate-600 text-sm leading-relaxed mb-5">
+                            التنفيذ الكامل للبنية التحتية الكهربائية، لوحات التوزيع الرئيسية والفرعية، منظومة الإنارة التجارية الاحترافية، وحماية الأحمال العالية لضمان استمرارية التشغيل التجاري بأعلى مستويات الأمان.
+                        </p>
+
+                        <!-- Technical Specs Pills -->
+                        <div class="bg-slate-50 rounded-lg p-3.5 border border-slate-200/80 mb-4">
+                            <div class="text-xs font-extrabold text-voltix-navy mb-2.5 flex items-center gap-1.5">
+                                <i class="fa-solid fa-microchip text-voltix-blue"></i>
+                                <span>المواصفات الفنية والمعدات المعتمدة:</span>
+                            </div>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="text-xs bg-white border border-slate-200 text-slate-700 px-2.5 py-1 rounded font-semibold">
+                                    قواطع تفاضلية <strong class="tech-ltr text-voltix-navy">Schneider Electric</strong>
+                                </span>
+                                <span class="text-xs bg-white border border-slate-200 text-slate-700 px-2.5 py-1 rounded font-semibold">
+                                    تجهيزات <strong class="tech-ltr text-voltix-navy">Legrand</strong>
+                                </span>
+                                <span class="text-xs bg-white border border-slate-200 text-slate-700 px-2.5 py-1 rounded font-semibold">
+                                    توزيع ثلاثي الأطوار <strong class="tech-ltr text-voltix-blue">380V/400V</strong>
+                                </span>
+                                <span class="text-xs bg-white border border-slate-200 text-slate-700 px-2.5 py-1 rounded font-semibold">
+                                    توازن أحمال دقيق وإنارة <strong class="tech-ltr">LED</strong>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card Footer Actions -->
+                <div class="px-6 py-4 bg-slate-50/70 border-t border-slate-200/80 flex items-center justify-between gap-4">
+                    <button onclick="openProjectModal('lilisunter')" class="text-voltix-blue hover:text-voltix-navy font-extrabold text-xs sm:text-sm flex items-center gap-2 group">
+                        <span>استعراض الملف الهندسي للمشروع</span>
+                        <i class="fa-solid fa-arrow-left text-xs transform group-hover:-translate-x-1 transition-transform"></i>
+                    </button>
+                    <button onclick="openConsultationModal('مشروع مماثل لـ المركز التجاري Lilisunter')" class="text-xs font-bold text-slate-600 hover:text-voltix-blue border border-slate-300 hover:border-voltix-blue px-3 py-1.5 rounded-md transition-colors no-print">
+                        اطلب مشروعاً مماثلاً
+                    </button>
+                </div>
+            </article>
+
+            <!-- PROJECT 2: Highway Infrastructure Annaba (Flagship - Spans 5 cols on Desktop) -->
+            <article
+                class="project-item project-card lg:col-span-5 bg-white rounded-xl border border-slate-200 shadow-corporate hover:shadow-corporate-lg overflow-hidden flex flex-col justify-between transition-all duration-300 print-break-inside"
+                data-category="infrastructure"
+                data-keywords="محطة دفع الرسوم بالطريق السيار ولاية عنابة بنية تحتية وطرق سيارة ups ip66 كوابل مسلحة تأريض"
+            >
+                <div>
+                    <!-- Image Container -->
+                    <div class="img-container relative h-64 sm:h-72 w-full bg-voltix-navy overflow-hidden cursor-pointer" onclick="openProjectModal('annaba-highway')">
+                        <img
+                            src="https://images.unsplash.com/photo-1545558014-8692077e9b5c?auto=format&fit=crop&w=1000&q=85"
+                            alt="محطة دفع الرسوم بالطريق السيار – ولاية عنابة"
+                            class="w-full h-full object-cover"
+                            onerror="handleImageFallback(this, 'HIGHWAY TOLL INFRASTRUCTURE', 'ANNABA • 24/7 UPS • IP66 RATED')"
+                        >
+                        <div class="absolute inset-0 card-gradient-overlay"></div>
+
+                        <!-- Top Badges -->
+                        <div class="absolute top-4 right-4 left-4 flex justify-between items-center">
+                            <span class="bg-amber-600 text-white text-xs font-extrabold px-3 py-1.5 rounded-md shadow-md">
+                                بنية تحتية وطرق سيارة
+                            </span>
+                            <span class="tech-ltr bg-slate-900/85 backdrop-blur-sm text-amber-300 text-xs font-mono px-2.5 py-1 rounded border border-white/15">
+                                IP66 • 24/7 UPS
+                            </span>
+                        </div>
+
+                        <!-- Bottom Image Title Info -->
+                        <div class="absolute bottom-4 right-4 left-4 text-white">
+                            <div class="flex items-center gap-2 text-xs text-amber-300 font-bold mb-1">
+                                <i class="fa-solid fa-road"></i>
+                                <span>الطريق السيار، ولاية عنابة</span>
+                                <span>•</span>
+                                <span class="text-emerald-400"><i class="fa-solid fa-circle-check ml-1"></i>تشغيل مستمر</span>
+                            </div>
+                            <h3 class="text-xl font-black leading-snug">محطة دفع الرسوم بالطريق السيار – ولاية عنابة</h3>
+                        </div>
+                    </div>
+
+                    <!-- Card Body -->
+                    <div class="p-6">
+                        <p class="text-slate-600 text-sm leading-relaxed mb-5">
+                            تمديد الشبكات الكهربائية الحيوية لمسارات العبور والدفع، تغذية أنظمة المراقبة والتحكم المروري، ومنظومة الإنارة الميدانية المستدامة لمواجهة ظروف التشغيل القاسية على مدار الساعة.
+                        </p>
+
+                        <!-- Technical Specs Pills -->
+                        <div class="bg-slate-50 rounded-lg p-3.5 border border-slate-200/80 mb-4">
+                            <div class="text-xs font-extrabold text-voltix-navy mb-2.5 flex items-center gap-1.5">
+                                <i class="fa-solid fa-shield-virus text-amber-600"></i>
+                                <span>المواصفات الفنية والمعدات المعتمدة:</span>
+                            </div>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="text-xs bg-white border border-slate-200 text-slate-700 px-2.5 py-1 rounded font-semibold">
+                                    كوابل مسلحة عالية التحمل
+                                </span>
+                                <span class="text-xs bg-white border border-slate-200 text-slate-700 px-2.5 py-1 rounded font-semibold">
+                                    تغذية احتياطية <strong class="tech-ltr text-voltix-navy">24/7 (UPS)</strong>
+                                </span>
+                                <span class="text-xs bg-white border border-slate-200 text-slate-700 px-2.5 py-1 rounded font-semibold">
+                                    تأريض وحماية صواعق
+                                </span>
+                                <span class="text-xs bg-white border border-slate-200 text-slate-700 px-2.5 py-1 rounded font-semibold">
+                                    معيار حماية <strong class="tech-ltr text-amber-700">IP66</strong>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card Footer Actions -->
+                <div class="px-6 py-4 bg-slate-50/70 border-t border-slate-200/80 flex items-center justify-between gap-4">
+                    <button onclick="openProjectModal('annaba-highway')" class="text-voltix-blue hover:text-voltix-navy font-extrabold text-xs sm:text-sm flex items-center gap-2 group">
+                        <span>استعراض الملف الهندسي</span>
+                        <i class="fa-solid fa-arrow-left text-xs transform group-hover:-translate-x-1 transition-transform"></i>
+                    </button>
+                    <button onclick="openConsultationModal('مشروع بنية تحتية مماثل لمحطة الطريق السيار عنابة')" class="text-xs font-bold text-slate-600 hover:text-voltix-blue border border-slate-300 hover:border-voltix-blue px-3 py-1.5 rounded-md transition-colors no-print">
+                        اطلب مشروعاً مماثلاً
+                    </button>
+                </div>
+            </article>
+
+            <!-- PROJECT 3: Smart Home Ecosystem Setif (Spans 4 cols on Desktop) -->
+            <article
+                class="project-item project-card lg:col-span-4 bg-white rounded-xl border border-slate-200 shadow-corporate hover:shadow-corporate-lg overflow-hidden flex flex-col justify-between transition-all duration-300 print-break-inside"
+                data-category="smarthome"
+                data-keywords="مشروع الفلل والمنازل الذكية المتكاملة سطيف منازل ذكية وفلل 2.5mm 1.5mm energical legrand esp32 zigbee 3.0"
+            >
+                <div>
+                    <div class="img-container relative h-56 w-full bg-voltix-navy overflow-hidden cursor-pointer" onclick="openProjectModal('setif-smarthome')">
+                        <img
+                            src="https://images.unsplash.com/photo-1558002038-1055907df827?auto=format&fit=crop&w=900&q=85"
+                            alt="مشروع الفلل والمنازل الذكية المتكاملة – سطيف"
+                            class="w-full h-full object-cover"
+                            onerror="handleImageFallback(this, 'SMART HOME ECOSYSTEM', 'ZIGBEE 3.0 • ESP32 • 2.5mm² / 1.5mm²')"
+                        >
+                        <div class="absolute inset-0 card-gradient-overlay"></div>
+                        <div class="absolute top-3.5 right-3.5 left-3.5 flex justify-between items-center">
+                            <span class="bg-emerald-600 text-white text-xs font-extrabold px-2.5 py-1 rounded shadow">
+                                منازل ذكية وفلل
+                            </span>
+                            <span class="tech-ltr bg-slate-900/85 text-emerald-300 text-[11px] font-mono px-2 py-0.5 rounded border border-white/15">
+                                Zigbee 3.0 + ESP32
+                            </span>
+                        </div>
+                        <div class="absolute bottom-3.5 right-3.5 left-3.5 text-white">
+                            <span class="text-xs text-emerald-300 font-bold block mb-0.5"><i class="fa-solid fa-location-dot ml-1"></i>ولاية سطيف</span>
+                            <h3 class="text-lg font-black leading-snug">مشروع الفلل والمنازل الذكية المتكاملة – سطيف</h3>
+                        </div>
+                    </div>
+
+                    <div class="p-5">
+                        <p class="text-slate-600 text-xs sm:text-sm leading-relaxed mb-4">
+                            دمج التأسيس الكهربائي الهندسي الدقيق مع أنظمة الأتمتة الذكية للتحكم في الإضاءة، التكييف، الستائر، والأمان عبر الهاتف والأوامر الصوتية.
+                        </p>
+                        <div class="bg-slate-50 rounded-lg p-3 border border-slate-200/80">
+                            <div class="flex flex-wrap gap-1.5">
+                                <span class="text-[11px] bg-white border border-slate-200 text-slate-700 px-2 py-1 rounded font-semibold">
+                                    مآخذ قوة <strong class="tech-ltr text-voltix-blue">2.5mm²</strong> وإنارة <strong class="tech-ltr text-voltix-blue">1.5mm²</strong>
+                                </span>
+                                <span class="text-[11px] bg-white border border-slate-200 text-slate-700 px-2 py-1 rounded font-semibold">
+                                    تجهيزات <strong class="tech-ltr">Energical & Legrand</strong>
+                                </span>
+                                <span class="text-[11px] bg-white border border-slate-200 text-slate-700 px-2 py-1 rounded font-semibold">
+                                    متحكمات <strong class="tech-ltr">ESP32 & Zigbee 3.0</strong>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="px-5 py-3.5 bg-slate-50/70 border-t border-slate-200/80 flex items-center justify-between">
+                    <button onclick="openProjectModal('setif-smarthome')" class="text-voltix-blue hover:text-voltix-navy font-extrabold text-xs flex items-center gap-1.5 group">
+                        <span>الملف الهندسي الكامل</span>
+                        <i class="fa-solid fa-arrow-left text-xs transform group-hover:-translate-x-1 transition-transform"></i>
+                    </button>
+                    <button onclick="openConsultationModal('تأسيس وأتمتة فيلا / منزل ذكي')" class="text-[11px] font-bold text-slate-600 hover:text-voltix-blue border border-slate-300 px-2.5 py-1 rounded no-print">
+                        اطلب مماثلاً
+                    </button>
+                </div>
+            </article>
+
+            <!-- PROJECT 4: Industrial Automation & Switchgear TGBT (Spans 4 cols on Desktop) -->
+            <article
+                class="project-item project-card lg:col-span-4 bg-white rounded-xl border border-slate-200 shadow-corporate hover:shadow-corporate-lg overflow-hidden flex flex-col justify-between transition-all duration-300 print-break-inside"
+                data-category="industrial"
+                data-keywords="تصميم وتجميع خزائن التحكم الصناعي armoires tgbt plc أتمتة ولوحات صناعية schneider سطيف العلمة"
+            >
+                <div>
+                    <div class="img-container relative h-56 w-full bg-voltix-navy overflow-hidden cursor-pointer" onclick="openProjectModal('industrial-tgbt')">
+                        <img
+                            src="https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=900&q=85"
+                            alt="تصميم وتجميع خزائن التحكم الصناعي (Armoires TGBT & PLC)"
+                            class="w-full h-full object-cover"
+                            onerror="handleImageFallback(this, 'ARMOIRES TGBT & PLC CONTROL', 'SCHNEIDER ELECTRIC • INDUSTRIAL AUTOMATION')"
+                        >
+                        <div class="absolute inset-0 card-gradient-overlay"></div>
+                        <div class="absolute top-3.5 right-3.5 left-3.5 flex justify-between items-center">
+                            <span class="bg-indigo-600 text-white text-xs font-extrabold px-2.5 py-1 rounded shadow">
+                                أتمتة ولوحات صناعية
+                            </span>
+                            <span class="tech-ltr bg-slate-900/85 text-indigo-300 text-[11px] font-mono px-2 py-0.5 rounded border border-white/15">
+                                TGBT & PLC
+                            </span>
+                        </div>
+                        <div class="absolute bottom-3.5 right-3.5 left-3.5 text-white">
+                            <span class="text-xs text-indigo-300 font-bold block mb-0.5"><i class="fa-solid fa-industry ml-1"></i>المناطق الصناعية والورشات</span>
+                            <h3 class="text-lg font-black leading-snug">تصميم وتجميع خزائن التحكم الصناعي <span class="tech-ltr text-base">(Armoires TGBT & PLC)</span></h3>
+                        </div>
+                    </div>
+
+                    <div class="p-5">
+                        <p class="text-slate-600 text-xs sm:text-sm leading-relaxed mb-4">
+                            هندسة وتركيب لوحات التوزيع والتحكم للمنشآت الصناعية والورشات مع ترقيم قياسي للكوابل وحماية حرارية ومغناطيسية شاملة.
+                        </p>
+                        <div class="bg-slate-50 rounded-lg p-3 border border-slate-200/80">
+                            <div class="flex flex-wrap gap-1.5">
+                                <span class="text-[11px] bg-white border border-slate-200 text-slate-700 px-2 py-1 rounded font-semibold">
+                                    خزائن <strong class="tech-ltr text-voltix-navy">TGBT</strong> معتمدة
+                                </span>
+                                <span class="text-[11px] bg-white border border-slate-200 text-slate-700 px-2 py-1 rounded font-semibold">
+                                    قواطع <strong class="tech-ltr">Schneider Electric</strong>
+                                </span>
+                                <span class="text-[11px] bg-white border border-slate-200 text-slate-700 px-2 py-1 rounded font-semibold">
+                                    كاشفات انقطاع وعكس الأطوار
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="px-5 py-3.5 bg-slate-50/70 border-t border-slate-200/80 flex items-center justify-between">
+                    <button onclick="openProjectModal('industrial-tgbt')" class="text-voltix-blue hover:text-voltix-navy font-extrabold text-xs flex items-center gap-1.5 group">
+                        <span>الملف الهندسي الكامل</span>
+                        <i class="fa-solid fa-arrow-left text-xs transform group-hover:-translate-x-1 transition-transform"></i>
+                    </button>
+                    <button onclick="openConsultationModal('تصميم خزانة تحكم صناعية TGBT / PLC')" class="text-[11px] font-bold text-slate-600 hover:text-voltix-blue border border-slate-300 px-2.5 py-1 rounded no-print">
+                        اطلب مماثلاً
+                    </button>
+                </div>
+            </article>
+
+            <!-- PROJECT 5: Commercial Showrooms Dubai St, El Eulma (Spans 4 cols on Desktop) -->
+            <article
+                class="project-item project-card lg:col-span-4 bg-white rounded-xl border border-slate-200 shadow-corporate hover:shadow-corporate-lg overflow-hidden flex flex-col justify-between transition-all duration-300 print-break-inside"
+                data-category="commercial"
+                data-keywords="تجهيز المعارض والفضاءات التجارية الحديثة شارع دبي العلمة مراكز تجارية cri 90 30ma"
+            >
+                <div>
+                    <div class="img-container relative h-56 w-full bg-voltix-navy overflow-hidden cursor-pointer" onclick="openProjectModal('dubai-showrooms')">
+                        <img
+                            src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=900&q=85"
+                            alt="تجهيز المعارض والفضاءات التجارية الحديثة – شارع دبي، العلمة"
+                            class="w-full h-full object-cover"
+                            onerror="handleImageFallback(this, 'COMMERCIAL SHOWROOMS LIGHTING', 'EL EULMA • CRI>90 • 30mA PROTECTION')"
+                        >
+                        <div class="absolute inset-0 card-gradient-overlay"></div>
+                        <div class="absolute top-3.5 right-3.5 left-3.5 flex justify-between items-center">
+                            <span class="bg-blue-600 text-white text-xs font-extrabold px-2.5 py-1 rounded shadow">
+                                مراكز ومعارض تجارية
+                            </span>
+                            <span class="tech-ltr bg-slate-900/85 text-blue-300 text-[11px] font-mono px-2 py-0.5 rounded border border-white/15">
+                                CRI&gt;90 • 30mA
+                            </span>
+                        </div>
+                        <div class="absolute bottom-3.5 right-3.5 left-3.5 text-white">
+                            <span class="text-xs text-blue-300 font-bold block mb-0.5"><i class="fa-solid fa-location-dot ml-1"></i>شارع دبي، العلمة – سطيف</span>
+                            <h3 class="text-lg font-black leading-snug">تجهيز المعارض والفضاءات التجارية الحديثة – العلمة</h3>
+                        </div>
+                    </div>
+
+                    <div class="p-5">
+                        <p class="text-slate-600 text-xs sm:text-sm leading-relaxed mb-4">
+                            تصميم وتنفيذ شبكات الإضاءة الموجهة وتوزيع نقاط القوة الكهربائية للمحلات التجارية العصرية بما يبرز جمالية المعروضات ويخفض استهلاك الكهرباء.
+                        </p>
+                        <div class="bg-slate-50 rounded-lg p-3 border border-slate-200/80">
+                            <div class="flex flex-wrap gap-1.5">
+                                <span class="text-[11px] bg-white border border-slate-200 text-slate-700 px-2 py-1 rounded font-semibold">
+                                    إنارة موجهة <strong class="tech-ltr text-voltix-blue">CRI&gt;90</strong>
+                                </span>
+                                <span class="text-[11px] bg-white border border-slate-200 text-slate-700 px-2 py-1 rounded font-semibold">
+                                    تقسيم دوائر مستقل
+                                </span>
+                                <span class="text-[11px] bg-white border border-slate-200 text-slate-700 px-2 py-1 rounded font-semibold">
+                                    حماية تفاضلية <strong class="tech-ltr">30mA</strong>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="px-5 py-3.5 bg-slate-50/70 border-t border-slate-200/80 flex items-center justify-between">
+                    <button onclick="openProjectModal('dubai-showrooms')" class="text-voltix-blue hover:text-voltix-navy font-extrabold text-xs flex items-center gap-1.5 group">
+                        <span>الملف الهندسي الكامل</span>
+                        <i class="fa-solid fa-arrow-left text-xs transform group-hover:-translate-x-1 transition-transform"></i>
+                    </button>
+                    <button onclick="openConsultationModal('تجهيز معرض أو فضاء تجاري')" class="text-[11px] font-bold text-slate-600 hover:text-voltix-blue border border-slate-300 px-2.5 py-1 rounded no-print">
+                        اطلب مماثلاً
+                    </button>
+                </div>
+            </article>
+
+            <!-- PROJECT 6: Smart Security & Power Continuity ATS (Full-Width Horizontal Featured Card - Spans 12 cols) -->
+            <article
+                class="project-item project-card lg:col-span-12 bg-white rounded-xl border border-slate-200 shadow-corporate hover:shadow-corporate-lg overflow-hidden transition-all duration-300 print-break-inside"
+                data-category="smarthome"
+                data-keywords="منظومات الأمان الذكي واستمرارية الطاقة للمؤسسات منازل ذكية وفلل ats zigbee كاميرات مراقبة انذار"
+            >
+                <div class="grid grid-cols-1 lg:grid-cols-12">
+                    <!-- Image Column (5 cols) -->
+                    <div class="img-container relative min-h-[240px] lg:min-h-full lg:col-span-5 bg-voltix-navy overflow-hidden cursor-pointer" onclick="openProjectModal('smart-security-ats')">
+                        <img
+                            src="https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=1000&q=85"
+                            alt="منظومات الأمان الذكي واستمرارية الطاقة للمؤسسات"
+                            class="w-full h-full object-cover"
+                            onerror="handleImageFallback(this, 'SMART SECURITY & ATS POWER', 'ZIGBEE SENSORS • AUTO TRANSFER SWITCH')"
+                        >
+                        <div class="absolute inset-0 card-gradient-overlay"></div>
+                        <div class="absolute top-4 right-4 flex gap-2">
+                            <span class="bg-emerald-600 text-white text-xs font-extrabold px-3 py-1 rounded shadow">
+                                الأمان الذكي واستمرارية الطاقة
+                            </span>
+                        </div>
+                        <div class="absolute bottom-4 right-4 left-4 text-white">
+                            <span class="tech-ltr text-xs font-mono text-emerald-300 block mb-1">ATS + ZIGBEE SECURITY</span>
+                            <h3 class="text-xl font-black">منظومات الأمان الذكي واستمرارية الطاقة للمؤسسات والفلل</h3>
+                        </div>
+                    </div>
+
+                    <!-- Details Column (7 cols) -->
+                    <div class="p-6 sm:p-8 lg:col-span-7 flex flex-col justify-between">
+                        <div>
+                            <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                                <span class="text-xs font-bold text-voltix-blue bg-blue-50 px-3 py-1 rounded-full border border-blue-200">
+                                    <i class="fa-solid fa-bolt-lightning ml-1"></i>حماية متكاملة واستمرارية تغذية بدون انقطاع
+                                </span>
+                                <span class="text-xs text-slate-500 font-semibold">سطيف والمدن المجاورة</span>
+                            </div>
+
+                            <h4 class="text-xl sm:text-2xl font-black text-voltix-navy mb-3">
+                                ربط أنظمة الدخول الذكي والمراقبة مع التحويل الأوتوماتيكي للطاقة الاحتياطية <span class="tech-ltr">(ATS)</span>
+                            </h4>
+
+                            <p class="text-slate-600 text-sm leading-relaxed mb-5">
+                                حل هندسي شامل يربط أقفال الدخول الذكية، كاميرات المراقبة عالية الدقة، وحساسات الحركة والدخان والغاز مع لوحة تحويل أوتوماتيكي للطاقة الاحتياطية <span class="tech-ltr font-semibold">(Automatic Transfer Switch - ATS)</span> لضمان عدم توقف الأنظمة الأمنية أو الخدمية لحظة انقطاع التيار الرئيسي.
+                            </p>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
+                                <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
+                                    <span class="text-[11px] text-slate-400 font-bold block">بروتوكول الحساسات</span>
+                                    <span class="tech-ltr text-xs font-bold text-voltix-navy">Zigbee 3.0 Smart Locks</span>
+                                </div>
+                                <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
+                                    <span class="text-[11px] text-slate-400 font-bold block">استمرارية التغذية</span>
+                                    <span class="tech-ltr text-xs font-bold text-emerald-700">Auto Transfer (ATS) &lt; 0.5s</span>
+                                </div>
+                                <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
+                                    <span class="text-[11px] text-slate-400 font-bold block">المراقبة والتنبيه</span>
+                                    <span class="text-xs font-bold text-voltix-navy">إشعارات فورية عبر التطبيق</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="pt-4 border-t border-slate-200 flex flex-wrap items-center justify-between gap-4">
+                            <button onclick="openProjectModal('smart-security-ats')" class="bg-voltix-navy hover:bg-voltix-blue text-white px-5 py-2.5 rounded-lg font-bold text-xs transition-all flex items-center gap-2">
+                                <span>عرض المخطط والمواصفات الفنية</span>
+                                <i class="fa-solid fa-arrow-left"></i>
+                            </button>
+                            <button onclick="openConsultationModal('منظومة أمان ذكي وتحويل طاقة احتياطية ATS')" class="text-xs font-bold text-voltix-blue hover:underline no-print">
+                                اطلب عرض سعر لمنظومة مماثلة <i class="fa-solid fa-angle-left mr-1"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+        </div>
+
+        <!-- Empty Search State (Hidden unless no project matches search) -->
+        <div id="empty-search-state" class="hidden bg-white rounded-xl border border-slate-200 p-12 text-center my-8">
+            <div class="w-16 h-16 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center mx-auto mb-4 text-2xl">
+                <i class="fa-solid fa-magnifying-glass-Minus"></i>
+            </div>
+            <h3 class="text-lg font-extrabold text-voltix-navy mb-2">لا توجد مشاريع مطابقة لعبارة البحث</h3>
+            <p class="text-slate-500 text-sm mb-6">جرب البحث بكلمات مثل: <span class="font-bold text-voltix-navy">سطيف، العلمة، عنابة، Schneider، Legrand، Zigbee، 2.5mm</span></p>
+            <button onclick="resetFiltersAndSearch()" class="bg-voltix-blue text-white px-6 py-2.5 rounded-lg font-bold text-xs hover:bg-voltix-navy transition-colors">
+                إعادة عرض جميع المشاريع (6)
+            </button>
+        </div>
+
+    </section>
+
+    <!-- Interactive "Voltix Engineering Standards" Comparator Section -->
+    <section id="engineering-standards" class="py-20 bg-voltix-navy text-white relative overflow-hidden blueprint-grid mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+
+            <div class="flex flex-col lg:flex-row lg:items-end justify-between mb-12 gap-6">
+                <div>
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded bg-blue-900/60 border border-blue-700 text-blue-300 text-xs font-bold mb-3">
+                        <i class="fa-solid fa-check-double"></i>
+                        <span>لماذا تتفوق مشاريع Voltix Dynamics هندسياً؟</span>
+                    </div>
+                    <h2 class="text-3xl sm:text-4xl font-black">مقارنة التأسيس الهندسي المعياري مقابل التقليدي</h2>
+                    <p class="text-slate-300 text-sm sm:text-base mt-2 max-w-2xl">
+                        الفرق بين شبكة كهربائية وذكية تعمل بأمان لعقود، وبين شبكة معرضة للأعطال وارتفاع حرارة الأسلاك يكمن في دقة اختيار المقاطع والمعدات.
+                    </p>
+                </div>
+
+                <!-- Interactive View Switcher -->
+                <div class="bg-slate-900 p-1.5 rounded-lg border border-slate-700 inline-flex self-start no-print">
+                    <button onclick="switchStandardTab('all')" id="std-tab-all" class="std-tab-btn bg-voltix-blue text-white px-4 py-2 rounded-md text-xs font-bold transition-all">
+                        مصفوفة المقارنة الشاملة
+                    </button>
+                    <button onclick="switchStandardTab('wiring')" id="std-tab-wiring" class="std-tab-btn text-slate-300 hover:text-white px-4 py-2 rounded-md text-xs font-bold transition-all">
+                        مقاطع الكوابل والحماية
+                    </button>
+                    <button onclick="switchStandardTab('smart')" id="std-tab-smart" class="std-tab-btn text-slate-300 hover:text-white px-4 py-2 rounded-md text-xs font-bold transition-all">
+                        الأتمتة والمنزل الذكي
+                    </button>
+                </div>
+            </div>
+
+            <!-- Comparison Matrix Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="standards-comparison-grid">
+
+                <!-- Card 1: Wiring & Cable Gauges -->
+                <div class="std-card bg-slate-900/90 border border-slate-700 rounded-xl p-6 hover:border-blue-500/60 transition-all" data-std-group="wiring">
+                    <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-800">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-lg bg-blue-600/20 border border-blue-500/40 text-blue-400 flex items-center justify-center font-bold">
+                                <i class="fa-solid fa-bezier-curve"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-base text-white">مقاطع الأسلاك والتمديدات الكهربائية</h3>
+                                <span class="tech-ltr text-xs text-blue-400 font-mono">Standard Cross-Sections: 1.5mm² / 2.5mm² / 4mm²+</span>
+                            </div>
+                        </div>
+                        <span class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[11px] font-bold px-2.5 py-1 rounded">حرج للأمان</span>
+                    </div>
+
+                    <div class="space-y-3 text-xs sm:text-sm">
+                        <div class="p-3.5 rounded-lg bg-emerald-950/40 border border-emerald-700/50">
+                            <div class="font-extrabold text-emerald-400 mb-1 flex items-center gap-1.5">
+                                <i class="fa-solid fa-circle-check"></i> معيار Voltix Dynamics الهندسي:
+                            </div>
+                            <p class="text-slate-200 leading-relaxed">
+                                فصل تام للدوائر: سلك نحاسي نقي معياري <span class="tech-ltr font-bold text-white">2.5mm²</span> مخصص لمآخذ القوة، و<span class="tech-ltr font-bold text-white">1.5mm²</span> لدوائر الإنارة، ومقاطع خاصة (<span class="tech-ltr font-bold text-white">4mm² / 6mm²</span>) للأحمال الحرارية والمكيفات مع ترقيم كامل للخطوط.
+                            </p>
+                        </div>
+                        <div class="p-3.5 rounded-lg bg-red-950/30 border border-red-800/40 text-slate-300">
+                            <div class="font-bold text-red-400 mb-1 flex items-center gap-1.5">
+                                <i class="fa-solid fa-circle-xmark"></i> التمديد التقليدي العشوائي:
+                            </div>
+                            <p class="text-slate-400 leading-relaxed">
+                                خلط دوائر الإنارة مع المآخذ بنفس السلك الضعيف، مما يسبب سخونة الكوابل، هبوط الجهد، وخطر نشوب حرائق عند تشغيل أجهزة عالية الاستهلاك.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2: Switchgear & Protection Brands -->
+                <div class="std-card bg-slate-900/90 border border-slate-700 rounded-xl p-6 hover:border-blue-500/60 transition-all" data-std-group="wiring">
+                    <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-800">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-lg bg-amber-600/20 border border-amber-500/40 text-amber-400 flex items-center justify-center font-bold">
+                                <i class="fa-solid fa-shield-halved"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-base text-white">لوحات التوزيع والقواطع التفاضلية</h3>
+                                <span class="tech-ltr text-xs text-amber-400 font-mono">Schneider Electric • Legrand • Energical</span>
+                            </div>
+                        </div>
+                        <span class="bg-blue-500/20 text-blue-300 border border-blue-500/30 text-[11px] font-bold px-2.5 py-1 rounded">معدات أصلية</span>
+                    </div>
+
+                    <div class="space-y-3 text-xs sm:text-sm">
+                        <div class="p-3.5 rounded-lg bg-emerald-950/40 border border-emerald-700/50">
+                            <div class="font-extrabold text-emerald-400 mb-1 flex items-center gap-1.5">
+                                <i class="fa-solid fa-circle-check"></i> معيار Voltix Dynamics الهندسي:
+                            </div>
+                            <p class="text-slate-200 leading-relaxed">
+                                اعتماد قواطع وتجهيزات أصلية (<span class="tech-ltr font-bold text-white">Schneider, Legrand, Energical</span>) مع حماية تفاضلية حساسة <span class="tech-ltr font-bold text-white">30mA</span> لحماية الأشخاص من الصعق، وتوزيع متوازن للأطوار الثلاثة <span class="tech-ltr font-bold text-white">380V</span>.
+                            </p>
+                        </div>
+                        <div class="p-3.5 rounded-lg bg-red-950/30 border border-red-800/40 text-slate-300">
+                            <div class="font-bold text-red-400 mb-1 flex items-center gap-1.5">
+                                <i class="fa-solid fa-circle-xmark"></i> التمديد التقليدي العشوائي:
+                            </div>
+                            <p class="text-slate-400 leading-relaxed">
+                                استخدام قواطع تجارية مقلدة لا تفصل عند حدوث قصر دارة (Court-circuit)، وغياب التوازن بين الأطوار مما يؤدي لانقطاع الكهرباء المتكرر.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3: Smart Home IoT Architecture -->
+                <div class="std-card bg-slate-900/90 border border-slate-700 rounded-xl p-6 hover:border-blue-500/60 transition-all" data-std-group="smart">
+                    <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-800">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-lg bg-emerald-600/20 border border-emerald-500/40 text-emerald-400 flex items-center justify-center font-bold">
+                                <i class="fa-solid fa-wifi"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-base text-white">بنية المنزل الذكي واستقرار الاتصال</h3>
+                                <span class="tech-ltr text-xs text-emerald-400 font-mono">Zigbee 3.0 Mesh + ESP32 Controllers</span>
+                            </div>
+                        </div>
+                        <span class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[11px] font-bold px-2.5 py-1 rounded">أتمتة ذكية</span>
+                    </div>
+
+                    <div class="space-y-3 text-xs sm:text-sm">
+                        <div class="p-3.5 rounded-lg bg-emerald-950/40 border border-emerald-700/50">
+                            <div class="font-extrabold text-emerald-400 mb-1 flex items-center gap-1.5">
+                                <i class="fa-solid fa-circle-check"></i> معيار Voltix Dynamics الهندسي:
+                            </div>
+                            <p class="text-slate-200 leading-relaxed">
+                                تأسيس خط محايد (<span class="tech-ltr font-bold text-white">Fil Neutre</span>) في جميع علب المفاتيح، واعتماد بروتوكول <span class="tech-ltr font-bold text-white">Zigbee 3.0</span> ومتحكمات <span class="tech-ltr font-bold text-white">ESP32</span> بحيث تعمل المفاتيح يدوياً ومحلياً بسرعة فائقة حتى في حال انقطاع الإنترنت.
+                            </p>
+                        </div>
+                        <div class="p-3.5 rounded-lg bg-red-950/30 border border-red-800/40 text-slate-300">
+                            <div class="font-bold text-red-400 mb-1 flex items-center gap-1.5">
+                                <i class="fa-solid fa-circle-xmark"></i> الأنظمة الاستهلاكية غير المدروسة:
+                            </div>
+                            <p class="text-slate-400 leading-relaxed">
+                                الاعتماد الكلي على مفاتيح Wi-Fi رخيصة تسبب بطء شبكة المنزل وتتعطل عن الاستجابة بمجرد ضعف الراوتر، مع غياب سلك المحايد داخل العلب.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 4: Industrial & Commercial Documentation -->
+                <div class="std-card bg-slate-900/90 border border-slate-700 rounded-xl p-6 hover:border-blue-500/60 transition-all" data-std-group="smart">
+                    <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-800">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-lg bg-sky-600/20 border border-sky-500/40 text-sky-400 flex items-center justify-center font-bold">
+                                <i class="fa-solid fa-file-contract"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-base text-white">الترقيم القياسي والتوثيق الهندسي</h3>
+                                <span class="tech-ltr text-xs text-sky-400 font-mono">Cable Labeling • Schéma Unifilaire • SLA</span>
+                            </div>
+                        </div>
+                        <span class="bg-sky-500/20 text-sky-300 border border-sky-500/30 text-[11px] font-bold px-2.5 py-1 rounded">سهولة الصيانة</span>
+                    </div>
+
+                    <div class="space-y-3 text-xs sm:text-sm">
+                        <div class="p-3.5 rounded-lg bg-emerald-950/40 border border-emerald-700/50">
+                            <div class="font-extrabold text-emerald-400 mb-1 flex items-center gap-1.5">
+                                <i class="fa-solid fa-circle-check"></i> معيار Voltix Dynamics الهندسي:
+                            </div>
+                            <p class="text-slate-200 leading-relaxed">
+                                تنظيم احترافي داخل الخزائن (<span class="tech-ltr font-bold text-white">Goulottes & Repérage</span>)، مع تسليم مخطط واضح لكل قاطع ودائرة كهربائية لتسهيل أي توسعة أو صيانة مستقبلية في ثوانٍ.
+                            </p>
+                        </div>
+                        <div class="p-3.5 rounded-lg bg-red-950/30 border border-red-800/40 text-slate-300">
+                            <div class="font-bold text-red-400 mb-1 flex items-center gap-1.5">
+                                <i class="fa-solid fa-circle-xmark"></i> التمديد التقليدي العشوائي:
+                            </div>
+                            <p class="text-slate-400 leading-relaxed">
+                                أسلاك متشابكة بدون ترقيم أو ألوان معيارية داخل الطبلون، مما يجعل اكتشاف أي عطل مستقبلي عملية مكلفة ومعقدة.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive "Technical Scope Recommender" (موصي التجهيز الهندسي السريع) -->
+    <section id="scope-estimator" class="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 no-print">
+        <div class="bg-white rounded-2xl shadow-corporate-lg border border-slate-200 overflow-hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-12">
+
+                <!-- Right Form Column (5 cols) -->
+                <div class="lg:col-span-5 p-6 sm:p-8 bg-slate-50 border-b lg:border-b-0 lg:border-l border-slate-200 flex flex-col justify-between">
+                    <div>
+                        <span class="text-xs font-extrabold text-voltix-blue uppercase tracking-wider block mb-2">
+                            <i class="fa-solid fa-calculator ml-1"></i> أداة تفاعلية ذكية للعملاء
+                        </span>
+                        <h3 class="text-2xl font-black text-voltix-navy mb-2">موصي التجهيز الهندسي السريع</h3>
+                        <p class="text-slate-600 text-xs sm:text-sm mb-6">
+                            حدد طبيعة مشروعك ومساحته التقريبية ليقوم نظام <span class="tech-ltr font-bold">Voltix</span> باقتراح الحزمة الفنية والمواصفات القياسية الملائمة لك فوراً:
+                        </p>
+
+                        <!-- Step 1: Project Type -->
+                        <div class="mb-5">
+                            <label class="block text-xs font-extrabold text-voltix-navy mb-2">1. اختر نوع المشروع:</label>
+                            <div class="grid grid-cols-2 gap-2.5" id="estimator-type-btns">
+                                <button type="button" onclick="updateEstimator('smarthome')" data-est-type="smarthome" class="est-type-btn active bg-voltix-navy text-white p-3 rounded-lg border border-voltix-navy text-right transition-all">
+                                    <i class="fa-solid fa-house-signal text-emerald-400 block mb-1"></i>
+                                    <span class="font-bold text-xs block">فيلا / منزل ذكي</span>
+                                </button>
+                                <button type="button" onclick="updateEstimator('commercial')" data-est-type="commercial" class="est-type-btn bg-white hover:bg-slate-100 text-slate-700 p-3 rounded-lg border border-slate-300 text-right transition-all">
+                                    <i class="fa-solid fa-store text-blue-600 block mb-1"></i>
+                                    <span class="font-bold text-xs block">مركز تجاري / معرض</span>
+                                </button>
+                                <button type="button" onclick="updateEstimator('industrial')" data-est-type="industrial" class="est-type-btn bg-white hover:bg-slate-100 text-slate-700 p-3 rounded-lg border border-slate-300 text-right transition-all">
+                                    <i class="fa-solid fa-industry text-indigo-600 block mb-1"></i>
+                                    <span class="font-bold text-xs block">مصنع / خزانة TGBT</span>
+                                </button>
+                                <button type="button" onclick="updateEstimator('infrastructure')" data-est-type="infrastructure" class="est-type-btn bg-white hover:bg-slate-100 text-slate-700 p-3 rounded-lg border border-slate-300 text-right transition-all">
+                                    <i class="fa-solid fa-road-bridge text-amber-600 block mb-1"></i>
+                                    <span class="font-bold text-xs block">بنية تحتية / مرفق</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Step 2: Scale / Size Slider -->
+                        <div class="mb-6">
+                            <div class="flex justify-between items-center mb-2">
+                                <label for="est-scale-slider" class="text-xs font-extrabold text-voltix-navy">2. حجم المشروع / المساحة التقريبية:</label>
+                                <span id="est-scale-label" class="tech-ltr text-xs font-bold bg-blue-100 text-voltix-blue px-2.5 py-0.5 rounded">250 m² (متوسط)</span>
+                            </div>
+                            <input
+                                type="range"
+                                id="est-scale-slider"
+                                min="1"
+                                max="3"
+                                value="2"
+                                oninput="updateEstimatorScale(this.value)"
+                                class="w-full accent-voltix-blue cursor-pointer"
+                            >
+                            <div class="flex justify-between text-[11px] text-slate-400 font-semibold mt-1">
+                                <span>صغير / شقة أو محل</span>
+                                <span>متوسط / فيلا أو معرض</span>
+                                <span>كبير / مجمع أو مصنع</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button onclick="requestEstimatedPackage()" class="w-full bg-voltix-blue hover:bg-voltix-navy text-white py-3.5 px-5 rounded-lg font-extrabold text-xs sm:text-sm transition-all shadow-md flex items-center justify-center gap-2">
+                        <span>احجز معاينة ميدانية لهذه المواصفات</span>
+                        <i class="fa-solid fa-arrow-left"></i>
+                    </button>
+                </div>
+
+                <!-- Left Output Recommendation Column (7 cols) -->
+                <div class="lg:col-span-7 p-6 sm:p-8 flex flex-col justify-between blueprint-grid-light">
+                    <div>
+                        <div class="flex flex-wrap items-center justify-between gap-2 pb-4 mb-6 border-b border-slate-200">
+                            <div>
+                                <span class="text-xs font-bold text-slate-400 block">التوصية الهندسية المقترحة من Voltix:</span>
+                                <h4 id="est-output-title" class="text-xl font-black text-voltix-navy">حزمة التأسيس الذكي المتكامل للفلل السكنية</h4>
+                            </div>
+                            <span id="est-output-badge" class="tech-ltr text-xs font-mono font-bold bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full border border-emerald-300">
+                                Smart Home Pro
+                            </span>
+                        </div>
+
+                        <!-- Recommended Specs Grid -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                                <div class="text-xs font-bold text-slate-400 mb-1 flex items-center gap-1.5">
+                                    <i class="fa-solid fa-bolt text-voltix-blue"></i> التمديدات ومقاطع الكوابل:
+                                </div>
+                                <div id="est-spec-wiring" class="text-xs sm:text-sm font-bold text-voltix-navy leading-relaxed">
+                                    نحاس معياري <span class="tech-ltr text-voltix-blue">2.5mm²</span> للمآخذ، <span class="tech-ltr text-voltix-blue">1.5mm²</span> للإنارة، و<span class="tech-ltr text-voltix-blue">4mm²</span> للمكيفات مع سلك محايد كامل.
+                                </div>
+                            </div>
+
+                            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                                <div class="text-xs font-bold text-slate-400 mb-1 flex items-center gap-1.5">
+                                    <i class="fa-solid fa-shield-halved text-amber-600"></i> لوحة التوزيع والحماية:
+                                </div>
+                                <div id="est-spec-panel" class="text-xs sm:text-sm font-bold text-voltix-navy leading-relaxed">
+                                    طبلون <span class="tech-ltr">Schneider / Legrand</span> مقسم حسب الطوابق مع قواطع تفاضلية <span class="tech-ltr">30mA</span> وحماية ارتفاع الجهد.
+                                </div>
+                            </div>
+
+                            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                                <div class="text-xs font-bold text-slate-400 mb-1 flex items-center gap-1.5">
+                                    <i class="fa-solid fa-microchip text-emerald-600"></i> الأتمتة والتحكم الذكي:
+                                </div>
+                                <div id="est-spec-automation" class="text-xs sm:text-sm font-bold text-voltix-navy leading-relaxed">
+                                    بوابة <span class="tech-ltr">Zigbee 3.0</span> + متحكمات <span class="tech-ltr">ESP32</span>، مفاتيح ذكية <span class="tech-ltr">Energical</span>، تحكم بالستائر والتكييف.
+                                </div>
+                            </div>
+
+                            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                                <div class="text-xs font-bold text-slate-400 mb-1 flex items-center gap-1.5">
+                                    <i class="fa-solid fa-diagram-project text-indigo-600"></i> مشروع مرجعي مشابه منفذ:
+                                </div>
+                                <div id="est-spec-ref" class="text-xs sm:text-sm font-bold text-voltix-blue leading-relaxed cursor-pointer hover:underline" onclick="openProjectModal('setif-smarthome')">
+                                    مشروع الفلل والمنازل الذكية المتكاملة – سطيف <i class="fa-solid fa-arrow-up-right-from-square text-[10px] mr-1"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bottom Assurance Note -->
+                    <div class="bg-blue-50/80 border border-blue-200 rounded-lg p-3.5 flex items-center justify-between gap-4">
+                        <div class="flex items-center gap-2.5 text-xs text-slate-700 font-semibold">
+                            <i class="fa-solid fa-circle-info text-voltix-blue text-base"></i>
+                            <span>جميع الدراسات الميدانية الأولية في سطيف، العلمة، والولايات المجاورة تتم بإشراف هندسي مباشر.</span>
+                        </div>
+                        <span class="tech-ltr text-xs font-mono font-bold text-voltix-blue shrink-0">NF C 15-100</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Corporate Footer -->
+    <footer class="bg-voltix-navy text-white pt-16 pb-10 border-t-4 border-voltix-blue">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 pb-12 border-b border-slate-800">
+
+                <!-- Col 1: Brand -->
+                <div>
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 bg-voltix-blue text-white flex items-center justify-center rounded-lg font-bold">
+                            <i class="fa-solid fa-bolt-lightning"></i>
+                        </div>
+                        <div>
+                            <span class="font-black text-xl tracking-tight text-white font-ltr block leading-none">VOLTIX DYNAMICS</span>
+                            <span class="text-[11px] text-blue-400 font-bold">الأتمتة والهندسة الكهربائية</span>
+                        </div>
+                    </div>
+                    <p class="text-slate-400 text-xs leading-relaxed mb-5">
+                        شريكك الهندسي الموثوق لتنفيذ الشبكات الكهربائية التجارية والصناعية، لوحات التوزيع والتحكم، وأنظمة المنازل الذكية المتكاملة بمعايير عالمية.
+                    </p>
+                    <div class="flex items-center gap-2 text-xs text-emerald-400 font-bold">
+                        <i class="fa-solid fa-certificate"></i>
+                        <span>تجهيزات أصلية • ضمان هندسي موثق</span>
+                    </div>
+                </div>
+
+                <!-- Col 2: Quick Links to Main Site -->
+                <div>
+                    <h4 class="font-extrabold text-sm text-white mb-4 border-r-2 border-voltix-blue pr-2.5">روابط المنصة</h4>
+                    <ul class="space-y-2.5 text-xs text-slate-300 font-semibold">
+                        <li><a href="https://agent-6adc1aa9903cfe471f--regal-paprenjak-99fa25.netlify.app/" class="hover:text-blue-400 transition-colors">الصفحة الرئيسية للمنصة</a></li>
+                        <li><a href="https://agent-6adc1aa9903cfe471f--regal-paprenjak-99fa25.netlify.app/#services" class="hover:text-blue-400 transition-colors">الخدمات الكهربائية والأتمتة</a></li>
+                        <li><a href="#projects-showcase" class="text-blue-400 font-bold">سجل إنجازاتنا وسابقة الأعمال</a></li>
+                        <li><a href="#engineering-standards" class="hover:text-blue-400 transition-colors">مقارنة المعايير الهندسية</a></li>
+                        <li><a href="https://agent-6adc1aa9903cfe471f--regal-paprenjak-99fa25.netlify.app/#contact" class="hover:text-blue-400 transition-colors">طلب عرض سعر / تواصل معنا</a></li>
+                    </ul>
+                </div>
+
+                <!-- Col 3: Key Executed Sectors -->
+                <div>
+                    <h4 class="font-extrabold text-sm text-white mb-4 border-r-2 border-voltix-blue pr-2.5">أبرز القطاعات المنفذة</h4>
+                    <ul class="space-y-2.5 text-xs text-slate-300">
+                        <li class="flex items-center gap-2">
+                            <i class="fa-solid fa-angle-left text-blue-400 text-[10px]"></i>
+                            <button onclick="openProjectModal('lilisunter')" class="hover:text-white text-right">المركز التجاري Lilisunter – العلمة</button>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i class="fa-solid fa-angle-left text-blue-400 text-[10px]"></i>
+                            <button onclick="openProjectModal('annaba-highway')" class="hover:text-white text-right">محطة الدفع بالطريق السيار – عنابة</button>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i class="fa-solid fa-angle-left text-blue-400 text-[10px]"></i>
+                            <button onclick="openProjectModal('setif-smarthome')" class="hover:text-white text-right">الفلل والمنازل الذكية – سطيف</button>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i class="fa-solid fa-angle-left text-blue-400 text-[10px]"></i>
+                            <button onclick="openProjectModal('industrial-tgbt')" class="hover:text-white text-right">خزائن التحكم الصناعي <span class="tech-ltr">TGBT & PLC</span></button>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Col 4: Direct Engineering Contact -->
+                <div>
+                    <h4 class="font-extrabold text-sm text-white mb-4 border-r-2 border-voltix-blue pr-2.5">التواصل الهندسي</h4>
+                    <ul class="space-y-3 text-xs text-slate-300">
+                        <li class="flex items-start gap-2.5">
+                            <i class="fa-solid fa-location-dot text-blue-400 mt-1"></i>
+                            <span>سطيف • العلمة • عنابة، وتغطية للمشاريع الكبرى عبر الولايات.</span>
+                        </li>
+                        <li class="flex items-center gap-2.5">
+                            <i class="fa-solid fa-microchip text-blue-400"></i>
+                            <span class="tech-ltr">Schneider • Legrand • Energical • Zigbee</span>
+                        </li>
+                    </ul>
+                    <div class="mt-5 no-print">
+                        <button onclick="openConsultationModal('تواصل مباشر من أسفل الصفحة')" class="w-full bg-voltix-blue hover:bg-blue-600 text-white py-2.5 px-4 rounded-lg font-bold text-xs transition-all flex items-center justify-center gap-2">
+                            <span>تحدث مع مهندس المشروع</span>
+                            <i class="fa-solid fa-arrow-left"></i>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="pt-6 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-slate-400">
+                <div>
+                    &copy; <span class="tech-ltr">2026</span> <strong class="text-white font-ltr">Voltix Dynamics</strong>. جميع الحقوق محفوظة.
+                </div>
+                <div class="flex items-center gap-4">
+                    <span class="tech-ltr font-mono text-[11px] text-slate-400">2.5mm² / 1.5mm² • 380V AC • Zigbee 3.0</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ===================================================================== -->
+    <!-- MODAL 1: ENGINEERING CASE STUDY DOSSIER (نافذة الملف الهندسي الكامل) -->
+    <!-- ===================================================================== -->
+    <div id="case-study-modal" class="fixed inset-0 z-50 hidden modal-backdrop flex items-center justify-center p-3 sm:p-6 overflow-y-auto no-print" role="dialog" aria-modal="true">
+        <div class="bg-white rounded-2xl max-w-4xl w-full overflow-hidden shadow-2xl border border-slate-200 my-auto max-h-[92vh] flex flex-col animate-fadeIn">
+
+            <!-- Modal Top Header -->
+            <div class="bg-voltix-navy text-white px-6 py-4 flex items-center justify-between border-b border-slate-800 shrink-0">
+                <div class="flex items-center gap-3">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+                    <span class="text-xs font-bold text-blue-300">الملف الهندسي الموثق للمشروع</span>
+                    <span id="modal-project-code" class="tech-ltr text-xs font-mono bg-slate-800 text-slate-300 px-2.5 py-0.5 rounded border border-slate-700">VLTX-REF-01</span>
+                </div>
+                <button onclick="closeProjectModal()" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-red-600 text-slate-300 hover:text-white flex items-center justify-center transition-colors focus:outline-none" title="إغلاق">
+                    <i class="fa-solid fa-xmark text-base"></i>
+                </button>
+            </div>
+
+            <!-- Modal Scrollable Content -->
+            <div class="p-6 sm:p-8 overflow-y-auto space-y-6">
+
+                <!-- Hero Banner Inside Modal -->
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+                    <div class="md:col-span-5 relative h-56 rounded-xl overflow-hidden bg-voltix-navy border border-slate-200">
+                        <img id="modal-project-img" src="" alt="" class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent"></div>
+                        <span id="modal-project-category" class="absolute top-3 right-3 bg-voltix-blue text-white text-xs font-bold px-3 py-1 rounded shadow"></span>
+                        <span id="modal-project-location" class="absolute bottom-3 right-3 text-white text-xs font-bold flex items-center gap-1.5"></span>
+                    </div>
+
+                    <div class="md:col-span-7">
+                        <div class="inline-flex items-center gap-1.5 text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded text-xs font-bold mb-2">
+                            <i class="fa-solid fa-circle-check"></i>
+                            <span id="modal-project-status">تم الاستلام والاختبار بنجاح</span>
+                        </div>
+                        <h3 id="modal-project-title" class="text-2xl sm:text-3xl font-black text-voltix-navy mb-3 leading-snug"></h3>
+                        <p id="modal-project-summary" class="text-slate-600 text-sm leading-relaxed mb-4"></p>
+
+                        <!-- Key Metrics Strip -->
+                        <div class="grid grid-cols-3 gap-2.5 pt-2">
+                            <div class="bg-slate-50 p-3 rounded-lg border border-slate-200 text-center">
+                                <span class="text-[11px] text-slate-400 font-bold block">الجهد / التغذية</span>
+                                <span id="modal-metric-voltage" class="tech-ltr text-xs sm:text-sm font-black text-voltix-navy mt-0.5"></span>
+                            </div>
+                            <div class="bg-slate-50 p-3 rounded-lg border border-slate-200 text-center">
+                                <span class="text-[11px] text-slate-400 font-bold block">معيار الحماية</span>
+                                <span id="modal-metric-protection" class="tech-ltr text-xs sm:text-sm font-black text-emerald-600 mt-0.5"></span>
+                            </div>
+                            <div class="bg-slate-50 p-3 rounded-lg border border-slate-200 text-center">
+                                <span class="text-[11px] text-slate-400 font-bold block">التوفير والاستدامة</span>
+                                <span id="modal-metric-efficiency" class="tech-ltr text-xs sm:text-sm font-black text-voltix-blue mt-0.5"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detailed Technical Specifications Table -->
+                <div class="bg-slate-50 rounded-xl p-5 border border-slate-200">
+                    <h4 class="font-extrabold text-sm text-voltix-navy mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-list-check text-voltix-blue"></i>
+                        <span>جدول المواصفات الفنية والمعدات المعتمدة في المشروع:</span>
+                    </h4>
+                    <div id="modal-specs-list" class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs sm:text-sm">
+                        <!-- Dynamically Populated -->
+                    </div>
+                </div>
+
+                <!-- 4-Step Execution Workflow -->
+                <div>
+                    <h4 class="font-extrabold text-sm text-voltix-navy mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-diagram-next text-voltix-blue"></i>
+                        <span>مراحل التنفيذ الهندسي (من الدراسة إلى التسليم):</span>
+                    </h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3" id="modal-timeline-steps">
+                        <!-- Dynamically Populated -->
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="bg-slate-100 px-6 py-4 border-t border-slate-200 flex flex-wrap items-center justify-between gap-3 shrink-0">
+                <button onclick="closeProjectModal()" class="px-4 py-2 rounded-lg border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 font-bold text-xs">
+                    إغلاق النافذة
+                </button>
+                <button id="modal-request-similar-btn" class="bg-voltix-blue hover:bg-voltix-navy text-white px-6 py-2.5 rounded-lg font-extrabold text-xs sm:text-sm transition-all shadow-md flex items-center gap-2">
+                    <span>اطلب دراسة وتنفيذ مشروع مماثل</span>
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- MODAL 2: REQUEST PROJECT / ENGINEERING CONSULTATION                   -->
+    <!-- ===================================================================== -->
+    <div id="consultation-modal" class="fixed inset-0 z-50 hidden modal-backdrop flex items-center justify-center p-4 overflow-y-auto no-print" role="dialog" aria-modal="true">
+        <div class="bg-white rounded-2xl max-w-lg w-full overflow-hidden shadow-2xl border border-slate-200 my-auto">
+
+            <div class="bg-voltix-navy text-white px-6 py-4 flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                    <i class="fa-solid fa-bolt text-blue-400"></i>
+                    <h3 class="font-extrabold text-base">طلب دراسة هندسية / عرض سعر</h3>
+                </div>
+                <button onclick="closeConsultationModal()" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-red-600 text-slate-300 hover:text-white flex items-center justify-center transition-colors">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <form id="consultation-form" onsubmit="submitConsultationForm(event)" class="p-6 space-y-4">
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-3 text-xs text-voltix-navy font-semibold flex items-center gap-2">
+                    <i class="fa-solid fa-bookmark text-voltix-blue"></i>
+                    <span>الموضوع المحدد: <strong id="consult-subject-display" class="text-voltix-blue">استشارة هندسية عامة</strong></span>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">الاسم الكامل أو اسم المؤسسة *</label>
+                    <input type="text" id="client-name" required placeholder="مثال: مؤسسة الأفق التجاري / م. أحمد..." class="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-xs sm:text-sm focus:outline-none focus:border-voltix-blue">
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">رقم الهاتف *</label>
+                        <input type="tel" id="client-phone" required dir="ltr" placeholder="05 / 06 / 07 XX XX XX XX" class="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-xs sm:text-sm font-mono text-right focus:outline-none focus:border-voltix-blue">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">الولاية / المدينة *</label>
+                        <input type="text" id="client-city" required placeholder="سطيف، العلمة، عنابة..." class="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-xs sm:text-sm focus:outline-none focus:border-voltix-blue">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">تفاصيل إضافية حول المشروع (اختياري)</label>
+                    <textarea id="client-notes" rows="3" placeholder="اذكر المساحة التقريبية، نوع التجهيز المطلوب (تأسيس كهربائي، منزل ذكي، لوحة TGBT)..." class="w-full px-3.5 py-2 rounded-lg border border-slate-300 text-xs sm:text-sm focus:outline-none focus:border-voltix-blue"></textarea>
+                </div>
+
+                <!-- Confirmation Feedback Box (Hidden by default) -->
+                <div id="consult-success-msg" class="hidden bg-emerald-50 border border-emerald-300 text-emerald-900 rounded-lg p-4 text-xs leading-relaxed">
+                    <div class="font-extrabold text-sm text-emerald-700 mb-1 flex items-center gap-1.5">
+                        <i class="fa-solid fa-circle-check"></i> تم تسجيل طلبك الهندسي بنجاح!
+                    </div>
+                    تم تجهيز ملخص مشروعك. يمكنك الآن إرساله مباشرة إلى قسم المشاريع في موقعنا الرئيسي أو نسخ تفاصيل الطلب.
+                    <div class="mt-3 flex gap-2">
+                        <a href="https://agent-6adc1aa9903cfe471f--regal-paprenjak-99fa25.netlify.app/#contact" class="bg-emerald-700 hover:bg-emerald-800 text-white px-4 py-2 rounded font-bold text-xs inline-flex items-center gap-1.5">
+                            <span>الانتقال لقسم التواصل المباشر</span>
+                            <i class="fa-solid fa-arrow-left"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="pt-2 flex items-center justify-end gap-3">
+                    <button type="button" onclick="closeConsultationModal()" class="px-4 py-2.5 rounded-lg border border-slate-300 text-slate-600 font-bold text-xs">
+                        إلغاء
+                    </button>
+                    <button type="submit" class="bg-voltix-blue hover:bg-voltix-navy text-white px-6 py-2.5 rounded-lg font-extrabold text-xs sm:text-sm transition-all shadow-md flex items-center gap-2">
+                        <span>تأكيد الطلب الهندسي</span>
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- JAVASCRIPT ENGINE: DATA, FILTERS, MODALS, FALLBACKS & ESTIMATOR       -->
+    <!-- ===================================================================== -->
+    <script>
+        /* 1. Bulletproof SVG Image Fallback Generator (Zero Broken Images Ever) */
+        function handleImageFallback(imgElement, titleText, subText) {
+            imgElement.onerror = null; // Prevent infinite loop
+            const svgMarkup = `
+            <svg xmlns="http://www.w3.org/2000/svg" width="1000" height="650" viewBox="0 0 1000 650">
+                <defs>
+                    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#0a192f"/>
+                        <stop offset="50%" stop-color="#112240"/>
+                        <stop offset="100%" stop-color="#1e3a8a"/>
+                    </linearGradient>
+                    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                        <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+                    </pattern>
+                </defs>
+                <rect width="1000" height="650" fill="url(#bg)"/>
+                <rect width="1000" height="650" fill="url(#grid)"/>
+                <circle cx="850" cy="120" r="180" fill="rgba(29,78,216,0.18)"/>
+                <circle cx="150" cy="520" r="220" fill="rgba(2,132,199,0.12)"/>
+                <g stroke="rgba(56,189,248,0.35)" stroke-width="2" fill="none">
+                    <rect x="80" y="80" width="840" height="490" rx="12"/>
+                    <line x1="80" y1="150" x2="920" y2="150"/>
+                </g>
+                <text x="500" y="290" text-anchor="middle" fill="#38bdf8" font-family="monospace" font-size="22" font-weight="bold">VOLTIX DYNAMICS ENGINEERING</text>
+                <text x="500" y="345" text-anchor="middle" fill="#ffffff" font-family="sans-serif" font-size="30" font-weight="bold">${titleText}</text>
+                <text x="500" y="395" text-anchor="middle" fill="#94a3b8" font-family="monospace" font-size="18">${subText}</text>
+            </svg>`;
+            imgElement.src = 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svgMarkup);
+        }
+
+        /* 2. Complete Engineering Database for the 6 Real-World Projects */
+        const projectsData = {
+            'lilisunter': {
+                code: 'VLTX-COM-2025-01',
+                title: 'المركز التجاري Lilisunter – العلمة، سطيف',
+                category: 'مراكز تجارية كبرى',
+                location: 'العلمة، ولاية سطيف',
+                status: 'تم التسليم والتشغيل الكامل',
+                image: 'https://images.unsplash.com/photo-1519567241046-7f570eee3ce6?auto=format&fit=crop&w=1200&q=85',
+                summary: 'التنفيذ الكامل للبنية التحتية الكهربائية للمركز التجاري Lilisunter بمدينة العلمة، شاملاً تصميم وتجميع لوحات التوزيع الرئيسية والفرعية، موازنة الأحمال الثلاثية الأطوار، وتنفيذ منظومة الإنارة التجارية الاحترافية عالية الكفاءة.',
+                voltage: '380V / 400V AC',
+                protection: 'Schneider / Legrand',
+                efficiency: '-35% استهلاك إنارة',
+                specs: [
+                    { label: 'قواطع الحماية والتوزيع', value: 'قواطع تفاضلية ومغناطيسية حرارية Schneider Electric أصلية' },
+                    { label: 'التجهيزات والمفاتيح', value: 'تجهيزات Legrand معيارية مقاومة للاستخدام التجاري الكثيف' },
+                    { label: 'نظام التغذية وتوازن الأطوار', value: 'توزيع ثلاثي الأطوار 380V/400V مع موازنة دقيقة للأحمال' },
+                    { label: 'منظومة الإضاءة التجارية', value: 'إنارة LED عالية الكفاءة موجهة للممرات والواجهات التجارية' },
+                    { label: 'مقاطع الكوابل والتسليك', value: 'كوابل نحاسية معيارية مرقمة داخل مسارات حماية منظمة' },
+                    { label: 'معيار السلامة والأمان', value: 'حماية تفاضلية 30mA + نظام تأريض قياسي شامل' }
+                ],
+                steps: [
+                    { num: '01', title: 'الدراسة وحساب الأحمال', desc: 'حساب استطاعة المحلات، الإنارة، والتكييف وتصميم المخطط الأحادي.' },
+                    { num: '02', title: 'التمديد وتجميع اللوحات', desc: 'تركيب مسارات الكوابل وتجميع خزائن التوزيع الرئيسية والفرعية.' },
+                    { num: '03', title: 'تركيب الإنارة والتجهيزات', desc: 'تثبيت وحدات الإنارة التجارية ومآخذ القوة ومفاتيح التحكم.' },
+                    { num: '04', title: 'الاختبار والتسليم النهائي', desc: 'فحص توازن الأطوار، اختبار القواطع التفاضلية، وتسليم المخططات.' }
+                ]
+            },
+            'annaba-highway': {
+                code: 'VLTX-INF-2024-02',
+                title: 'محطة دفع الرسوم بالطريق السيار – ولاية عنابة',
+                category: 'بنية تحتية وطرق سيارة',
+                location: 'الطريق السيار، ولاية عنابة',
+                status: 'تشغيل ميداني مستمر 24/7',
+                image: 'https://images.unsplash.com/photo-1545558014-8692077e9b5c?auto=format&fit=crop&w=1000&q=85',
+                summary: 'تنفيذ وتمديد الشبكات الكهربائية الحيوية لمحطة دفع الرسوم على الطريق السيار بولاية عنابة، بما يضمن التغذية المستمرة لمسارات العبور، بوابات الدفع، أنظمة المراقبة والتحكم المروري، والإنارة الميدانية.',
+                voltage: '380V + 24/7 UPS',
+                protection: 'IP66 Weatherproof',
+                efficiency: '99.9% استمرارية',
+                specs: [
+                    { label: 'الكوابل الميدانية', value: 'كوابل مسلحة عالية التحمل مدفونة ومحمية ميكانيكياً' },
+                    { label: 'استمرارية الطاقة (Backup)', value: 'أنظمة تغذية احتياطية مستمرة 24/7 (UPS) بدون انقطاع' },
+                    { label: 'الحماية من العوامل الجوية', value: 'خزائن وتجهيزات بمعيار حماية IP66 ضد الأمطار والغبار' },
+                    { label: 'التأريض والحماية الجوية', value: 'شبكة تأريض قياسية وحماية متقدمة ضد الصواعق وارتفاع الجهد' },
+                    { label: 'تغذية الأنظمة الذكية', value: 'مسارات مستقلة لكاميرات المراقبة، الحساسات، وبوابات العبور' },
+                    { label: 'الإنارة الميدانية', value: 'كشافات LED عالية الاستطاعة لإضاءة مسارات الدخول والخروج' }
+                ],
+                steps: [
+                    { num: '01', title: 'المسح الميداني والهندسي', desc: 'تحديد مسارات الكوابل المسلحة ونقاط تغذية كبائن الدفع والمراقبة.' },
+                    { num: '02', title: 'التمديد والتأريض القياسي', desc: 'مد الكوابل عالية التحمل وإنجاز شبكة التأريض والحماية من الصواعق.' },
+                    { num: '03', title: 'ربط لوحات القوة و UPS', desc: 'تركيب الخزائن المعزولة IP66 وربط أنظمة التغذية غير المنقطعة.' },
+                    { num: '04', title: 'اختبار التحمل والتشغيل', desc: 'اختبار العزل واستمرارية الطاقة تحت أقصى ظروف التشغيل.' }
+                ]
+            },
+            'setif-smarthome': {
+                code: 'VLTX-SMT-2026-03',
+                title: 'مشروع الفلل والمنازل الذكية المتكاملة – سطيف',
+                category: 'منازل ذكية وفلل سكنية',
+                location: 'أحياء سكنية راقية، سطيف',
+                status: 'مشاريع منفذة وقيد التوسع',
+                image: 'https://images.unsplash.com/photo-1558002038-1055907df827?auto=format&fit=crop&w=900&q=85',
+                summary: 'دمج التأسيس الكهربائي الهندسي الدقيق (بمقاطع أسلاك معيارية وتجهيزات أصلية) مع أحدث أنظمة الأتمتة الذكية للتحكم الكامل في الإضاءة، التكييف، الستائر الكهربائية، والأمان عبر الهاتف والأوامر الصوتية.',
+                voltage: '230V / 380V AC',
+                protection: '2.5mm² & 1.5mm²',
+                efficiency: 'Zigbee 3.0 + ESP32',
+                specs: [
+                    { label: 'مقاطع الأسلاك المعيارية', value: 'تمديد 2.5mm² لمآخذ القوة، 1.5mm² للإنارة، و4mm² للمكيفات' },
+                    { label: 'المفاتيح والتجهيزات', value: 'تجهيزات Energical و Legrand العصرية مع توفر خط المحايد (Neutre)' },
+                    { label: 'وحدات التحكم والاتصال', value: 'متحكمات دقيقة ESP32 وبوابات وحساسات Zigbee 3.0 سريعة الاستجابة' },
+                    { label: 'سيناريوهات الأتمتة', value: 'تحكم ذكي في الإضاءة، الستائر، التكييف، وسيناريو الخروج والنوم' },
+                    { label: 'مراقبة الطاقة', value: 'قياس ومراقبة استهلاك الكهرباء لحظياً عبر تطبيق الهاتف' },
+                    { label: 'العمل المحلي (Offline)', value: 'استمرار عمل المفاتيح والسيناريوهات محلياً حتى في حال انقطاع الإنترنت' }
+                ],
+                steps: [
+                    { num: '01', title: 'تخطيط نقاط القوة والذكاء', desc: 'توزيع نقاط الإضاءة، المآخذ، الستائر، والحساسات حسب ديكور الفيلا.' },
+                    { num: '02', title: 'التأسيس المعياري الدقيق', desc: 'سحب أسلاك 2.5mm² و1.5mm² مع خط المحايد وترقيم كافة الدوائر.' },
+                    { num: '03', title: 'تركيب لوحات ومفاتيح الذكاء', desc: 'تثبيت قواطع الحماية، مفاتيح Energical/Legrand، ووحدات Zigbee/ESP32.' },
+                    { num: '04', title: 'البرمجة وتدريب المالك', desc: 'برمجة السيناريوهات الذكية وربط تطبيق الهاتف وتسليم الضمان.' }
+                ]
+            },
+            'industrial-tgbt': {
+                code: 'VLTX-IND-2025-04',
+                title: 'تصميم وتجميع خزائن التحكم الصناعي (Armoires TGBT & PLC)',
+                category: 'أتمتة ولوحات صناعية',
+                location: 'المناطق الصناعية، سطيف والعلمة',
+                status: 'معتمد ومطبق ميدانياً',
+                image: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=900&q=85',
+                summary: 'هندسة وتجميع وتركيب خزائن التوزيع العام (TGBT) ولوحات التحكم الصناعي الآلي للمصانع والورشات الإنتاجية، مع ترقيم قياسي للكوابل وحماية حرارية ومغناطيسية شاملة للمحركات وخطوط الإنتاج.',
+                voltage: '400V Three-Phase',
+                protection: 'Schneider TGBT',
+                efficiency: 'PLC Automation',
+                specs: [
+                    { label: 'خزائن التوزيع والتحكم', value: 'خزائن معدنية TGBT معزولة ومهواة بمقاسات صناعية معتمدة' },
+                    { label: 'القواطع والكونتاكتورات', value: 'قواطع، كونتاكتورات، ومرحلات حرارية Schneider Electric' },
+                    { label: 'حماية المحركات والأطوار', value: 'كاشفات انقطاع وعكس الأطوار (Relais de phase) وحماية زيادة الحمل' },
+                    { label: 'التنظيم والترقيم القياسي', value: 'مسارات Goulottes منظمة مع ترقيم كوابل (Repérage) ومخطط داخلي' },
+                    { label: 'الأتمتة الصناعية', value: 'برمجة وحدات التحكم المنطقي PLC وحساسات خطوط التشغيل' },
+                    { label: 'الصيانة الوقائية', value: 'تصميم يتيح الفحص الحراري والصيانة السريعة دون تعطيل الإنتاج' }
+                ],
+                steps: [
+                    { num: '01', title: 'دراسة استطاعة الآلات', desc: 'حساب تيارات الإقلاع والتشغيل للمحركات وخطوط الإنتاج.' },
+                    { num: '02', title: 'الرسم الهندسي والتجميع', desc: 'تصميم المخطط الكهربائي وتجميع الخزانة في الورشة بترقيم دقيق.' },
+                    { num: '03', title: 'النقل والربط الميداني', desc: 'تثبيت الخزانة في المصنع وربط كوابل التغذية والمحركات.' },
+                    { num: '04', title: 'اختبار الحماية والتشغيل', desc: 'معايرة الحمايات الحرارية واختبار التشغيل الآلي تحت الحمل.' }
+                ]
+            },
+            'dubai-showrooms': {
+                code: 'VLTX-COM-2025-05',
+                title: 'تجهيز المعارض والفضاءات التجارية الحديثة – شارع دبي، العلمة',
+                category: 'مراكز ومعارض تجارية',
+                location: 'شارع دبي، العلمة – سطيف',
+                status: 'مشاريع مسلمة',
+                image: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=900&q=85',
+                summary: 'تصميم وتنفيذ شبكات الإضاءة الموجهة الاحترافية وتوزيع نقاط القوة الكهربائية للمعارض والمحلات التجارية العصرية في شارع دبي بالعلمة، بما يبرز جمالية المعروضات ويخفض فاتورة استهلاك الكهرباء.',
+                voltage: '230V / 380V AC',
+                protection: '30mA Differential',
+                efficiency: 'CRI > 90 LED',
+                specs: [
+                    { label: 'جودة الإضاءة التجارية', value: 'إنارة موجهة (Track Lights & Spots) بمعامل إظهار لوني CRI > 90' },
+                    { label: 'تقسيم الدوائر الكهربائية', value: 'فصل مستقل لدوائر الواجهات، الإنارة الداخلية، التكييف، والمآخذ' },
+                    { label: 'المفاتيح والمآخذ', value: 'تشكيلة عصرية من Legrand و Energical متناسقة مع الديكور' },
+                    { label: 'الحماية الكهربائية', value: 'قواطع تفاضلية 30mA وحماية ضد تقلبات التيار' },
+                    { label: 'الأسلاك والتمديدات', value: 'مقاطع 2.5mm² للمآخذ و1.5mm² للإنارة داخل أنابيب مقاومة للحرارة' },
+                    { label: 'الكفاءة الطاقوية', value: 'تخفيض استهلاك الطاقة بنسبة تصل إلى 40% مع إضاءة أقوى' }
+                ],
+                steps: [
+                    { num: '01', title: 'توزيع الإضاءة المعمارية', desc: 'تحديد زوايا تسليط الضوء لإبراز البضائع والواجهات الزجاجية.' },
+                    { num: '02', title: 'التمديد وتقسيم الطبلون', desc: 'تمديد الدوائر المستقلة وتركيب لوحة التوزيع الفرعية للمعرض.' },
+                    { num: '03', title: 'تركيب السكك والكشافات', desc: 'تثبيت سكك الإنارة المغناطيسية أو الموجهة والمفاتيح العصرية.' },
+                    { num: '04', title: 'الضبط البصري والتسليم', desc: 'معايرة شدة واتجاه الإضاءة وتسليم المعرض جاهزاً للافتتاح.' }
+                ]
+            },
+            'smart-security-ats': {
+                code: 'VLTX-SEC-2026-06',
+                title: 'منظومات الأمان الذكي واستمرارية الطاقة للمؤسسات والفلل',
+                category: 'الأمان الذكي واستمرارية الطاقة',
+                location: 'سطيف والمدن المجاورة',
+                status: 'حلول متكاملة جاهزة للتنفيذ',
+                image: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=1000&q=85',
+                summary: 'ربط أنظمة الدخول الذكي، كاميرات المراقبة، وحساسات الحركة والحريق مع نظام تحويل أوتوماتيكي للطاقة الاحتياطية (ATS) لضمان استمرار العمل والحماية 24/7 دون أي تدخل بشري.',
+                voltage: '230V/380V + ATS',
+                protection: 'Zigbee Security',
+                efficiency: 'تحويل آلي < 0.5s',
+                specs: [
+                    { label: 'تحويل الطاقة الاحتياطية', value: 'لوحة تحويل أوتوماتيكي (ATS) بين الشبكة العمومية والمولد أو العاكس' },
+                    { label: 'الدخول والتحكم الذكي', value: 'أقفال ذكية ببصمة الإصبع، البطاقة، وتطبيق الهاتف' },
+                    { label: 'منظومة الحساسات', value: 'حساسات Zigbee للحركة، فتح الأبواب/النوافذ، الدخان، وتسرب الغاز' },
+                    { label: 'المراقبة المستمرة', value: 'تغذية محمية لكاميرات المراقبة وأجهزة التسجيل والشبكة' },
+                    { label: 'التنبيهات الفورية', value: 'إشعارات لحظية على الهاتف عند أي طارئ أو انقطاع للتيار' },
+                    { label: 'التكامل الهندسي', value: 'ربط كامل بين لوحة القوة الكهربائية ونظام الإنذار والأتمتة' }
+                ],
+                steps: [
+                    { num: '01', title: 'تقييم المخاطر والأحمال الحرجة', desc: 'تحديد الأجهزة الحيوية ونقاط التغطية الأمنية في المنشأة.' },
+                    { num: '02', title: 'تركيب لوحة ATS والتمديد', desc: 'تأسيس خطوط التغذية الاحتياطية وتركيب لوحة التحويل الآلي.' },
+                    { num: '03', title: 'تثبيت الحساسات والأقفال', desc: 'تركيب الكاميرات، الأقفال الذكية، وحساسات الأمان اللاسلكية.' },
+                    { num: '04', title: 'محاكاة الطوارئ والتسليم', desc: 'اختبار قطع التيار الرئيسي للتأكد من التحويل الفوري وإرسال التنبيهات.' }
+                ]
+            }
+        };
+
+        /* 3. Category Filter & Live Search Engine */
+        let currentCategory = 'all';
+        let currentSearchQuery = '';
+
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const projectCards = document.querySelectorAll('.project-item');
+        const searchInput = document.getElementById('project-search-input');
+        const clearSearchBtn = document.getElementById('clear-search-btn');
+        const activeCountBadge = document.getElementById('active-projects-count');
+        const emptySearchState = document.getElementById('empty-search-state');
+
+        function applyFilters() {
+            let visibleCount = 0;
+            const totalCount = projectCards.length;
+            const query = currentSearchQuery.trim().toLowerCase();
+
+            projectCards.forEach(card => {
+                const cardCategory = card.getAttribute('data-category');
+                const cardKeywords = (card.getAttribute('data-keywords') || '').toLowerCase();
+                const cardText = card.innerText.toLowerCase();
+
+                const matchesCategory = (currentCategory === 'all') || (cardCategory === currentCategory);
+                const matchesSearch = !query || cardKeywords.includes(query) || cardText.includes(query);
+
+                if (matchesCategory && matchesSearch) {
+                    card.classList.remove('hidden-card');
+                    visibleCount++;
+                } else {
+                    card.classList.add('hidden-card');
+                }
+            });
+
+            activeCountBadge.textContent = `${visibleCount} / ${totalCount}`;
+
+            if (visibleCount === 0) {
+                emptySearchState.classList.remove('hidden');
+            } else {
+                emptySearchState.classList.add('hidden');
+            }
+        }
+
+        filterButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                currentCategory = btn.getAttribute('data-category');
+
+                // Update button styles
+                filterButtons.forEach(b => {
+                    b.classList.remove('bg-voltix-navy', 'text-white', 'shadow-sm');
+                    b.classList.add('bg-slate-100', 'text-slate-700');
+                });
+                btn.classList.remove('bg-slate-100', 'text-slate-700');
+                btn.classList.add('bg-voltix-navy', 'text-white', 'shadow-sm');
+
+                applyFilters();
+            });
+        });
+
+        searchInput.addEventListener('input', (e) => {
+            currentSearchQuery = e.target.value;
+            if (currentSearchQuery.length > 0) {
+                clearSearchBtn.classList.remove('hidden');
+            } else {
+                clearSearchBtn.classList.add('hidden');
+            }
+            applyFilters();
+        });
+
+        clearSearchBtn.addEventListener('click', () => {
+            searchInput.value = '';
+            currentSearchQuery = '';
+            clearSearchBtn.classList.add('hidden');
+            applyFilters();
+        });
+
+        function setQuickSearch(tagText) {
+            searchInput.value = tagText;
+            currentSearchQuery = tagText;
+            clearSearchBtn.classList.remove('hidden');
+            // Reset category to 'all' so tag search finds across all categories
+            document.querySelector('[data-category="all"]').click();
+        }
+
+        function resetFiltersAndSearch() {
+            searchInput.value = '';
+            currentSearchQuery = '';
+            clearSearchBtn.classList.add('hidden');
+            document.querySelector('[data-category="all"]').click();
+        }
+
+        /* 4. Engineering Case Study Modal Logic */
+        const caseStudyModal = document.getElementById('case-study-modal');
+
+        function openProjectModal(projectId) {
+            const data = projectsData[projectId];
+            if (!data) return;
+
+            document.getElementById('modal-project-code').textContent = data.code;
+            document.getElementById('modal-project-title').textContent = data.title;
+            document.getElementById('modal-project-category').textContent = data.category;
+            document.getElementById('modal-project-location').innerHTML = `<i class="fa-solid fa-location-dot text-blue-400"></i> <span>${data.location}</span>`;
+            document.getElementById('modal-project-status').textContent = data.status;
+            document.getElementById('modal-project-summary').textContent = data.summary;
+
+            const modalImg = document.getElementById('modal-project-img');
+            modalImg.src = data.image;
+            modalImg.alt = data.title;
+            modalImg.onerror = function() {
+                handleImageFallback(this, data.code, data.voltage);
+            };
+
+            document.getElementById('modal-metric-voltage').textContent = data.voltage;
+            document.getElementById('modal-metric-protection').textContent = data.protection;
+            document.getElementById('modal-metric-efficiency').textContent = data.efficiency;
+
+            // Populate Specs List
+            const specsContainer = document.getElementById('modal-specs-list');
+            specsContainer.innerHTML = data.specs.map(item => `
+                <div class="bg-white p-3 rounded-lg border border-slate-200 flex items-start gap-2.5">
+                    <i class="fa-solid fa-circle-check text-voltix-blue mt-1 shrink-0"></i>
+                    <div>
+                        <span class="text-[11px] font-bold text-slate-400 block">${item.label}</span>
+                        <span class="font-bold text-voltix-navy text-xs sm:text-sm">${item.value}</span>
+                    </div>
+                </div>
+            `).join('');
+
+            // Populate 4-Step Execution Timeline
+            const stepsContainer = document.getElementById('modal-timeline-steps');
+            stepsContainer.innerHTML = data.steps.map(step => `
+                <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 relative">
+                    <span class="tech-ltr text-xs font-mono font-black text-voltix-blue bg-blue-100 px-2 py-0.5 rounded inline-block mb-2">STEP ${step.num}</span>
+                    <h5 class="font-extrabold text-voltix-navy text-xs sm:text-sm mb-1">${step.title}</h5>
+                    <p class="text-slate-500 text-xs leading-relaxed">${step.desc}</p>
+                </div>
+            `).join('');
+
+            // Bind Request Similar Project button
+            const reqBtn = document.getElementById('modal-request-similar-btn');
+            reqBtn.onclick = function() {
+                closeProjectModal();
+                openConsultationModal(`مشروع مماثل لـ: ${data.title}`);
+            };
+
+            caseStudyModal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeProjectModal() {
+            caseStudyModal.classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
+        /* 5. Consultation Modal Logic */
+        const consultationModal = document.getElementById('consultation-modal');
+        const consultSubjectDisplay = document.getElementById('consult-subject-display');
+        const consultSuccessMsg = document.getElementById('consult-success-msg');
+
+        function openConsultationModal(subjectText) {
+            consultSubjectDisplay.textContent = subjectText || 'استشارة هندسية عامة';
+            consultSuccessMsg.classList.add('hidden');
+            consultationModal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeConsultationModal() {
+            consultationModal.classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
+        function submitConsultationForm(e) {
+            e.preventDefault();
+            consultSuccessMsg.classList.remove('hidden');
+        }
+
+        // Close modals on backdrop click or Escape key
+        window.addEventListener('click', (e) => {
+            if (e.target === caseStudyModal) closeProjectModal();
+            if (e.target === consultationModal) closeConsultationModal();
+        });
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeProjectModal();
+                closeConsultationModal();
+            }
+        });
+
+        /* 6. Interactive Standards Comparator Tabs */
+        function switchStandardTab(group) {
+            const tabs = document.querySelectorAll('.std-tab-btn');
+            tabs.forEach(t => {
+                t.classList.remove('bg-voltix-blue', 'text-white');
+                t.classList.add('text-slate-300');
+            });
+            const activeBtn = document.getElementById(`std-tab-${group}`);
+            if (activeBtn) {
+                activeBtn.classList.remove('text-slate-300');
+                activeBtn.classList.add('bg-voltix-blue', 'text-white');
+            }
+
+            const cards = document.querySelectorAll('.std-card');
+            cards.forEach(card => {
+                const cardGroup = card.getAttribute('data-std-group');
+                if (group === 'all' || cardGroup === group) {
+                    card.classList.remove('hidden');
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+        }
+
+        /* 7. Interactive Technical Scope Recommender (موصي التجهيز الهندسي السريع) */
+        let currentEstimatorType = 'smarthome';
+        let currentEstimatorScale = '2';
+
+        const estimatorPackages = {
+            'smarthome': {
+                title: 'حزمة التأسيس الذكي المتكامل للفلل والمنازل',
+                badge: 'Smart Home Pro • Zigbee 3.0',
+                wiring: 'نحاس معياري <span class="tech-ltr text-voltix-blue">2.5mm²</span> للمآخذ، <span class="tech-ltr text-voltix-blue">1.5mm²</span> للإنارة، و<span class="tech-ltr text-voltix-blue">4mm²</span> للمكيفات مع سلك محايد كامل.',
+                panel: 'طبلون <span class="tech-ltr">Schneider / Legrand</span> مقسم حسب الطوابق مع قواطع تفاضلية <span class="tech-ltr">30mA</span> وحماية ارتفاع الجهد.',
+                automation: 'بوابة <span class="tech-ltr">Zigbee 3.0</span> + متحكمات <span class="tech-ltr">ESP32</span>، مفاتيح ذكية <span class="tech-ltr">Energical</span>، تحكم بالستائر والتكييف.',
+                refText: 'مشروع الفلل والمنازل الذكية المتكاملة – سطيف',
+                refId: 'setif-smarthome'
+            },
+            'commercial': {
+                title: 'حزمة البنية التحتية للمراكز والمعارض التجارية',
+                badge: 'Commercial 380V • CRI>90',
+                wiring: 'شبكة ثلاثية الأطوار <span class="tech-ltr text-voltix-blue">380V/400V</span> مع خطوط مستقلة للواجهات، التكييف المركزي، ومآخذ القوة <span class="tech-ltr text-voltix-blue">2.5mm²</span>.',
+                panel: 'لوحات توزيع رئيسية وفرعية بقواطع <span class="tech-ltr">Schneider Electric</span> وتجهيزات <span class="tech-ltr">Legrand</span> مع موازنة أحمال دقيقة.',
+                automation: 'إنارة تجارية موجهة عالية الكفاءة <span class="tech-ltr">LED CRI>90</span> مع تحكم ذكي بمجموعات الإضاءة وتوفير الطاقة.',
+                refText: 'المركز التجاري Lilisunter – العلمة، سطيف',
+                refId: 'lilisunter'
+            },
+            'industrial': {
+                title: 'حزمة خزائن التحكم الصناعي وتوزيع القوى (TGBT)',
+                badge: 'Industrial TGBT & PLC',
+                wiring: 'كوابل صناعية عالية التحمل مع مسارات <span class="tech-ltr text-voltix-blue">Goulottes</span> وترقيم قياسي شامل (<span class="tech-ltr text-voltix-blue">Repérage</span>) لكافة الخطوط.',
+                panel: 'خزانة معدنية <span class="tech-ltr">Armoire TGBT</span> بقواطع وكونتاكتورات <span class="tech-ltr">Schneider</span> وكاشفات انقطاع وعكس الأطوار.',
+                automation: 'أتمتة خطوط الإنتاج عبر وحدات <span class="tech-ltr">PLC</span>، حساسات صناعية، وحماية حرارية ومغناطيسية للمحركات.',
+                refText: 'تصميم وتجميع خزائن التحكم الصناعي (Armoires TGBT)',
+                refId: 'industrial-tgbt'
+            },
+            'infrastructure': {
+                title: 'حزمة الشبكات الحيوية، الطرق السيارة، واستمرارية الطاقة',
+                badge: 'Infrastructure IP66 • 24/7 UPS',
+                wiring: 'كوابل مسلحة محمية ميكانيكياً مع شبكة تأريض قياسية وحماية متكاملة ضد الصواعق.',
+                panel: 'خزائن خارجية مقاومة للعوامل الجوية بمعيار <span class="tech-ltr">IP66</span> مع نظام تحويل آلي للطاقة <span class="tech-ltr">ATS</span>.',
+                automation: 'أنظمة تغذية احتياطية مستمرة <span class="tech-ltr">24/7 UPS</span> لتأمين مسارات الدفع، الكاميرات، وأنظمة المراقبة.',
+                refText: 'محطة دفع الرسوم بالطريق السيار – ولاية عنابة',
+                refId: 'annaba-highway'
+            }
+        };
+
+        function updateEstimator(type) {
+            currentEstimatorType = type;
+            const btns = document.querySelectorAll('.est-type-btn');
+            btns.forEach(btn => {
+                if (btn.getAttribute('data-est-type') === type) {
+                    btn.classList.remove('bg-white', 'text-slate-700', 'border-slate-300');
+                    btn.classList.add('bg-voltix-navy', 'text-white', 'border-voltix-navy');
+                } else {
+                    btn.classList.remove('bg-voltix-navy', 'text-white', 'border-voltix-navy');
+                    btn.classList.add('bg-white', 'text-slate-700', 'border-slate-300');
+                }
+            });
+
+            const pkg = estimatorPackages[type];
+            document.getElementById('est-output-title').textContent = pkg.title;
+            document.getElementById('est-output-badge').textContent = pkg.badge;
+            document.getElementById('est-spec-wiring').innerHTML = pkg.wiring;
+            document.getElementById('est-spec-panel').innerHTML = pkg.panel;
+            document.getElementById('est-spec-automation').innerHTML = pkg.automation;
+
+            const refEl = document.getElementById('est-spec-ref');
+            refEl.innerHTML = `${pkg.refText} <i class="fa-solid fa-arrow-up-right-from-square text-[10px] mr-1"></i>`;
+            refEl.onclick = function() {
+                openProjectModal(pkg.refId);
+            };
+        }
+
+        function updateEstimatorScale(val) {
+            currentEstimatorScale = val;
+            const label = document.getElementById('est-scale-label');
+            if (val === '1') {
+                label.textContent = '100 - 180 m² (صغير / متوسط)';
+            } else if (val === '2') {
+                label.textContent = '250 - 500 m² (فيلا / معرض كبير)';
+            } else {
+                label.textContent = '+1000 m² (مشروع ضخم / منشأة)';
+            }
+        }
+
+        function requestEstimatedPackage() {
+            const pkg = estimatorPackages[currentEstimatorType];
+            const scaleText = document.getElementById('est-scale-label').textContent;
+            openConsultationModal(`${pkg.title} — الحجم: ${scaleText}`);
+        }
+
+        /* 8. Mobile Menu Toggle & Smooth KPI Counter on Load */
+        document.addEventListener('DOMContentLoaded', () => {
+            const mobileBtn = document.getElementById('mobile-menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const mobileIcon = document.getElementById('mobile-menu-icon');
+
+            if (mobileBtn && mobileMenu) {
+                mobileBtn.addEventListener('click', () => {
+                    mobileMenu.classList.toggle('hidden');
+                    if (mobileMenu.classList.contains('hidden')) {
+                        mobileIcon.classList.remove('fa-xmark');
+                        mobileIcon.classList.add('fa-bars');
+                    } else {
+                        mobileIcon.classList.remove('fa-bars');
+                        mobileIcon.classList.add('fa-xmark');
+                    }
+                });
+            }
+
+            // Animate KPI Counters once when visible
+            const counters = document.querySelectorAll('.kpi-counter');
+            let counted = false;
+            const observer = new IntersectionObserver((entries) => {
+                if (entries[0].isIntersecting && !counted) {
+                    counted = true;
+                    counters.forEach(counter => {
+                        const target = +counter.getAttribute('data-target');
+                        const duration = 1600;
+                        const start = performance.now();
+                        const step = (now) => {
+                            const progress = Math.min((now - start) / duration, 1);
+                            const ease = 1 - Math.pow(1 - progress, 3);
+                            counter.textContent = Math.floor(target * ease);
+                            if (progress < 1) {
+                                requestAnimationFrame(step);
+                            } else {
+                                counter.textContent = target;
+                            }
+                        };
+                        requestAnimationFrame(step);
+                    });
+                }
+            }, { threshold: 0.4 });
+
+            const kpiBar = document.getElementById('kpi-stats-bar');
+            if (kpiBar) observer.observe(kpiBar);
+        });
+    </script>
+</body>
+</html>

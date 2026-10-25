@@ -65,7 +65,7 @@ export async function POST(req: Request) {
 
   const text = [
     `🚨 SOS - ${label}`,
-    `الاسم: ${data.fullName}`,
+    `الاسم: ${data.fullName ?? "غير مذكور"}`,
     `الهاتف: ${data.phone}`,
     ...(data.description ? [`وصف المشكلة: ${data.description}`] : []),
     `الموقع: ${mapsUrl ?? "غير مرفق"}`,
@@ -76,7 +76,7 @@ export async function POST(req: Request) {
   const telegramResult = await sendTelegramAlert(
     `🚨 بلاغ طوارئ - ${label}`,
     {
-      الاسم: data.fullName,
+      الاسم: data.fullName ?? "غير مذكور",
       الهاتف: data.phone,
       "نوع الطوارئ": label,
       ...(data.description ? { "وصف المشكلة": data.description } : {}),
@@ -100,7 +100,7 @@ export async function POST(req: Request) {
   const photoResult = data.imageBase64
     ? await sendTelegramPhoto(
         data.imageBase64,
-        `📷 صورة لوحة كهربائية مرفقة ببلاغ SOS من ${data.fullName}. يرجى مراجعتها هندسياً.`,
+        `📷 صورة لوحة كهربائية مرفقة ببلاغ SOS من ${data.fullName ?? "غير مذكور"}. يرجى مراجعتها هندسياً.`,
       )
     : null;
   if (photoResult) console.info("[SOS] Telegram photo attachment.", photoResult);
@@ -109,7 +109,7 @@ export async function POST(req: Request) {
     type: "sos",
     text,
     content: text,
-    fullName: data.fullName,
+    fullName: data.fullName ?? null,
     phone: data.phone,
     emergencyType: data.emergencyType,
     emergencyLabel: label,

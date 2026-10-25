@@ -15,6 +15,7 @@ interface ModalShellProps {
   footer?: ReactNode;
   /** When this value changes the scroll area jumps back to the top (used for wizard steps). */
   scrollKey?: string | number;
+  panelClassName?: string;
   children: ReactNode;
 }
 
@@ -31,6 +32,7 @@ export default function ModalShell({
   icon,
   footer,
   scrollKey,
+  panelClassName = "",
   children,
 }: ModalShellProps) {
   const panelRef = useRef<HTMLDivElement>(null);
@@ -113,7 +115,7 @@ export default function ModalShell({
         aria-labelledby={titleId}
         tabIndex={-1}
         onKeyDown={trapFocus}
-        className={`modal-panel relative flex max-h-full w-full animate-modal-in flex-col overflow-hidden rounded-t-3xl border bg-grid-card outline-none sm:max-w-xl sm:rounded-3xl ${border} ${glow}`}
+        className={`modal-panel relative flex max-h-full w-full animate-modal-in flex-col overflow-hidden rounded-t-3xl border bg-grid-card outline-none sm:max-w-xl sm:rounded-3xl ${border} ${glow} ${panelClassName}`}
       >
         <header className="flex items-start justify-between gap-3 border-b border-white/10 px-5 py-4">
           <div className="flex items-start gap-3">

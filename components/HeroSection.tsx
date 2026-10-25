@@ -1,6 +1,6 @@
 "use client";
 
-import { Clock, Lock, ShieldCheck } from "lucide-react";
+import { BarChart3, Clock, Lock, ShieldCheck, Zap } from "lucide-react";
 import { useSiteActions } from "./SiteActionsProvider";
 
 const STATS = [
@@ -39,20 +39,31 @@ export default function HeroSection() {
           لوحات تحكم مصممة بدقة، وأنظمة ذكية تعمل محلياً وتحمي خصوصيتك.
         </p>
 
-        <div className="mt-10 flex flex-col items-stretch justify-center gap-4 sm:flex-row sm:items-center">
+        <div className="vx-cta-row">
           <button
             type="button"
             onClick={openSos}
-            className="open-sos-trigger min-h-14 rounded-2xl bg-sos-red px-8 py-4 text-lg font-black text-white shadow-glow-red transition hover:brightness-110 sm:min-w-72"
+            className="vx-btn vx-sos open-sos-trigger"
           >
-            SOS - تدخل طوارئ فوري ⚡
+            <span className="vx-ico">
+              <Zap className="vx-zap" aria-hidden="true" />
+            </span>
+            <span className="vx-text">
+              <span>SOS - تدخل طوارئ فوري</span>
+              <small><i className="vx-live" aria-hidden="true" />استجابة 24/7</small>
+            </span>
           </button>
           <button
             type="button"
             onClick={openCalculator}
-            className="min-h-14 rounded-2xl bg-electric-blue px-8 py-4 text-lg font-black text-grid-dark shadow-glow-blue transition hover:brightness-110 sm:min-w-72"
+            className="vx-btn vx-calc"
           >
-            احسب تكلفة مشروعك الآن 📊
+            <span className="vx-ico">
+              <BarChart3 aria-hidden="true" />
+            </span>
+            <span className="vx-text">
+              <span>احسب تكلفة مشروعك الآن</span>
+            </span>
           </button>
         </div>
 
