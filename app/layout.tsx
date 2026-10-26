@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import Script from "next/script";
 import "./globals.css";
+import "./fx.css";
 import { SITE } from "@/lib/site";
 
 const TITLE = "Voltix Dynamics | الكهرباء الصناعية، المنازل الذكية وأنظمة المراقبة";
@@ -97,7 +98,7 @@ const jsonLd = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="ar" dir="rtl" suppressHydrationWarning>
+    <html lang="ar" dir="rtl" data-fx="on" suppressHydrationWarning>
       <head>
         <Script id="voltix-theme-init" strategy="beforeInteractive">
           {`(() => {

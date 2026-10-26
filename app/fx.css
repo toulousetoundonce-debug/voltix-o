@@ -1,0 +1,19 @@
+:root {
+  --vx-fx-layer: 0;
+  --vx-fx-nav-layer: 40;
+  --vx-fx-action-layer: 40;
+  --vx-fx-modal-layer: 50;
+  --vx-fx-accessibility-layer: 60;
+  --vx-fx-accent: rgb(var(--electric));
+  --vx-fx-base: rgb(var(--bg));
+}
+
+html[data-fx="on"] .vx-fx-layer {
+  z-index: var(--vx-fx-layer);
+  pointer-events: none;
+}
+
+html:not([data-fx="on"]) .vx-fx-layer,
+html:not([data-fx="on"]) .vx-fx-decoration {
+  display: none !important;
+}
