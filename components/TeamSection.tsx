@@ -45,7 +45,7 @@ export default function TeamSection() {
             key={member.name}
             className="team-card surface surface-interactive group rounded-3xl p-5 shadow-soft transition duration-300 hover:-translate-y-1 hover:border-electric-blue/40"
           >
-            <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-grid-dark/90 p-3">
+            <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-page-bg/90 p-3">
               <Image
                 src={failedImages[member.image] ? IMAGE_PLACEHOLDER : member.image}
                 alt={member.name}

@@ -17,7 +17,7 @@ export default function SmartTableauSimulatorLauncher() {
 
   return (
     <section id="control-center" className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16">
-      <div className="relative isolate overflow-hidden rounded-[2rem] border border-cyan-400/20 bg-[#080e19] shadow-[0_24px_80px_rgba(0,0,0,0.32)]">
+      <div className="relative isolate overflow-hidden rounded-[2rem] border border-cyan-400/20 bg-grid-card shadow-[0_24px_80px_rgba(0,0,0,0.12)]">
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_78%_35%,rgba(34,211,238,0.14),transparent_42%),linear-gradient(115deg,transparent_35%,rgba(16,185,129,0.06)_100%)]"
@@ -62,7 +62,7 @@ export default function SmartTableauSimulatorLauncher() {
 
             <div className="relative mx-auto w-full max-w-xl">
               <div className="absolute -inset-5 rounded-[2rem] bg-cyan-400/[0.07] blur-2xl" aria-hidden="true" />
-              <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-[#060b13]/90 p-4 shadow-2xl sm:p-5">
+              <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-surface-2/90 p-4 shadow-2xl sm:p-5">
                 <div className="flex items-center justify-between gap-3 border-b border-white/[0.08] pb-4">
                   <div className="flex items-center gap-2.5">
                     <span className="flex h-9 w-9 items-center justify-center rounded-xl border border-cyan-300/20 bg-cyan-300/[0.08] text-cyan-300">

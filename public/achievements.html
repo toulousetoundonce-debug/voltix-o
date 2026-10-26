@@ -5,8 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>إنجازاتنا وسابقة الأعمال | Voltix Dynamics للأتمتة والهندسة الكهربائية</title>
 
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/achievements.css">
 
     <!-- Google Fonts: Cairo & Tajawal for Arabic, Inter & JetBrains Mono for Technical Specs/LTR Numbers -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -15,37 +14,6 @@
 
     <!-- FontAwesome 6.4.0 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- Tailwind Configuration -->
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Cairo', 'Tajawal', 'sans-serif'],
-                        mono: ['JetBrains Mono', 'Inter', 'monospace'],
-                        ltr: ['Inter', 'sans-serif']
-                    },
-                    colors: {
-                        voltix: {
-                            navy: '#0a192f',       /* Deep Engineering Navy */
-                            slate: '#0f172a',      /* Slate 900 */
-                            lightNavy: '#112240',  /* Secondary Navy */
-                            blue: '#1d4ed8',       /* Cobalt Engineering Blue */
-                            accent: '#2563eb',     /* Royal Corporate Blue */
-                            sky: '#0284c7',        /* Technical Cyan-Blue */
-                            surface: '#f8fafc',    /* Crisp Light Background */
-                            border: '#e2e8f0'      /* Clean Corporate Border */
-                        }
-                    },
-                    boxShadow: {
-                        'corporate': '0 4px 20px -2px rgba(10, 25, 47, 0.06), 0 2px 6px -1px rgba(10, 25, 47, 0.04)',
-                        'corporate-lg': '0 20px 35px -5px rgba(10, 25, 47, 0.12), 0 8px 15px -6px rgba(10, 25, 47, 0.06)',
-                    }
-                }
-            }
-        }
-    </script>
 
     <style>
         /* Core Typography & RTL Rules */
@@ -161,7 +129,7 @@
                 <span class="text-slate-400 hidden md:inline">
                     <i class="fa-solid fa-location-dot text-blue-400 ml-1"></i> سطيف • العلمة • عنابة • كامل التراب الوطني
                 </span>
-                <a href="https://agent-6adc1aa9903cfe471f--regal-paprenjak-99fa25.netlify.app/#contact" class="text-blue-400 hover:text-white font-semibold transition-colors">
+                <a href="/#contact" class="text-blue-400 hover:text-white font-semibold transition-colors">
                     الدعم الهندسي المباشر <i class="fa-solid fa-arrow-left mr-1 text-[10px]"></i>
                 </a>
             </div>
@@ -226,7 +194,7 @@
 
                 <!-- Mobile Hamburger Button -->
                 <div class="lg:hidden flex items-center gap-2">
-                    <button id="mobile-menu-btn" class="w-10 h-10 rounded-lg border border-slate-200 flex items-center justify-center text-voltix-navy hover:bg-slate-100 focus:outline-none" aria-label="القائمة">
+                    <button id="mobile-menu-btn" type="button" class="w-10 h-10 rounded-lg border border-slate-200 flex items-center justify-center text-voltix-navy hover:bg-slate-100 focus:outline-none" aria-label="القائمة" aria-controls="mobile-menu" aria-expanded="false">
                         <i class="fa-solid fa-bars text-lg" id="mobile-menu-icon"></i>
                     </button>
                 </div>
@@ -284,7 +252,7 @@
                             توزيع ثلاثي الأطوار <span class="tech-ltr text-blue-300 font-semibold">380V / 400V AC</span>
                         </span>
                         <span class="px-3 py-1.5 rounded-md bg-slate-800/90 border border-slate-700 text-xs font-medium text-slate-200 flex items-center gap-2">
-                            <i class="fa-solid fa-Sliders text-emerald-400"></i>
+                            <i class="fa-solid fa-sliders text-emerald-400"></i>
                             تمديدات معيارية <span class="tech-ltr text-emerald-300 font-semibold">2.5mm² & 1.5mm²</span>
                         </span>
                         <span class="px-3 py-1.5 rounded-md bg-slate-800/90 border border-slate-700 text-xs font-medium text-slate-200 flex items-center gap-2">
@@ -321,7 +289,7 @@
 
                         <!-- Highlighted Real Reference Items -->
                         <div class="space-y-3.5">
-                            <div onclick="openProjectModal('lilisunter')" class="p-3.5 rounded-lg bg-slate-800/60 hover:bg-slate-800 border border-slate-700/70 cursor-pointer transition-all group flex items-start justify-between gap-3">
+                            <div role="button" tabindex="0" aria-label="عرض ملف مشروع المركز التجاري Lilisunter" onclick="openProjectModal('lilisunter')" onkeydown="activateOnKeyboard(event, () => openProjectModal('lilisunter'))" class="p-3.5 rounded-lg bg-slate-800/60 hover:bg-slate-800 border border-slate-700/70 cursor-pointer transition-all group flex items-start justify-between gap-3">
                                 <div>
                                     <div class="flex items-center gap-2 mb-1">
                                         <span class="text-[11px] font-bold px-2 py-0.5 rounded bg-blue-500/20 text-blue-300">مركز تجاري</span>
@@ -333,7 +301,7 @@
                                 <i class="fa-solid fa-arrow-up-right-from-square text-slate-500 group-hover:text-blue-400 text-xs mt-1"></i>
                             </div>
 
-                            <div onclick="openProjectModal('annaba-highway')" class="p-3.5 rounded-lg bg-slate-800/60 hover:bg-slate-800 border border-slate-700/70 cursor-pointer transition-all group flex items-start justify-between gap-3">
+                            <div role="button" tabindex="0" aria-label="عرض ملف مشروع محطة الدفع بالطريق السيار" onclick="openProjectModal('annaba-highway')" onkeydown="activateOnKeyboard(event, () => openProjectModal('annaba-highway'))" class="p-3.5 rounded-lg bg-slate-800/60 hover:bg-slate-800 border border-slate-700/70 cursor-pointer transition-all group flex items-start justify-between gap-3">
                                 <div>
                                     <div class="flex items-center gap-2 mb-1">
                                         <span class="text-[11px] font-bold px-2 py-0.5 rounded bg-amber-500/20 text-amber-300">بنية تحتية</span>
@@ -345,7 +313,7 @@
                                 <i class="fa-solid fa-arrow-up-right-from-square text-slate-500 group-hover:text-blue-400 text-xs mt-1"></i>
                             </div>
 
-                            <div onclick="openProjectModal('setif-smarthome')" class="p-3.5 rounded-lg bg-slate-800/60 hover:bg-slate-800 border border-slate-700/70 cursor-pointer transition-all group flex items-start justify-between gap-3">
+                            <div role="button" tabindex="0" aria-label="عرض ملف مشروع المنازل الذكية في سطيف" onclick="openProjectModal('setif-smarthome')" onkeydown="activateOnKeyboard(event, () => openProjectModal('setif-smarthome'))" class="p-3.5 rounded-lg bg-slate-800/60 hover:bg-slate-800 border border-slate-700/70 cursor-pointer transition-all group flex items-start justify-between gap-3">
                                 <div>
                                     <div class="flex items-center gap-2 mb-1">
                                         <span class="text-[11px] font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300">أتمتة ذكية</span>
@@ -455,7 +423,7 @@
             <div class="bg-white border border-slate-200 rounded-lg px-4 py-2.5 shadow-sm flex items-center gap-3 self-start md:self-end">
                 <span class="w-2.5 h-2.5 rounded-full bg-voltix-blue"></span>
                 <span class="text-xs font-bold text-slate-600">المشاريع المعروضة حالياً:</span>
-                <span id="active-projects-count" class="tech-ltr font-black text-sm bg-blue-50 text-voltix-blue px-2.5 py-0.5 rounded border border-blue-200">6 / 6</span>
+                <span id="active-projects-count" class="tech-ltr font-black text-sm bg-blue-50 text-voltix-blue px-2.5 py-0.5 rounded border border-blue-200" aria-live="polite" aria-atomic="true">6 / 6</span>
             </div>
         </div>
 
@@ -465,27 +433,27 @@
 
                 <!-- Category Filter Buttons -->
                 <div class="flex flex-wrap gap-2" id="category-filters">
-                    <button data-category="all" class="filter-btn active-filter bg-voltix-navy text-white px-4 py-2.5 rounded-lg font-bold text-xs transition-all flex items-center gap-2 shadow-sm">
+                    <button type="button" data-category="all" aria-pressed="true" class="filter-btn active-filter bg-voltix-navy text-white px-4 py-2.5 rounded-lg font-bold text-xs transition-all flex items-center gap-2 shadow-sm">
                         <i class="fa-solid fa-layer-group"></i>
                         <span>الكل</span>
                         <span class="tech-ltr text-[11px] bg-white/20 px-1.5 py-0.2 rounded">6</span>
                     </button>
-                    <button data-category="commercial" class="filter-btn bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2.5 rounded-lg font-bold text-xs transition-all flex items-center gap-2">
+                    <button type="button" data-category="commercial" aria-pressed="false" class="filter-btn bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2.5 rounded-lg font-bold text-xs transition-all flex items-center gap-2">
                         <i class="fa-solid fa-store text-blue-600"></i>
                         <span>مراكز تجارية</span>
                         <span class="tech-ltr text-[11px] bg-slate-200 text-slate-700 px-1.5 py-0.2 rounded">2</span>
                     </button>
-                    <button data-category="infrastructure" class="filter-btn bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2.5 rounded-lg font-bold text-xs transition-all flex items-center gap-2">
+                    <button type="button" data-category="infrastructure" aria-pressed="false" class="filter-btn bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2.5 rounded-lg font-bold text-xs transition-all flex items-center gap-2">
                         <i class="fa-solid fa-road-bridge text-amber-600"></i>
                         <span>بنية تحتية وطرق سيارة</span>
                         <span class="tech-ltr text-[11px] bg-slate-200 text-slate-700 px-1.5 py-0.2 rounded">1</span>
                     </button>
-                    <button data-category="smarthome" class="filter-btn bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2.5 rounded-lg font-bold text-xs transition-all flex items-center gap-2">
+                    <button type="button" data-category="smarthome" aria-pressed="false" class="filter-btn bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2.5 rounded-lg font-bold text-xs transition-all flex items-center gap-2">
                         <i class="fa-solid fa-house-laptop text-emerald-600"></i>
                         <span>منازل ذكية وفلل</span>
                         <span class="tech-ltr text-[11px] bg-slate-200 text-slate-700 px-1.5 py-0.2 rounded">2</span>
                     </button>
-                    <button data-category="industrial" class="filter-btn bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2.5 rounded-lg font-bold text-xs transition-all flex items-center gap-2">
+                    <button type="button" data-category="industrial" aria-pressed="false" class="filter-btn bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2.5 rounded-lg font-bold text-xs transition-all flex items-center gap-2">
                         <i class="fa-solid fa-gears text-indigo-600"></i>
                         <span>أتمتة ولوحات صناعية</span>
                         <span class="tech-ltr text-[11px] bg-slate-200 text-slate-700 px-1.5 py-0.2 rounded">1</span>
@@ -498,10 +466,11 @@
                     <input
                         type="text"
                         id="project-search-input"
+                        aria-label="ابحث في المشاريع حسب المدينة أو التقنية"
                         placeholder="ابحث بالمدينة (سطيف، العلمة، عنابة) أو التقنية (Schneider, Zigbee, 2.5mm)..."
                         class="w-full pr-10 pl-9 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-xs sm:text-sm text-voltix-navy placeholder-slate-400 focus:outline-none focus:border-voltix-blue focus:bg-white transition-all font-medium"
                     >
-                    <button id="clear-search-btn" class="hidden absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-red-500 text-sm" title="مسح البحث">
+                    <button id="clear-search-btn" type="button" aria-label="مسح البحث" class="hidden absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-red-500 text-sm" title="مسح البحث">
                         <i class="fa-solid fa-circle-xmark"></i>
                     </button>
                 </div>
@@ -532,7 +501,7 @@
             >
                 <div>
                     <!-- Image Container -->
-                    <div class="img-container relative h-64 sm:h-72 w-full bg-voltix-navy overflow-hidden cursor-pointer" onclick="openProjectModal('lilisunter')">
+                    <div role="button" tabindex="0" aria-label="عرض الملف الهندسي للمركز التجاري Lilisunter" class="img-container relative h-64 sm:h-72 w-full bg-voltix-navy overflow-hidden cursor-pointer focus-visible:outline focus-visible:outline-4 focus-visible:outline-blue-400" onclick="openProjectModal('lilisunter')" onkeydown="activateOnKeyboard(event, () => openProjectModal('lilisunter'))">
                         <img
                             src="https://images.unsplash.com/photo-1519567241046-7f570eee3ce6?auto=format&fit=crop&w=1200&q=85"
                             alt="المركز التجاري Lilisunter – العلمة، سطيف"
@@ -615,7 +584,7 @@
             >
                 <div>
                     <!-- Image Container -->
-                    <div class="img-container relative h-64 sm:h-72 w-full bg-voltix-navy overflow-hidden cursor-pointer" onclick="openProjectModal('annaba-highway')">
+                    <div role="button" tabindex="0" aria-label="عرض الملف الهندسي لمحطة الدفع بالطريق السيار" class="img-container relative h-64 sm:h-72 w-full bg-voltix-navy overflow-hidden cursor-pointer focus-visible:outline focus-visible:outline-4 focus-visible:outline-blue-400" onclick="openProjectModal('annaba-highway')" onkeydown="activateOnKeyboard(event, () => openProjectModal('annaba-highway'))">
                         <img
                             src="https://images.unsplash.com/photo-1545558014-8692077e9b5c?auto=format&fit=crop&w=1000&q=85"
                             alt="محطة دفع الرسوم بالطريق السيار – ولاية عنابة"
@@ -695,7 +664,7 @@
                 data-keywords="مشروع الفلل والمنازل الذكية المتكاملة سطيف منازل ذكية وفلل 2.5mm 1.5mm energical legrand esp32 zigbee 3.0"
             >
                 <div>
-                    <div class="img-container relative h-56 w-full bg-voltix-navy overflow-hidden cursor-pointer" onclick="openProjectModal('setif-smarthome')">
+                    <div role="button" tabindex="0" aria-label="عرض الملف الهندسي لمشروع المنازل الذكية في سطيف" class="img-container relative h-56 w-full bg-voltix-navy overflow-hidden cursor-pointer focus-visible:outline focus-visible:outline-4 focus-visible:outline-blue-400" onclick="openProjectModal('setif-smarthome')" onkeydown="activateOnKeyboard(event, () => openProjectModal('setif-smarthome'))">
                         <img
                             src="https://images.unsplash.com/photo-1558002038-1055907df827?auto=format&fit=crop&w=900&q=85"
                             alt="مشروع الفلل والمنازل الذكية المتكاملة – سطيف"
@@ -755,7 +724,7 @@
                 data-keywords="تصميم وتجميع خزائن التحكم الصناعي armoires tgbt plc أتمتة ولوحات صناعية schneider سطيف العلمة"
             >
                 <div>
-                    <div class="img-container relative h-56 w-full bg-voltix-navy overflow-hidden cursor-pointer" onclick="openProjectModal('industrial-tgbt')">
+                    <div role="button" tabindex="0" aria-label="عرض الملف الهندسي لخزائن التحكم الصناعي" class="img-container relative h-56 w-full bg-voltix-navy overflow-hidden cursor-pointer focus-visible:outline focus-visible:outline-4 focus-visible:outline-blue-400" onclick="openProjectModal('industrial-tgbt')" onkeydown="activateOnKeyboard(event, () => openProjectModal('industrial-tgbt'))">
                         <img
                             src="https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=900&q=85"
                             alt="تصميم وتجميع خزائن التحكم الصناعي (Armoires TGBT & PLC)"
@@ -815,7 +784,7 @@
                 data-keywords="تجهيز المعارض والفضاءات التجارية الحديثة شارع دبي العلمة مراكز تجارية cri 90 30ma"
             >
                 <div>
-                    <div class="img-container relative h-56 w-full bg-voltix-navy overflow-hidden cursor-pointer" onclick="openProjectModal('dubai-showrooms')">
+                    <div role="button" tabindex="0" aria-label="عرض الملف الهندسي لمعارض شارع دبي في العلمة" class="img-container relative h-56 w-full bg-voltix-navy overflow-hidden cursor-pointer focus-visible:outline focus-visible:outline-4 focus-visible:outline-blue-400" onclick="openProjectModal('dubai-showrooms')" onkeydown="activateOnKeyboard(event, () => openProjectModal('dubai-showrooms'))">
                         <img
                             src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=900&q=85"
                             alt="تجهيز المعارض والفضاءات التجارية الحديثة – شارع دبي، العلمة"
@@ -876,7 +845,7 @@
             >
                 <div class="grid grid-cols-1 lg:grid-cols-12">
                     <!-- Image Column (5 cols) -->
-                    <div class="img-container relative min-h-[240px] lg:min-h-full lg:col-span-5 bg-voltix-navy overflow-hidden cursor-pointer" onclick="openProjectModal('smart-security-ats')">
+                    <div role="button" tabindex="0" aria-label="عرض الملف الهندسي لمنظومات الأمان واستمرارية الطاقة" class="img-container relative min-h-[240px] lg:min-h-full lg:col-span-5 bg-voltix-navy overflow-hidden cursor-pointer focus-visible:outline focus-visible:outline-4 focus-visible:outline-blue-400" onclick="openProjectModal('smart-security-ats')" onkeydown="activateOnKeyboard(event, () => openProjectModal('smart-security-ats'))">
                         <img
                             src="https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=1000&q=85"
                             alt="منظومات الأمان الذكي واستمرارية الطاقة للمؤسسات"
@@ -1249,9 +1218,9 @@
                                 <div class="text-xs font-bold text-slate-400 mb-1 flex items-center gap-1.5">
                                     <i class="fa-solid fa-diagram-project text-indigo-600"></i> مشروع مرجعي مشابه منفذ:
                                 </div>
-                                <div id="est-spec-ref" class="text-xs sm:text-sm font-bold text-voltix-blue leading-relaxed cursor-pointer hover:underline" onclick="openProjectModal('setif-smarthome')">
+                                <button type="button" id="est-spec-ref" class="w-full text-right text-xs sm:text-sm font-bold text-voltix-blue leading-relaxed hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-voltix-blue" onclick="openProjectModal('setif-smarthome')">
                                     مشروع الفلل والمنازل الذكية المتكاملة – سطيف <i class="fa-solid fa-arrow-up-right-from-square text-[10px] mr-1"></i>
-                                </div>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -1299,11 +1268,11 @@
                 <div>
                     <h4 class="font-extrabold text-sm text-white mb-4 border-r-2 border-voltix-blue pr-2.5">روابط المنصة</h4>
                     <ul class="space-y-2.5 text-xs text-slate-300 font-semibold">
-                        <li><a href="https://agent-6adc1aa9903cfe471f--regal-paprenjak-99fa25.netlify.app/" class="hover:text-blue-400 transition-colors">الصفحة الرئيسية للمنصة</a></li>
-                        <li><a href="https://agent-6adc1aa9903cfe471f--regal-paprenjak-99fa25.netlify.app/#services" class="hover:text-blue-400 transition-colors">الخدمات الكهربائية والأتمتة</a></li>
+                        <li><a href="/" class="hover:text-blue-400 transition-colors">الصفحة الرئيسية للمنصة</a></li>
+                        <li><a href="/#services" class="hover:text-blue-400 transition-colors">الخدمات الكهربائية والأتمتة</a></li>
                         <li><a href="#projects-showcase" class="text-blue-400 font-bold">سجل إنجازاتنا وسابقة الأعمال</a></li>
                         <li><a href="#engineering-standards" class="hover:text-blue-400 transition-colors">مقارنة المعايير الهندسية</a></li>
-                        <li><a href="https://agent-6adc1aa9903cfe471f--regal-paprenjak-99fa25.netlify.app/#contact" class="hover:text-blue-400 transition-colors">طلب عرض سعر / تواصل معنا</a></li>
+                        <li><a href="/#contact" class="hover:text-blue-400 transition-colors">طلب عرض سعر / تواصل معنا</a></li>
                     </ul>
                 </div>
 
@@ -1367,7 +1336,7 @@
     <!-- ===================================================================== -->
     <!-- MODAL 1: ENGINEERING CASE STUDY DOSSIER (نافذة الملف الهندسي الكامل) -->
     <!-- ===================================================================== -->
-    <div id="case-study-modal" class="fixed inset-0 z-50 hidden modal-backdrop flex items-center justify-center p-3 sm:p-6 overflow-y-auto no-print" role="dialog" aria-modal="true">
+    <div id="case-study-modal" class="fixed inset-0 z-50 hidden modal-backdrop flex items-center justify-center p-3 sm:p-6 overflow-y-auto no-print" role="dialog" aria-modal="true" aria-labelledby="modal-project-title">
         <div class="bg-white rounded-2xl max-w-4xl w-full overflow-hidden shadow-2xl border border-slate-200 my-auto max-h-[92vh] flex flex-col animate-fadeIn">
 
             <!-- Modal Top Header -->
@@ -1460,15 +1429,15 @@
     <!-- ===================================================================== -->
     <!-- MODAL 2: REQUEST PROJECT / ENGINEERING CONSULTATION                   -->
     <!-- ===================================================================== -->
-    <div id="consultation-modal" class="fixed inset-0 z-50 hidden modal-backdrop flex items-center justify-center p-4 overflow-y-auto no-print" role="dialog" aria-modal="true">
+    <div id="consultation-modal" class="fixed inset-0 z-50 hidden modal-backdrop flex items-center justify-center p-4 overflow-y-auto no-print" role="dialog" aria-modal="true" aria-labelledby="consultation-modal-title">
         <div class="bg-white rounded-2xl max-w-lg w-full overflow-hidden shadow-2xl border border-slate-200 my-auto">
 
             <div class="bg-voltix-navy text-white px-6 py-4 flex items-center justify-between">
                 <div class="flex items-center gap-2.5">
                     <i class="fa-solid fa-bolt text-blue-400"></i>
-                    <h3 class="font-extrabold text-base">طلب دراسة هندسية / عرض سعر</h3>
+                    <h3 id="consultation-modal-title" class="font-extrabold text-base">طلب دراسة هندسية / عرض سعر</h3>
                 </div>
-                <button onclick="closeConsultationModal()" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-red-600 text-slate-300 hover:text-white flex items-center justify-center transition-colors">
+                <button type="button" aria-label="إغلاق نافذة طلب الدراسة الهندسية" onclick="closeConsultationModal()" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-red-600 text-slate-300 hover:text-white flex items-center justify-center transition-colors">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
@@ -1480,35 +1449,35 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">الاسم الكامل أو اسم المؤسسة *</label>
-                    <input type="text" id="client-name" required placeholder="مثال: مؤسسة الأفق التجاري / م. أحمد..." class="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-xs sm:text-sm focus:outline-none focus:border-voltix-blue">
+                    <label for="client-name" class="block text-xs font-bold text-slate-700 mb-1">الاسم الكامل أو اسم المؤسسة *</label>
+                    <input type="text" id="client-name" name="name" autocomplete="name" required placeholder="مثال: مؤسسة الأفق التجاري / م. أحمد..." class="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-xs sm:text-sm focus:outline-none focus:border-voltix-blue">
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">رقم الهاتف *</label>
-                        <input type="tel" id="client-phone" required dir="ltr" placeholder="05 / 06 / 07 XX XX XX XX" class="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-xs sm:text-sm font-mono text-right focus:outline-none focus:border-voltix-blue">
+                        <label for="client-phone" class="block text-xs font-bold text-slate-700 mb-1">رقم الهاتف *</label>
+                        <input type="tel" id="client-phone" name="phone" autocomplete="tel" required dir="ltr" placeholder="05 / 06 / 07 XX XX XX XX" class="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-xs sm:text-sm font-mono text-right focus:outline-none focus:border-voltix-blue">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">الولاية / المدينة *</label>
-                        <input type="text" id="client-city" required placeholder="سطيف، العلمة، عنابة..." class="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-xs sm:text-sm focus:outline-none focus:border-voltix-blue">
+                        <label for="client-city" class="block text-xs font-bold text-slate-700 mb-1">الولاية / المدينة *</label>
+                        <input type="text" id="client-city" name="city" autocomplete="address-level2" required placeholder="سطيف، العلمة، عنابة..." class="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-xs sm:text-sm focus:outline-none focus:border-voltix-blue">
                     </div>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">تفاصيل إضافية حول المشروع (اختياري)</label>
-                    <textarea id="client-notes" rows="3" placeholder="اذكر المساحة التقريبية، نوع التجهيز المطلوب (تأسيس كهربائي، منزل ذكي، لوحة TGBT)..." class="w-full px-3.5 py-2 rounded-lg border border-slate-300 text-xs sm:text-sm focus:outline-none focus:border-voltix-blue"></textarea>
+                    <label for="client-notes" class="block text-xs font-bold text-slate-700 mb-1">تفاصيل إضافية حول المشروع (اختياري)</label>
+                    <textarea id="client-notes" name="notes" rows="3" placeholder="اذكر المساحة التقريبية، نوع التجهيز المطلوب (تأسيس كهربائي، منزل ذكي، لوحة TGBT)..." class="w-full px-3.5 py-2 rounded-lg border border-slate-300 text-xs sm:text-sm focus:outline-none focus:border-voltix-blue"></textarea>
                 </div>
 
                 <!-- Confirmation Feedback Box (Hidden by default) -->
                 <div id="consult-success-msg" class="hidden bg-emerald-50 border border-emerald-300 text-emerald-900 rounded-lg p-4 text-xs leading-relaxed">
                     <div class="font-extrabold text-sm text-emerald-700 mb-1 flex items-center gap-1.5">
-                        <i class="fa-solid fa-circle-check"></i> تم تسجيل طلبك الهندسي بنجاح!
+                        <i class="fa-solid fa-circle-check"></i> طلبك جاهز للإرسال عبر واتساب
                     </div>
-                    تم تجهيز ملخص مشروعك. يمكنك الآن إرساله مباشرة إلى قسم المشاريع في موقعنا الرئيسي أو نسخ تفاصيل الطلب.
+                    لم يتم إرسال الطلب بعد. افتح واتساب من الزر أدناه لإرساله إلى فريق Voltix Dynamics.
                     <div class="mt-3 flex gap-2">
-                        <a href="https://agent-6adc1aa9903cfe471f--regal-paprenjak-99fa25.netlify.app/#contact" class="bg-emerald-700 hover:bg-emerald-800 text-white px-4 py-2 rounded font-bold text-xs inline-flex items-center gap-1.5">
-                            <span>الانتقال لقسم التواصل المباشر</span>
+                        <a id="consult-whatsapp-link" href="#" target="_blank" rel="noopener noreferrer" class="bg-emerald-700 hover:bg-emerald-800 text-white px-4 py-2 rounded font-bold text-xs inline-flex items-center gap-1.5">
+                            <span>إرسال الطلب الآن عبر واتساب</span>
                             <i class="fa-solid fa-arrow-left"></i>
                         </a>
                     </div>
@@ -1519,7 +1488,7 @@
                         إلغاء
                     </button>
                     <button type="submit" class="bg-voltix-blue hover:bg-voltix-navy text-white px-6 py-2.5 rounded-lg font-extrabold text-xs sm:text-sm transition-all shadow-md flex items-center gap-2">
-                        <span>تأكيد الطلب الهندسي</span>
+                        <span>تجهيز الطلب للإرسال</span>
                         <i class="fa-solid fa-paper-plane"></i>
                     </button>
                 </div>
@@ -1531,6 +1500,13 @@
     <!-- JAVASCRIPT ENGINE: DATA, FILTERS, MODALS, FALLBACKS & ESTIMATOR       -->
     <!-- ===================================================================== -->
     <script>
+        function activateOnKeyboard(event, action) {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                action();
+            }
+        }
+
         /* 1. Bulletproof SVG Image Fallback Generator (Zero Broken Images Ever) */
         function handleImageFallback(imgElement, titleText, subText) {
             imgElement.onerror = null; // Prevent infinite loop
@@ -1770,9 +1746,11 @@
                 filterButtons.forEach(b => {
                     b.classList.remove('bg-voltix-navy', 'text-white', 'shadow-sm');
                     b.classList.add('bg-slate-100', 'text-slate-700');
+                    b.setAttribute('aria-pressed', 'false');
                 });
                 btn.classList.remove('bg-slate-100', 'text-slate-700');
                 btn.classList.add('bg-voltix-navy', 'text-white', 'shadow-sm');
+                btn.setAttribute('aria-pressed', 'true');
 
                 applyFilters();
             });
@@ -1892,6 +1870,21 @@
 
         function submitConsultationForm(e) {
             e.preventDefault();
+            const name = document.getElementById('client-name').value.trim();
+            const phone = document.getElementById('client-phone').value.trim();
+            const city = document.getElementById('client-city').value.trim();
+            const notes = document.getElementById('client-notes').value.trim();
+            const message = [
+                'طلب دراسة هندسية عبر صفحة سابقة الأعمال - Voltix Dynamics',
+                `الموضوع: ${consultSubjectDisplay.textContent}`,
+                `الاسم: ${name}`,
+                `الهاتف: ${phone}`,
+                `المدينة: ${city}`,
+                ...(notes ? [`تفاصيل المشروع: ${notes}`] : [])
+            ].join('\n');
+
+            document.getElementById('consult-whatsapp-link').href =
+                `https://wa.me/213796886772?text=${encodeURIComponent(message)}`;
             consultSuccessMsg.classList.remove('hidden');
         }
 
@@ -2025,16 +2018,27 @@
             const mobileMenu = document.getElementById('mobile-menu');
             const mobileIcon = document.getElementById('mobile-menu-icon');
 
-            if (mobileBtn && mobileMenu) {
+            if (mobileBtn && mobileMenu && mobileIcon) {
                 mobileBtn.addEventListener('click', () => {
                     mobileMenu.classList.toggle('hidden');
-                    if (mobileMenu.classList.contains('hidden')) {
+                    const isOpen = !mobileMenu.classList.contains('hidden');
+                    mobileBtn.setAttribute('aria-expanded', String(isOpen));
+                    if (!isOpen) {
                         mobileIcon.classList.remove('fa-xmark');
                         mobileIcon.classList.add('fa-bars');
                     } else {
                         mobileIcon.classList.remove('fa-bars');
                         mobileIcon.classList.add('fa-xmark');
                     }
+                });
+
+                mobileMenu.querySelectorAll('a').forEach(link => {
+                    link.addEventListener('click', () => {
+                        mobileMenu.classList.add('hidden');
+                        mobileBtn.setAttribute('aria-expanded', 'false');
+                        mobileIcon.classList.remove('fa-xmark');
+                        mobileIcon.classList.add('fa-bars');
+                    });
                 });
             }
 

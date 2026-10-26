@@ -46,7 +46,7 @@ const TYPE_ICONS: Record<ProjectType, LucideIcon> = {
 };
 
 const inputCls =
-  "w-full rounded-xl border border-white/10 bg-grid-dark px-4 py-3 text-base text-white placeholder:text-slate-500 focus:border-electric-blue focus:outline-none focus:ring-2 focus:ring-electric-blue/40";
+  "w-full rounded-xl border border-white/10 bg-page-bg px-4 py-3 text-base text-white placeholder:text-slate-500 focus:border-electric-blue focus:outline-none focus:ring-2 focus:ring-electric-blue/40";
 
 export default function CostCalculatorModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   const [step, setStep] = useState<Step>(1);
@@ -351,7 +351,7 @@ export default function CostCalculatorModal({ open, onClose }: { open: boolean; 
                 className={`flex w-full items-start gap-4 rounded-2xl border p-4 text-right transition ${
                   selected
                     ? "border-electric-blue bg-electric-blue/10 shadow-glow-blue"
-                    : "border-white/10 bg-grid-dark hover:border-white/30"
+                    : "border-white/10 bg-page-bg hover:border-white/30"
                 }`}
               >
                 <span
@@ -443,7 +443,7 @@ export default function CostCalculatorModal({ open, onClose }: { open: boolean; 
                 className={`w-full rounded-2xl border p-4 text-right transition ${
                   selected
                     ? "border-electric-blue bg-electric-blue/10 shadow-glow-blue"
-                    : "border-white/10 bg-grid-dark hover:border-white/30"
+                    : "border-white/10 bg-page-bg hover:border-white/30"
                 }`}
               >
                 <span className="flex items-center justify-between gap-3">

@@ -2,11 +2,12 @@ import type { Config } from "tailwindcss";
 
 const config: Config = {
   darkMode: "class",
-  content: ["./app/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}"],
+  content: ["./app/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}", "./public/achievements.html"],
   theme: {
     extend: {
       colors: {
         "grid-dark": "#090D16",
+        "page-bg": "rgb(var(--bg) / <alpha-value>)",
         "grid-card": "rgb(var(--surface-1) / <alpha-value>)",
         "surface-2": "rgb(var(--surface-2) / <alpha-value>)",
         "surface-3": "rgb(var(--surface-3) / <alpha-value>)",
@@ -17,6 +18,7 @@ const config: Config = {
       },
       fontFamily: {
         cairo: ["Cairo", "Segoe UI", "Tahoma", "Arial", "sans-serif"],
+        "plex-arabic": ["IBM Plex Sans Arabic", "Cairo", "Segoe UI", "Tahoma", "Arial", "sans-serif"],
       },
       boxShadow: {
         "glow-blue":

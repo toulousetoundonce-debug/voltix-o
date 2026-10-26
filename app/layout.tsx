@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
+import Script from "next/script";
 import "./globals.css";
 import { SITE } from "@/lib/site";
 
@@ -96,16 +97,31 @@ const jsonLd = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="ar" dir="rtl">
+    <html lang="ar" dir="rtl" suppressHydrationWarning>
       <head>
+        <Script id="voltix-theme-init" strategy="beforeInteractive">
+          {`(() => {
+            let savedTheme = null;
+            try {
+              savedTheme = localStorage.getItem("voltix-theme");
+            } catch {}
+            const theme = savedTheme === "light" || savedTheme === "dark"
+              ? savedTheme
+              : window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+            const root = document.documentElement;
+            root.classList.toggle("light", theme === "light");
+            root.classList.toggle("dark", theme === "dark");
+            root.style.colorScheme = theme;
+          })();`}
+        </Script>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
           rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap"
         />
       </head>
-      <body className="min-h-screen bg-grid-dark font-cairo text-slate-200 antialiased">
+      <body className="min-h-screen bg-page-bg font-cairo text-slate-200 antialiased">
         <a
           href="#main"
           className="sr-only focus:not-sr-only focus:fixed focus:right-3 focus:top-3 focus:z-[60] focus:rounded-lg focus:bg-electric-blue focus:px-4 focus:py-2 focus:font-bold focus:text-grid-dark"

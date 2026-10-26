@@ -15,6 +15,7 @@
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 5rem;
+  min-height: 100%;
 }
 
 html.light {
@@ -25,9 +26,24 @@ html.light {
   --page-card: rgba(255, 255, 255, 0.7);
   --page-panel: rgba(255, 255, 255, 0.85);
   --page-border: rgba(148, 163, 184, 0.28);
+  --bg: 248 250 252;
+  --surface-1: 255 255 255;
+  --surface-2: 241 245 249;
+  --surface-3: 226 232 240;
+  --hairline: 15 23 42;
+  --electric: 0 112 140;
+  --electric-glow: 0 150 185;
+  --ok: 5 150 105;
+  --warn: 180 83 9;
+  --danger: 220 38 38;
+  --text-1: 15 23 42;
+  --text-2: 51 65 85;
+  --text-3: 71 85 105;
 }
 
 body {
+  min-height: 100vh;
+  overflow-x: hidden;
   background-color: var(--page-bg);
   color: var(--page-text);
   font-family: "Cairo", "Segoe UI", Tahoma, Arial, sans-serif;
@@ -541,15 +557,23 @@ body {
 }
 
 .vx-calc {
+  min-height: 5rem;
+  justify-content: space-between;
+  gap: 0.8rem;
+  padding-inline: 1.1rem;
   color: var(--vx-ink);
   background:
-    radial-gradient(120% 140% at 50% -20%, rgba(255, 255, 255, 0.55), transparent 55%),
-    linear-gradient(180deg, #6ff5ff 0%, var(--vx-cyan) 50%, var(--vx-cyan-dark) 100%);
+    radial-gradient(110% 160% at 92% 0%, rgba(255, 255, 255, 0.55), transparent 48%),
+    linear-gradient(120deg, #67f2ff 0%, #00d7f2 48%, #00b4d0 100%);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.7),
     inset 0 -3px 0 rgba(0, 70, 90, 0.25),
-    0 14px 34px -10px rgba(0, 229, 255, 0.65),
-    0 0 46px -12px rgba(0, 229, 255, 0.5);
+    0 16px 38px -12px rgba(0, 229, 255, 0.7),
+    0 0 52px -16px rgba(0, 229, 255, 0.65);
+  transition:
+    transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1),
+    filter 0.25s,
+    box-shadow 0.25s;
 }
 
 .vx-ico {
@@ -572,8 +596,53 @@ body {
 }
 
 .vx-calc .vx-ico {
-  background: rgba(3, 17, 26, 0.12);
-  box-shadow: inset 0 0 0 1px rgba(3, 17, 26, 0.18);
+  width: 3rem;
+  height: 3rem;
+  border-radius: 1rem;
+  background: rgba(3, 17, 26, 0.1);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.38),
+    inset 0 0 0 1px rgba(3, 17, 26, 0.16);
+}
+
+.vx-calc .vx-ico svg {
+  width: 1.55rem;
+  height: 1.55rem;
+  stroke-width: 2.4;
+}
+
+.vx-calc .vx-text {
+  flex: 1;
+  gap: 0.3rem;
+}
+
+.vx-calc-title {
+  font-size: 1.08rem;
+  letter-spacing: -0.025em;
+}
+
+.vx-calc-caption {
+  color: rgba(3, 17, 26, 0.75);
+  font-size: 0.76rem;
+  font-weight: 800;
+}
+
+.vx-calc-arrow {
+  display: grid;
+  width: 2.35rem;
+  height: 2.35rem;
+  flex: none;
+  place-items: center;
+  border: 1px solid rgba(3, 17, 26, 0.14);
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.25);
+  transition: transform 0.25s ease, background-color 0.25s ease;
+}
+
+.vx-calc-arrow svg {
+  width: 1.1rem;
+  height: 1.1rem;
+  stroke-width: 2.5;
 }
 
 .vx-zap {
@@ -634,12 +703,30 @@ body {
     min-width: 19.5rem;
     font-size: 1.2rem;
   }
+
+  .vx-calc {
+    min-width: 22rem;
+    padding-inline: 1.2rem;
+  }
 }
 
 @media (hover: hover) {
   .vx-btn:hover {
     filter: brightness(1.08);
     transform: translateY(-4px) scale(1.03);
+  }
+
+  .vx-calc:hover {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.8),
+      inset 0 -3px 0 rgba(0, 70, 90, 0.2),
+      0 20px 46px -12px rgba(0, 229, 255, 0.78),
+      0 0 58px -14px rgba(0, 229, 255, 0.72);
+  }
+
+  .vx-calc:hover .vx-calc-arrow {
+    transform: translateX(-3px);
+    background: rgba(255, 255, 255, 0.42);
   }
 
   .vx-btn:hover::after {
@@ -1237,5 +1324,162 @@ body > a:focus-visible {
   *::before,
   *::after {
     scroll-behavior: auto !important;
+  }
+}
+
+html.light [class~="text-white"],
+html.light [class*="text-white/"] {
+  color: rgb(var(--text-1));
+}
+
+html.light [class~="text-slate-100"],
+html.light [class~="text-slate-200"],
+html.light [class~="text-slate-300"] {
+  color: rgb(var(--text-2));
+}
+
+html.light [class~="text-slate-400"],
+html.light [class~="text-slate-500"],
+html.light [class~="text-slate-600"] {
+  color: rgb(var(--text-3));
+}
+
+html.light [class~="text-cyan-100"],
+html.light [class~="text-cyan-200"],
+html.light [class~="text-cyan-300"],
+html.light [class~="text-emerald-200"],
+html.light [class~="text-emerald-300"],
+html.light [class~="text-green-200"],
+html.light [class~="text-green-300"] {
+  color: rgb(var(--electric));
+}
+
+html.light [class~="text-amber-100"],
+html.light [class~="text-amber-200"],
+html.light [class~="text-amber-300"] {
+  color: #92400e;
+}
+
+html.light [class~="text-rose-100"],
+html.light [class~="text-rose-200"],
+html.light [class~="text-red-100"],
+html.light [class~="text-red-200"] {
+  color: #b91c1c;
+}
+
+html.light [class*="bg-slate-950"],
+html.light [class*="bg-slate-900"] {
+  background-color: rgb(var(--surface-2) / 0.96);
+}
+
+html.light [class*="bg-slate-800"] {
+  background-color: rgb(var(--surface-3) / 0.8);
+}
+
+html.light [class*="bg-white/"] {
+  background-color: rgb(var(--text-1) / 0.035);
+}
+
+html.light [class*="bg-black/"] {
+  background-color: rgb(var(--text-1) / 0.045);
+}
+
+html.light [class*="border-white/"],
+html.light [class*="border-slate-800"] {
+  border-color: rgb(var(--hairline) / 0.14);
+}
+
+html.light .text-slate-500,
+html.light input::placeholder,
+html.light textarea::placeholder,
+html.light select::placeholder {
+  color: rgb(var(--text-3));
+}
+
+html.light .theme-inverse,
+html.light .theme-inverse[class~="text-white"],
+html.light .vx-sos[class~="text-white"],
+html.light .sos-modal-pro,
+html.light .sos-modal-pro [class~="text-white"],
+html.light [class~="bg-sos-red"][class~="text-white"],
+html.light .btn-command-red[class~="text-white"],
+html.light .team-card [class*="bg-slate-950"][class~="text-white"] {
+  color: #fff;
+}
+
+html.light .sos-modal-pro [class~="text-slate-100"],
+html.light .sos-modal-pro [class~="text-slate-200"],
+html.light .sos-modal-pro [class~="text-slate-300"],
+html.light .sos-modal-pro [class~="text-slate-400"],
+html.light .sos-modal-pro [class~="text-slate-500"] {
+  color: #cbd5e1;
+}
+
+html.light .sos-pro-input,
+html.light .sos-pro-type-card,
+html.light .sos-pro-tool,
+html.light .sos-pro-assist {
+  color-scheme: dark;
+}
+
+html.light .sos-pro-label,
+html.light .sos-pro-safety strong {
+  color: #f1f5f9;
+}
+
+html.light .sos-pro-hint {
+  color: #94a3b8;
+}
+
+html.light .sos-pro-safety {
+  color: #ffd9d9;
+}
+
+.theme-toggle-icon {
+  transform-origin: center;
+  transition:
+    opacity 350ms ease,
+    transform 500ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+html.dark .theme-toggle-sun {
+  opacity: 1;
+  transform: rotate(0) scale(1);
+}
+
+html.dark .theme-toggle-moon {
+  opacity: 0;
+  transform: rotate(-90deg) scale(0.65);
+}
+
+html.light .theme-toggle-sun {
+  opacity: 0;
+  transform: rotate(90deg) scale(0.65);
+}
+
+html.light .theme-toggle-moon {
+  opacity: 1;
+  transform: rotate(0) scale(1);
+}
+
+html.theme-changing body,
+html.theme-changing body *,
+html.theme-changing body *::before,
+html.theme-changing body *::after {
+  transition-property: color, background-color, border-color, box-shadow, fill, stroke !important;
+  transition-duration: 500ms !important;
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .theme-toggle-icon {
+    transition-duration: 1ms;
+  }
+
+  html.theme-changing body,
+  html.theme-changing body *,
+  html.theme-changing body *::before,
+  html.theme-changing body *::after {
+    transition-duration: 1ms !important;
   }
 }

@@ -85,7 +85,7 @@ export default function PortfolioSection() {
   return (
     <section id="portfolio" aria-labelledby="portfolio-title" className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24">
       {!isOpen ? (
-        <div className="relative isolate overflow-hidden rounded-[2rem] border border-cyan-400/20 bg-[#080e19] shadow-[0_24px_80px_rgba(0,0,0,0.32)]">
+        <div className="relative isolate overflow-hidden rounded-[2rem] border border-cyan-400/20 bg-grid-card shadow-[0_24px_80px_rgba(0,0,0,0.12)]">
           <div
             aria-hidden="true"
             className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_20%_30%,rgba(34,211,238,0.12),transparent_40%),linear-gradient(115deg,transparent_35%,rgba(16,185,129,0.05)_100%)]"
@@ -125,7 +125,7 @@ export default function PortfolioSection() {
 
             <div className="relative mx-auto w-full max-w-xl">
               <div className="absolute -inset-5 rounded-[2rem] bg-cyan-400/[0.06] blur-2xl" aria-hidden="true" />
-              <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-[#060b13]/90 p-4 shadow-2xl sm:p-5">
+              <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-surface-2/90 p-4 shadow-2xl sm:p-5">
                 <div className="flex items-center justify-between gap-3 border-b border-white/[0.08] pb-4">
                   <div>
                     <p className="text-sm font-extrabold text-white">استكشف حسب المجال</p>
@@ -223,7 +223,7 @@ export default function PortfolioSection() {
               return (
                 <li key={project.id}>
                   <article className="surface surface-interactive flex h-full flex-col overflow-hidden transition hover:border-electric-blue/40">
-                    <div className="relative flex h-32 items-center justify-center overflow-hidden border-b border-white/10 bg-grid-dark">
+                    <div className="relative flex h-32 items-center justify-center overflow-hidden border-b border-white/10 bg-page-bg">
                       <div aria-hidden="true" className="bg-grid-pattern absolute inset-0 opacity-70" />
                       <Icon className="relative h-12 w-12 text-electric-blue" aria-hidden="true" />
                       <span className="badge-tech absolute right-3 top-3">

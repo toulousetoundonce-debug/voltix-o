@@ -53,7 +53,7 @@ export default function Footer() {
   const { openSos, openCalculator } = useSiteActions();
 
   return (
-    <footer id="contact" className="relative isolate overflow-hidden border-t border-white/10 bg-[#080d17]">
+    <footer id="contact" className="relative isolate overflow-hidden border-t border-white/10 bg-page-bg">
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_83%_45%,rgba(0,229,255,0.1),transparent_34%),linear-gradient(105deg,transparent_43%,rgba(8,145,178,0.045)_100%)]"
@@ -63,7 +63,7 @@ export default function Footer() {
         dir="ltr"
         className="grid min-h-[31.5rem] lg:grid-cols-[45%_22%_33%]"
       >
-        <div className="relative order-1 min-h-[17rem] overflow-hidden bg-[#0b1422] sm:min-h-[23rem] lg:min-h-0">
+        <div className="relative order-1 min-h-[17rem] overflow-hidden bg-surface-2 sm:min-h-[23rem] lg:min-h-0">
           <Image
             src="/images/footer/smart-home-technician.png"
             alt="فني يضبط نظام منزل ذكي عبر الهاتف بجوار لوحة كهربائية"
@@ -77,7 +77,7 @@ export default function Footer() {
             aria-hidden="true"
             className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#07101e]/55 via-transparent to-[#07101e]/10 lg:bg-gradient-to-r lg:from-transparent lg:via-transparent lg:to-[#080d17]/20"
           />
-          <div className="absolute bottom-4 left-4 inline-flex items-center gap-2 rounded-full border border-white/15 bg-[#07101e]/65 px-3 py-1.5 text-[11px] font-bold text-white/85 shadow-lg backdrop-blur-md sm:bottom-6 sm:left-6">
+          <div className="theme-inverse absolute bottom-4 left-4 inline-flex items-center gap-2 rounded-full border border-white/15 bg-[#07101e]/65 px-3 py-1.5 text-[11px] font-bold text-white/85 shadow-lg backdrop-blur-md sm:bottom-6 sm:left-6">
             <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.9)]" />
             تحكم ذكي، محلي وآمن
           </div>
@@ -108,7 +108,7 @@ export default function Footer() {
           <button
             type="button"
             onClick={openSos}
-            className="mt-8 inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-gradient-to-l from-[#ff4148] to-[#c91432] px-5 py-2.5 text-sm font-extrabold text-white shadow-[0_0_22px_rgba(239,35,55,0.3)] transition hover:-translate-y-0.5 hover:shadow-[0_0_30px_rgba(239,35,55,0.48)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-red-400"
+            className="theme-inverse mt-8 inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-gradient-to-l from-[#ff4148] to-[#c91432] px-5 py-2.5 text-sm font-extrabold text-white shadow-[0_0_22px_rgba(239,35,55,0.3)] transition hover:-translate-y-0.5 hover:shadow-[0_0_30px_rgba(239,35,55,0.48)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-red-400"
           >
             طوارئ فورية - SOS
             <Siren className="h-4 w-4" aria-hidden="true" />
