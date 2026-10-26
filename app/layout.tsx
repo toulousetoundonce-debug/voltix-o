@@ -4,6 +4,7 @@ import Script from "next/script";
 import "./globals.css";
 import "./fx.css";
 import { SITE } from "@/lib/site";
+import GraphicSignature from "@/components/GraphicSignature";
 
 const TITLE = "Voltix Dynamics | الكهرباء الصناعية، المنازل الذكية وأنظمة المراقبة";
 const DESCRIPTION =
@@ -133,6 +134,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
         />
+        <GraphicSignature />
         {children}
       </body>
     </html>

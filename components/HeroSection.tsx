@@ -9,7 +9,7 @@ export default function HeroSection() {
   const [standardDetailsOpen, setStandardDetailsOpen] = useState(false);
 
   return (
-    <section aria-labelledby="hero-title" className="relative isolate overflow-hidden">
+    <section aria-labelledby="hero-title" className="vx-fx-hero relative isolate overflow-hidden">
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
         <div className="absolute inset-0 bg-gradient-to-b from-grid-card via-page-bg to-page-bg" />
         <div className="bg-grid-pattern absolute inset-0" />

@@ -17,3 +17,53 @@ html:not([data-fx="on"]) .vx-fx-layer,
 html:not([data-fx="on"]) .vx-fx-decoration {
   display: none !important;
 }
+
+html[data-fx="on"] .vx-fx-hero {
+  isolation: isolate;
+}
+
+html[data-fx="on"] .vx-fx-hero::before,
+html[data-fx="on"] .vx-fx-hero::after {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  content: "";
+}
+
+html[data-fx="on"] .vx-fx-hero::before {
+  background-image:
+    radial-gradient(ellipse 42rem 22rem at 50% 44%, rgb(var(--electric) / 0.105), transparent 74%),
+    linear-gradient(rgb(var(--electric) / 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(var(--electric) / 0.045) 1px, transparent 1px);
+  background-size: auto, 56px 56px, 56px 56px;
+  mask-image: radial-gradient(ellipse at center, #000 8%, transparent 76%);
+  opacity: 0.62;
+}
+
+html[data-fx="on"] .vx-fx-hero::after {
+  background: radial-gradient(
+    ellipse 24rem 20rem at var(--vx-fx-pointer-x, 50%) var(--vx-fx-pointer-y, 42%),
+    rgb(var(--electric) / 0.095),
+    transparent 74%
+  );
+  opacity: 0.7;
+}
+
+@supports not (mask-image: radial-gradient(ellipse, #000, transparent)) {
+  html[data-fx="on"] .vx-fx-hero::before {
+    opacity: 0.24;
+  }
+}
+
+@media (max-width: 767px) {
+  html[data-fx="on"] .vx-fx-hero::after {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-fx="on"] .vx-fx-hero::after {
+    display: none;
+  }
+}
