@@ -67,3 +67,70 @@ html[data-fx="on"] .vx-fx-hero::after {
     display: none;
   }
 }
+
+html[data-fx="on"] .vx-fx-conductor {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  display: block;
+  width: 18px;
+  overflow: visible;
+  opacity: 0.72;
+}
+
+html[data-fx="on"] .vx-fx-conductor[data-quality="light"] {
+  opacity: 0.34;
+}
+
+html[data-fx="on"] .vx-fx-trace-base,
+html[data-fx="on"] .vx-fx-trace-progress {
+  fill: none;
+  stroke: var(--vx-fx-accent);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+html[data-fx="on"] .vx-fx-trace-base {
+  stroke-width: 1;
+  opacity: 0.2;
+}
+
+html[data-fx="on"] .vx-fx-trace-progress {
+  stroke-width: 1.35;
+  opacity: 0.82;
+}
+
+html[data-fx="on"] .vx-fx-trace-node {
+  fill: var(--vx-fx-base);
+  stroke: var(--vx-fx-accent);
+  stroke-width: 1.2;
+  opacity: 0.26;
+  transition: opacity 180ms ease;
+}
+
+html[data-fx="on"] .vx-fx-trace-node[data-lit="true"] {
+  opacity: 0.72;
+}
+
+html[data-fx="on"] .vx-fx-trace-node[data-current="true"] {
+  opacity: 1;
+  filter: drop-shadow(0 0 3px var(--vx-fx-accent));
+}
+
+@media (max-width: 767px) {
+  html[data-fx="on"] .vx-fx-conductor {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-fx="on"] .vx-fx-trace-node {
+    transition: none;
+  }
+
+  html[data-fx="on"] .vx-fx-trace-progress {
+    stroke-dasharray: none !important;
+    stroke-dashoffset: 0 !important;
+  }
+}
