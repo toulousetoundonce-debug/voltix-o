@@ -1,0 +1,73 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`pricing engine > returns deterministic bounded estimate for cctv-network / high-plateaux 1`] = `
+{
+  "confidenceScore": 86,
+  "expected": 193645000,
+  "max": 220750000,
+  "min": 166535000,
+}
+`;
+
+exports[`pricing engine > returns deterministic bounded estimate for cctv-network / north-center 1`] = `
+{
+  "confidenceScore": 86,
+  "expected": 57390000,
+  "max": 65420000,
+  "min": 49355000,
+}
+`;
+
+exports[`pricing engine > returns deterministic bounded estimate for commercial / high-plateaux 1`] = `
+{
+  "confidenceScore": 86,
+  "expected": 684000,
+  "max": 781000,
+  "min": 589000,
+}
+`;
+
+exports[`pricing engine > returns deterministic bounded estimate for commercial / north-center 1`] = `
+{
+  "confidenceScore": 86,
+  "expected": 2535000,
+  "max": 2890000,
+  "min": 2180000,
+}
+`;
+
+exports[`pricing engine > returns deterministic bounded estimate for industrial / north-center 1`] = `
+{
+  "confidenceScore": 86,
+  "expected": 500000,
+  "max": 570000,
+  "min": 430000,
+}
+`;
+
+exports[`pricing engine > returns deterministic bounded estimate for industrial / south 1`] = `
+{
+  "confidenceScore": 86,
+  "expected": 3300000,
+  "max": 3765000,
+  "min": 2840000,
+}
+`;
+
+exports[`pricing engine > returns deterministic bounded estimate for smart-home / other 1`] = `
+{
+  "confidenceScore": 86,
+  "expected": 198740000,
+  "max": 226565000,
+  "min": 170920000,
+}
+`;
+
+exports[`pricing engine > returns deterministic bounded estimate for smart-home / south 1`] = `
+{
+  "confidenceScore": 86,
+  "expected": 116140000,
+  "max": 132400000,
+  "min": 99875000,
+}
+`;

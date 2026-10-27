@@ -14,6 +14,16 @@ const report = {
   confidence: "medium",
 };
 
+const voiceReport = {
+  transcript: "وصف العطل الكهربائي.",
+  detectedLanguage: "ar-DZ",
+  emergencyType: "control_panel_fault",
+  severity: "medium",
+  summaryAr: "لوحة كهربائية تحتاج إلى فحص فني.",
+  safetyAdviceAr: ["ابتعد عن اللوحة واترك فحصها لفني مؤهل."],
+  needsImmediateCall: false,
+};
+
 const makeResponse = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), {
     status,
@@ -37,9 +47,9 @@ describe("optional server-side triage pipeline", () => {
     vi.stubEnv("RATE_LIMIT_VOICE_PER_MINUTE", "100");
     vi.stubEnv("DEEPSEEK_API_KEY", "test-deepseek-key");
     vi.stubEnv("GROQ_API_KEY", "test-groq-key");
-    vi.stubEnv("TELEGRAM_BOT_TOKEN", "test-telegram-token");
-    vi.stubEnv("TELEGRAM_CHAT_ID", "test-chat");
-    vi.stubEnv("TELEGRAM_ALERT_CHAT_ID", "test-alert-chat");
+    vi.stubEnv("TELEGRAM_BOT_TOKEN", "123456:test_telegram_token_123456");
+    vi.stubEnv("TELEGRAM_CHAT_ID", "456789");
+    vi.stubEnv("TELEGRAM_ALERT_CHAT_ID", "-1001234567890");
     vi.stubEnv("GEMINI_API_KEY", "");
     vi.stubEnv("IMAGE_ANALYSIS_ENDPOINT", "https://images.example.test/analyze");
     vi.stubEnv("AUDIO_ANALYSIS_ENDPOINT", "https://audio.example.test/analyze");
@@ -116,6 +126,7 @@ describe("optional server-side triage pipeline", () => {
   it("analyzes SOS text without forwarding identity or location fields to the model", async () => {
     let modelRequest = "";
     let telegramMessage = "";
+    let telegramReplyMarkup: { inline_keyboard?: Array<Array<{ text: string; url: string }>> } | undefined;
     vi.stubGlobal(
       "fetch",
       vi.fn(async (url: string | URL | Request, init?: RequestInit) => {
@@ -125,8 +136,10 @@ describe("optional server-side triage pipeline", () => {
           return makeResponse({ choices: [{ message: { content: JSON.stringify(report) } }] });
         }
         if (target.includes("api.telegram.org")) {
-          telegramMessage = JSON.parse(String(init?.body)).text;
-          return makeResponse({ ok: true, result: {} });
+          const telegramPayload = JSON.parse(String(init?.body));
+          telegramMessage = telegramPayload.text;
+          telegramReplyMarkup = telegramPayload.reply_markup;
+          return makeResponse({ ok: true, result: { message_id: 42 } });
         }
         if (target.includes("example.com/test-hook")) return makeResponse({ ok: true });
         throw new Error("Unexpected network target in test.");
@@ -149,7 +162,10 @@ describe("optional server-side triage pipeline", () => {
     expect(modelRequest).not.toContain("36.7");
     expect(JSON.stringify(payload.messages[1].content)).toContain("لوحة تصدر صوتاً");
     expect(telegramMessage).toContain(report.summary);
-    expect(telegramMessage).toContain("الإجراءات الموصى بها");
+    expect(telegramMessage).toContain("التدخل المقترح");
+    expect(telegramReplyMarkup?.inline_keyboard?.[0].map((button) => button.url)).toContain(
+      "https://www.google.com/maps?q=36.7,3.1&z=20",
+    );
   });
 
   it("falls back to manual review when image analysis fails without exposing the error", async () => {
@@ -199,7 +215,7 @@ describe("optional server-side triage pipeline", () => {
     logSpy.mockRestore();
   });
 
-  it("transcribes audio with Groq and sends the structured report to Telegram", async () => {
+  it("transcribes audio and returns a structured report for the SOS submission", async () => {
     const fetchMock = vi.fn(async (url: string | URL | Request, init?: RequestInit) => {
       const target = String(url);
       if (target.includes("/audio/transcriptions")) {
@@ -208,15 +224,8 @@ describe("optional server-side triage pipeline", () => {
         expect((form.get("file") as File).name).toBe("voice-report.webm");
         return makeResponse({ text: "أسمع طقطقة قرب لوحة الكهرباء." });
       }
-      if (target.includes("api.deepseek.com")) {
-        return makeResponse({ choices: [{ message: { content: JSON.stringify(report) } }] });
-      }
-      if (target.includes("api.telegram.org")) {
-        const telegramPayload = JSON.parse(String(init?.body));
-        expect(telegramPayload.reply_markup.inline_keyboard[0][0].url).toBe(
-          "https://wa.me/213551234567?text=" + encodeURIComponent("مرحباً، نتواصل معك بخصوص بلاغ العطل المرسل إلى Voltix Dynamics."),
-        );
-        return makeResponse({ ok: true, result: {} });
+      if (target.includes("chat/completions")) {
+        return makeResponse({ choices: [{ message: { content: JSON.stringify(voiceReport) } }] });
       }
       throw new Error("Unexpected network target in test.");
     });
@@ -236,9 +245,9 @@ describe("optional server-side triage pipeline", () => {
     const body = await response.json();
     expect(response.status).toBe(200);
     expect(body.transcript).toBe("أسمع طقطقة قرب لوحة الكهرباء.");
-    expect(body.analysis.summary).toBe(report.summary);
+    expect(body.analysis.summary).toBe(voiceReport.summaryAr);
     expect(body.usedFallback).toBe(false);
-    expect(fetchMock).toHaveBeenCalledTimes(3);
+    expect(fetchMock).toHaveBeenCalledTimes(2);
   });
 
   it("uses Groq triage when optional DeepSeek is disabled", async () => {
@@ -250,9 +259,8 @@ describe("optional server-side triage pipeline", () => {
         const payload = JSON.parse(String(init?.body));
         expect(payload.model).toBe("qwen/qwen3.8-27b");
         expect(payload.messages[1].content).toContain("القاطع يفصل");
-        return makeResponse({ choices: [{ message: { content: JSON.stringify(report) } }] });
+        return makeResponse({ choices: [{ message: { content: JSON.stringify(voiceReport) } }] });
       }
-      if (target.includes("api.telegram.org")) return makeResponse({ ok: true, result: {} });
       throw new Error("Unexpected network target in test.");
     });
     vi.stubGlobal("fetch", fetchMock);
@@ -269,8 +277,8 @@ describe("optional server-side triage pipeline", () => {
     expect(response.status).toBe(200);
     expect(body.ok).toBe(true);
     expect(body.usedFallback).toBe(false);
-    expect(body.analysis.summary).toBe(report.summary);
-    expect(fetchMock).toHaveBeenCalledTimes(3);
+    expect(body.analysis.summary).toBe(voiceReport.summaryAr);
+    expect(fetchMock).toHaveBeenCalledTimes(2);
   });
 
   it("transcribes voice before triage and returns no provider metadata", async () => {
@@ -280,9 +288,8 @@ describe("optional server-side triage pipeline", () => {
       if (target.includes("chat/completions")) {
         const payload = JSON.parse(String(init?.body));
         expect(JSON.stringify(payload)).toContain("يوجد دخان قرب اللوحة.");
-        return makeResponse({ choices: [{ message: { content: JSON.stringify(report) } }] });
+        return makeResponse({ choices: [{ message: { content: JSON.stringify(voiceReport) } }] });
       }
-      if (target.includes("api.telegram.org")) return makeResponse({ ok: true, result: {} });
       throw new Error("Unexpected network target in test.");
     });
     vi.stubGlobal("fetch", fetchMock);
@@ -301,7 +308,7 @@ describe("optional server-side triage pipeline", () => {
     expect(body.transcript).toBe("يوجد دخان قرب اللوحة.");
     expect(body.usedFallback).toBe(false);
     expect(JSON.stringify(body)).not.toMatch(/deepseek|gemini|provider|model/i);
-    expect(fetchMock.mock.calls.filter(([url]) => String(url).includes("api.telegram.org"))).toHaveLength(1);
+    expect(fetchMock.mock.calls.filter(([url]) => String(url).includes("api.telegram.org"))).toHaveLength(0);
   });
 
   it("uses safe local voice guidance when structured analysis fails", async () => {
@@ -350,21 +357,16 @@ describe("optional server-side triage pipeline", () => {
     logSpy.mockRestore();
   });
 
-  it("keeps the voice response successful when Telegram delivery fails", async () => {
-    vi.stubGlobal(
-      "fetch",
-      vi.fn(async (url: string | URL | Request) => {
-        const target = String(url);
-        if (target.includes("/audio/transcriptions")) return makeResponse({ text: "عطل في لوحة الكهرباء." });
-        if (target.includes("chat/completions")) {
-          return makeResponse({ choices: [{ message: { content: JSON.stringify(report) } }] });
-        }
-        if (target.includes("api.telegram.org")) {
-          return makeResponse({ ok: false, description: "private telegram error" }, 500);
-        }
-        throw new Error("Unexpected network target in test.");
-      }),
-    );
+  it("does not send an incomplete voice notification before the SOS submission", async () => {
+    const fetchMock = vi.fn(async (url: string | URL | Request) => {
+      const target = String(url);
+      if (target.includes("/audio/transcriptions")) return makeResponse({ text: "عطل في لوحة الكهرباء." });
+      if (target.includes("chat/completions")) {
+        return makeResponse({ choices: [{ message: { content: JSON.stringify(report) } }] });
+      }
+      throw new Error("Unexpected network target in test.");
+    });
+    vi.stubGlobal("fetch", fetchMock);
     const form = new FormData();
     form.set("audio", new File([new Uint8Array([1])], "voice.webm", { type: "audio/webm" }));
     const response = await voicePost(
@@ -377,7 +379,7 @@ describe("optional server-side triage pipeline", () => {
     const body = await response.json();
     expect(response.status).toBe(200);
     expect(body.ok).toBe(true);
-    expect(JSON.stringify(body)).not.toContain("private telegram error");
+    expect(fetchMock.mock.calls.filter(([url]) => String(url).includes("api.telegram.org"))).toHaveLength(0);
   });
 
   it("HTML-escapes and bounds the organized Telegram report", async () => {

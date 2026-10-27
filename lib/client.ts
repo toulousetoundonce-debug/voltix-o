@@ -5,6 +5,8 @@ export interface ApiResult {
   ok: boolean;
   message?: string;
   error?: string;
+  referenceId?: string;
+  safetyAdvice?: string[];
   fieldErrors?: Record<string, string[] | undefined>;
   estimate?: Estimate;
   imageAttachmentError?: string;

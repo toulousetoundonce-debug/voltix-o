@@ -28,7 +28,21 @@ npm run start
 npm run typecheck
 npm test
 npm run smoke
+npm run pricing:check
+npm run pricing:calibrate
 ```
+
+### Indicative pricing catalog
+
+The calculator's server-side estimate engine is in `lib/pricing/`. All 16 seeded catalog entries are explicit placeholders and have `needsReview: true`; replace their DZD/USD unit prices and source metadata with current supplier quotes before relying on customer estimates. Confirm VAT (currently 19%), labor/transport rates, regional coefficients, USD/DZD exchange rate, and copper index in `lib/pricing/config.ts`. The strict catalog gate intentionally exits non-zero while any prices still need review:
+
+```powershell
+npm run pricing:check
+npm run pricing:check -- --strict
+npm run pricing:calibrate
+```
+
+`data/calibration.csv` starts empty. Add completed estimate/final-price pairs to it to calculate average deviation by service line; calibration prints suggestions only and never changes production pricing automatically.
 
 ## Environment variables
 
@@ -52,7 +66,8 @@ Connect the GitHub repository to Netlify. The root `netlify.toml` configures the
 | `NEXT_PUBLIC_SUPABASE_BUCKET` | No | No | Public image bucket; defaults to `fault-images` |
 | `TELEGRAM_BOT_TOKEN` | For Telegram delivery | Yes | Existing server-only bot credential |
 | `TELEGRAM_CHAT_ID` | For Telegram delivery | Yes | Existing default recipient |
-| `TELEGRAM_ALERT_CHAT_ID` | No | Yes | Optional recipient for AI triage reports |
+| `TELEGRAM_ALERT_CHAT_ID` | No | Yes | Optional recipient for emergency dispatch cards |
+| `TELEGRAM_THREAD_ID` | No | No | Optional Telegram forum topic/thread ID |
 | `DEEPSEEK_API_KEY` | For optional triage | Yes | Only used when the optional DeepSeek pipeline is enabled |
 | `DEEPSEEK_BASE_URL` | No | No | Defaults to `https://api.deepseek.com` |
 | `DEEPSEEK_CHAT_MODEL` | For `/api/agent/chat` and optional SOS triage | No | Defaults to `deepseek-chat`; uses the official DeepSeek API |

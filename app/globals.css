@@ -1319,6 +1319,595 @@ body > a:focus-visible {
   }
 }
 
+.sos-modal-pro {
+  max-width: 40rem !important;
+  border-color: rgb(var(--surface-3));
+  border-radius: var(--radius-xl);
+  background: rgb(var(--bg));
+  box-shadow: var(--elevation-3);
+}
+
+.sos-modal-pro > header {
+  background: rgb(var(--surface-1));
+}
+
+.sos-modal-pro > header > div:first-child > span {
+  border-color: rgb(var(--surface-3));
+  background: rgb(var(--surface-2));
+  box-shadow: none;
+}
+
+.sos-modal-pro > div:nth-child(2) {
+  padding: 1rem 1.25rem;
+}
+
+.sos-modal-pro > div:last-child {
+  border-color: rgb(var(--surface-3));
+  background: rgb(var(--surface-1));
+  box-shadow: 0 -8px 24px rgb(0 0 0 / 0.16);
+}
+
+.sos-pro-form {
+  display: grid;
+  gap: 1rem;
+  color: rgb(var(--text-1));
+  font-size: 1rem;
+  line-height: 1.7;
+}
+
+.sos-pro-safety {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.75rem 0.875rem;
+  border: 1px solid rgb(var(--warn) / 0.45);
+  border-radius: 0.875rem;
+  background: rgb(var(--warn) / 0.1);
+  color: rgb(var(--text-1));
+  font-size: 0.9375rem;
+  line-height: 1.55;
+}
+
+.sos-pro-safety > svg {
+  color: rgb(var(--warn));
+}
+
+.sos-pro-safety strong {
+  display: block;
+  margin-bottom: 0.2rem;
+  color: rgb(var(--text-1));
+  font-size: 1rem;
+}
+
+.sos-pro-safety p + p {
+  margin-top: 0.25rem;
+}
+
+.sos-pro-safety a,
+.sos-pro-map-link {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.25rem;
+  color: rgb(var(--text-1));
+  font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 0.2rem;
+}
+
+.sos-pro-safety.is-danger {
+  border-color: rgb(var(--danger));
+  background: rgb(var(--danger) / 0.14);
+  color: rgb(var(--text-1));
+  animation: none;
+}
+
+.sos-pro-safety.is-danger > svg {
+  color: rgb(var(--danger));
+}
+
+.sos-pro-error,
+.sos-pro-assist-message {
+  padding: 0.7rem 0.8rem;
+  border: 1px solid rgb(var(--danger) / 0.45);
+  border-radius: 0.75rem;
+  background: rgb(var(--danger) / 0.1);
+  color: rgb(var(--text-1));
+  font-size: 0.9375rem;
+}
+
+.sos-pro-fieldset {
+  min-width: 0;
+  border: 0;
+  padding: 0;
+}
+
+.sos-pro-label {
+  display: block;
+  margin-bottom: 0.45rem;
+  padding: 0;
+  color: rgb(var(--text-1));
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.sos-pro-section {
+  display: grid;
+  gap: 0.625rem;
+  min-width: 0;
+}
+
+.sos-pro-section-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.4rem 0.75rem;
+}
+
+.sos-pro-section-heading .sos-pro-label {
+  margin: 0;
+}
+
+.sos-pro-optional,
+.sos-pro-hint {
+  color: rgb(var(--text-3));
+  font-size: 0.875rem;
+}
+
+.sos-pro-types {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+
+.sos-pro-type {
+  position: relative;
+  min-width: 0;
+  cursor: pointer;
+}
+
+.sos-pro-type > input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.sos-pro-type-card {
+  display: flex;
+  min-height: 3.5rem;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid rgb(var(--surface-3));
+  border-radius: 0.875rem;
+  background: rgb(var(--surface-1));
+  color: rgb(var(--text-1));
+  font-size: 0.9rem;
+  font-weight: 750;
+  line-height: 1.45;
+  transition: border-color 180ms ease, color 180ms ease, background 180ms ease;
+}
+
+.sos-pro-type-card > svg,
+.sos-pro-tool > svg {
+  flex: 0 0 auto;
+  color: rgb(var(--electric));
+}
+
+.sos-pro-type:hover .sos-pro-type-card {
+  border-color: rgb(var(--electric));
+}
+
+.sos-pro-type.is-selected .sos-pro-type-card {
+  border-color: rgb(var(--electric));
+  background: rgb(var(--electric) / 0.1);
+  box-shadow: inset 0 0 0 1px rgb(var(--electric) / 0.4);
+}
+
+.sos-pro-type > input:focus-visible + .sos-pro-type-card {
+  outline: 3px solid rgb(var(--electric));
+  outline-offset: 2px;
+}
+
+.sos-pro-input {
+  width: 100%;
+  min-height: 3rem;
+  padding: 0.7rem 0.8rem;
+  border: 1px solid rgb(var(--surface-3));
+  border-radius: 0.875rem;
+  background: rgb(var(--surface-1));
+  color: rgb(var(--text-1));
+  font: inherit;
+  font-size: 1rem;
+  transition: border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.sos-pro-input::placeholder {
+  color: rgb(var(--text-3));
+  opacity: 1;
+}
+
+.sos-pro-input:focus {
+  border-color: rgb(var(--electric));
+  outline: 2px solid rgb(var(--electric) / 0.24);
+  outline-offset: 1px;
+}
+
+.sos-pro-input[aria-invalid="true"] {
+  border-color: rgb(var(--danger));
+}
+
+.sos-pro-description {
+  min-height: 7rem;
+  resize: vertical;
+}
+
+.sos-pro-phone {
+  text-align: start;
+}
+
+.sos-pro-field-error {
+  margin-top: 0.25rem;
+  color: rgb(var(--danger));
+  font-size: 0.875rem;
+  font-weight: 750;
+}
+
+.sos-pro-voice {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.sos-pro-mic {
+  display: flex;
+  min-height: 4.25rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid rgb(var(--electric) / 0.5);
+  border-radius: 1rem;
+  background: rgb(var(--electric) / 0.1);
+  color: rgb(var(--text-1));
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 800;
+  text-align: center;
+  transition: border-color 180ms ease, background 180ms ease, transform 180ms ease;
+}
+
+.sos-pro-mic > svg {
+  flex: 0 0 auto;
+  color: rgb(var(--electric));
+}
+
+.sos-pro-mic:not(:disabled) {
+  cursor: pointer;
+}
+
+.sos-pro-mic:hover:not(:disabled),
+.sos-pro-mic:focus-visible {
+  border-color: rgb(var(--electric));
+  outline: 2px solid rgb(var(--electric) / 0.4);
+  outline-offset: 2px;
+}
+
+.sos-pro-mic.is-recording {
+  border-color: rgb(var(--danger));
+  background: rgb(var(--danger) / 0.12);
+}
+
+.sos-pro-mic.is-recording > svg {
+  color: rgb(var(--danger));
+}
+
+.sos-pro-mic.is-error {
+  border-color: rgb(var(--warn));
+}
+
+.sos-pro-mic:disabled {
+  cursor: progress;
+  opacity: 0.72;
+}
+
+.sos-pro-languages {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.4rem;
+}
+
+.sos-pro-language {
+  min-height: 3rem;
+  padding: 0.4rem;
+  border: 1px solid rgb(var(--surface-3));
+  border-radius: 0.75rem;
+  background: rgb(var(--surface-1));
+  color: rgb(var(--text-2));
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 750;
+}
+
+.sos-pro-language[aria-pressed="true"] {
+  border-color: rgb(var(--electric));
+  background: rgb(var(--electric) / 0.1);
+  color: rgb(var(--text-1));
+}
+
+.sos-pro-live-transcript {
+  min-height: 2.75rem;
+  padding: 0.5rem 0.65rem;
+  border-inline-start: 3px solid rgb(var(--electric));
+  border-radius: 0.5rem;
+  background: rgb(var(--surface-1));
+  color: rgb(var(--text-1));
+  font-size: 0.9375rem;
+}
+
+.sos-pro-live-transcript > span {
+  color: rgb(var(--text-3));
+  font-weight: 700;
+}
+
+.sos-pro-tool {
+  display: flex;
+  min-height: 3rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  padding: 0.6rem 0.8rem;
+  border: 1px solid rgb(var(--surface-3));
+  border-radius: 0.875rem;
+  background: rgb(var(--surface-1));
+  color: rgb(var(--text-1));
+  font: inherit;
+  font-size: 0.9375rem;
+  font-weight: 800;
+  transition: border-color 180ms ease, background 180ms ease;
+}
+
+.sos-pro-tool:not(:disabled) {
+  cursor: pointer;
+}
+
+.sos-pro-tool:hover:not(:disabled),
+.sos-pro-tool:focus-visible {
+  border-color: rgb(var(--electric));
+  outline: 2px solid rgb(var(--electric) / 0.25);
+  outline-offset: 1px;
+}
+
+.sos-pro-tool:disabled {
+  cursor: progress;
+  opacity: 0.72;
+}
+
+.sos-pro-analysis {
+  display: grid;
+  gap: 0.35rem;
+  padding: 0.75rem;
+  border: 1px solid rgb(var(--surface-3));
+  border-radius: 0.875rem;
+  background: rgb(var(--surface-1));
+  color: rgb(var(--text-1));
+  font-size: 0.9375rem;
+  line-height: 1.6;
+}
+
+.sos-pro-analysis h4 {
+  font-weight: 800;
+}
+
+.sos-pro-analysis.is-danger {
+  border-color: rgb(var(--danger));
+}
+
+.sos-pro-image-preview {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.5rem;
+  border: 1px solid rgb(var(--surface-3));
+  border-radius: 0.875rem;
+}
+
+.sos-pro-image-preview img {
+  max-height: 8rem;
+  width: 100%;
+  border-radius: 0.6rem;
+  object-fit: contain;
+}
+
+.sos-pro-remove-photo {
+  display: inline-flex;
+  min-height: 3rem;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.5rem;
+  color: rgb(var(--danger));
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 750;
+}
+
+.sos-pro-location-chip {
+  display: inline-flex;
+  min-height: 2rem;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.6rem;
+  border: 1px solid rgb(var(--surface-3));
+  border-radius: 999px;
+  background: rgb(var(--surface-1));
+  color: rgb(var(--text-2));
+  font-size: 0.8125rem;
+  font-weight: 700;
+}
+
+.sos-pro-location-chip.is-ok {
+  border-color: rgb(var(--ok) / 0.5);
+  color: rgb(var(--text-1));
+}
+
+.sos-pro-location-chip.is-ok > svg {
+  color: rgb(var(--ok));
+}
+
+.sos-pro-location-chip.is-failed,
+.sos-pro-location-chip.is-unsupported {
+  border-color: rgb(var(--warn) / 0.5);
+  color: rgb(var(--text-1));
+}
+
+.sos-pro-location-chip.is-failed > svg,
+.sos-pro-location-chip.is-unsupported > svg {
+  color: rgb(var(--warn));
+}
+
+.sos-pro-hint.is-warning {
+  color: rgb(var(--text-1));
+}
+
+.sos-pro-map-link {
+  justify-self: start;
+  font-size: 0.875rem;
+}
+
+.sos-pro-footer-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.55fr);
+  gap: 0.6rem;
+}
+
+.sos-pro-required-hint {
+  grid-column: 1 / -1;
+  color: rgb(var(--text-3));
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.sos-pro-submit,
+.sos-pro-call,
+.sos-pro-call-inline {
+  display: flex;
+  width: 100%;
+  min-height: 3rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  padding: 0.65rem 0.8rem;
+  border: 1px solid transparent;
+  border-radius: 0.875rem;
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 850;
+  text-decoration: none;
+  transition: transform 180ms ease, filter 180ms ease, background 180ms ease;
+}
+
+.sos-pro-submit {
+  color: #fff;
+  background: rgb(var(--danger));
+  cursor: pointer;
+}
+
+.sos-pro-submit:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+
+.sos-pro-submit:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.sos-pro-submit:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.sos-pro-call,
+.sos-pro-call-inline {
+  border-color: rgb(var(--surface-3));
+  background: rgb(var(--surface-1));
+  color: rgb(var(--text-1));
+}
+
+.sos-pro-success {
+  display: grid;
+  justify-items: center;
+  gap: 0.85rem;
+  padding: 1rem 0.25rem;
+  color: rgb(var(--text-1));
+  text-align: center;
+}
+
+.sos-pro-success > svg {
+  color: rgb(var(--ok));
+}
+
+.sos-pro-success h3 {
+  font-size: 1.25rem;
+  font-weight: 850;
+}
+
+.sos-pro-reference {
+  padding: 0.55rem 0.8rem;
+  border: 1px solid rgb(var(--surface-3));
+  border-radius: 0.75rem;
+  background: rgb(var(--surface-1));
+  font-weight: 750;
+}
+
+@media (min-width: 560px) {
+  .sos-pro-types {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 639px) {
+  .sos-modal-pro {
+    max-height: 96dvh;
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  }
+
+  .sos-modal-pro > div:nth-child(2) {
+    padding: 0.8rem 1rem;
+  }
+
+  .sos-modal-pro > div:last-child {
+    padding: 0.65rem 1rem max(0.65rem, env(safe-area-inset-bottom));
+  }
+}
+
+@media (max-width: 380px) {
+  .sos-pro-footer-actions {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.5fr);
+  }
+
+  .sos-pro-submit,
+  .sos-pro-call {
+    padding-inline: 0.5rem;
+    font-size: 0.9rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sos-modal-pro *,
+  .sos-modal-pro *::before,
+  .sos-modal-pro *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

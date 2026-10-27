@@ -82,9 +82,15 @@ describe("fault image flow", () => {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = "public-anon-key";
     process.env.TELEGRAM_BOT_TOKEN = "123:test";
     process.env.TELEGRAM_CHAT_ID = "456";
-    const sentBodies: Array<Record<string, unknown>> = [];
-    const fetchMock = vi.fn(async (_url: string, init?: RequestInit) => {
+    const sentBodies: Array<Record<string, unknown> | FormData> = [];
+    const webp = new Uint8Array(30);
+    webp.set([0x56, 0x50, 0x38, 0x58], 12);
+    const fetchMock = vi.fn(async (url: string | URL | Request, init?: RequestInit) => {
+      if (String(url) === imageUrl) {
+        return new Response(webp, { headers: { "content-type": "image/webp" } });
+      }
       if (typeof init?.body === "string") sentBodies.push(JSON.parse(init.body) as Record<string, unknown>);
+      else if (init?.body instanceof FormData) sentBodies.push(init.body);
       return Response.json({ ok: true });
     });
     vi.stubGlobal("fetch", fetchMock);
@@ -93,9 +99,11 @@ describe("fault image flow", () => {
       sendTelegramAlert("بلاغ", { الهاتف: "+213551234567" }, undefined, "https://wa.me/213551234567"),
     ).resolves.toEqual({ ok: true });
     await expect(sendTelegramPhotoUrl(imageUrl, "صورة العطل")).resolves.toEqual({ ok: true });
-    expect(sentBodies[0].reply_markup).toEqual({
+    expect((sentBodies[0] as Record<string, unknown>).reply_markup).toEqual({
       inline_keyboard: [[{ text: "مراسلة العميل عبر واتساب", url: "https://wa.me/213551234567" }]],
     });
-    expect(sentBodies[1]).toMatchObject({ photo: imageUrl });
+    expect(sentBodies[1]).toBeInstanceOf(FormData);
+    expect((sentBodies[1] as FormData).get("photo")).toBeInstanceOf(Blob);
+    expect((sentBodies[1] as FormData).get("photo")).not.toBe(imageUrl);
   });
 });

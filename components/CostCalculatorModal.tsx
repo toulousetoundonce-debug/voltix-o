@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import {
   AlertTriangle,
   ArrowLeft,
   ArrowRight,
   Calculator,
   Camera,
+  Building2,
   CheckCircle2,
   Factory,
   Home,
@@ -21,32 +22,80 @@ import {
   AREA_MAX,
   AREA_MIN,
   AREA_STEP,
-  CURRENCY,
   PROJECTS,
   PROJECT_TYPE_VALUES,
   TIERS,
   TIER_VALUES,
-  computeEstimate,
-  formatMoney,
-  type Estimate,
   type ProjectType,
   type Tier,
 } from "@/lib/pricing";
+import { computePricingEstimate, formatPricingMoney as formatMoney } from "@/lib/pricing/engine";
+import type { Estimate } from "@/lib/pricing";
+import type { PricingEstimate } from "@/lib/pricing/types";
+import { pricingStrings } from "@/lib/pricing/strings";
+import { track } from "@/lib/pricing/analytics";
+import { pricingEstimateSchema } from "@/lib/pricing/schema";
+import { PRICING_OPTION_IDS } from "@/lib/pricing/types";
+import type { RegionalZone } from "@/lib/pricing/types";
 import { isValidPhone } from "@/lib/validation";
+import { z } from "zod";
 
 type Step = 1 | 2 | 3 | 4;
 type Status = "idle" | "submitting" | "success" | "error";
 
 const STEP_LABELS = ["نوع المشروع", "المعايير الفنية", "مستوى التجهيز", "التقدير والطلب"];
+const preferredWindowSchema = z.enum(["anytime", "morning", "afternoon", "evening"]);
 
 const TYPE_ICONS: Record<ProjectType, LucideIcon> = {
   smart_home: Home,
   industrial_electrical: Factory,
+  commercial: Building2,
   cctv: Camera,
+};
+const ADDONS_BY_TYPE: Record<ProjectType, Array<keyof typeof pricingStrings.addons>> = {
+  smart_home: ["addon-ups-smart", "addon-scenes-smart"],
+  industrial_electrical: ["addon-surge-industrial", "addon-ats-industrial"],
+  commercial: ["addon-surge-commercial"],
+  cctv: ["addon-nightvision-cctv", "addon-vlan-cctv"],
 };
 
 const inputCls =
   "w-full rounded-xl border border-white/10 bg-page-bg px-4 py-3 text-base text-white placeholder:text-slate-500 focus:border-electric-blue focus:outline-none focus:ring-2 focus:ring-electric-blue/40";
+const formatQuantity = (value: number) =>
+  new Intl.NumberFormat("ar-DZ-u-nu-latn", { maximumFractionDigits: 0 }).format(value);
+const calculatorDraftSchema = z.object({
+  projectType: z.enum(PROJECT_TYPE_VALUES).nullable(),
+  area: z.number().int().min(AREA_MIN).max(AREA_MAX),
+  units: z.number().int().min(1).max(500),
+  tier: z.enum(TIER_VALUES),
+  city: z.string().max(60),
+  includeVat: z.boolean(),
+  detailLevel: z.enum(["known", "estimated", "unknown"]),
+  requestId: z.string().uuid().optional(),
+  options: z.array(z.enum(PRICING_OPTION_IDS)).max(12).default([]),
+  renovation: z.boolean().default(false),
+  accessDifficulty: z.enum(["normal", "difficult", "unknown"]).default("normal"),
+});
+const shareSelectionSchema = z.object({
+  projectType: z.enum(PROJECT_TYPE_VALUES),
+  area: z.number().int().min(AREA_MIN).max(AREA_MAX),
+  units: z.number().int().min(1).max(500),
+  tier: z.enum(TIER_VALUES),
+  includeVat: z.boolean(),
+  detailLevel: z.enum(["known", "estimated", "unknown"]),
+  options: z.array(z.enum(PRICING_OPTION_IDS)).max(12).default([]),
+  renovation: z.boolean().default(false),
+  accessDifficulty: z.enum(["normal", "difficult", "unknown"]).default("normal"),
+  zone: z.enum(["north-center", "high-plateaux", "south", "other"]),
+});
+const estimatePreviewSchema = z.object({
+  ok: z.literal(true),
+  referenceId: z.string().regex(/^EST-\d{6}-[23456789ABCDEFGHJKLMNPQRSTUVWXYZ]{4}$/),
+  estimate: pricingEstimateSchema.extend({ base: z.number().finite().nonnegative() }),
+});
+const estimateSubmitSchema = pricingEstimateSchema.extend({
+  base: z.number().finite().nonnegative(),
+});
 
 export default function CostCalculatorModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   const [step, setStep] = useState<Step>(1);
@@ -58,15 +107,111 @@ export default function CostCalculatorModal({ open, onClose }: { open: boolean; 
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
   const [city, setCity] = useState("");
+  const [address, setAddress] = useState("");
+  const [preferredWindow, setPreferredWindow] = useState<"anytime" | "morning" | "afternoon" | "evening">("anytime");
+  const [renovation, setRenovation] = useState(false);
+  const [accessDifficulty, setAccessDifficulty] = useState<"normal" | "difficult" | "unknown">("normal");
+  const [shareZone, setShareZone] = useState<RegionalZone | null>(null);
   const [honeypot, setHoneypot] = useState("");
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [status, setStatus] = useState<Status>("idle");
   const [message, setMessage] = useState("");
-  const [serverEstimate, setServerEstimate] = useState<Estimate | null>(null);
+  const [serverEstimate, setServerEstimate] = useState<PricingEstimate | null>(null);
+  const [includeVat, setIncludeVat] = useState(true);
+  const [detailLevel, setDetailLevel] = useState<"known" | "estimated" | "unknown">("unknown");
+  const [referenceId, setReferenceId] = useState("");
+  const [shareMessage, setShareMessage] = useState("");
+  const [selectedOptions, setSelectedOptions] = useState<Array<(typeof PRICING_OPTION_IDS)[number]>>([]);
+  const requestIdRef = useRef("");
 
   const project = projectType ? PROJECTS[projectType] : null;
-  const estimate = projectType ? computeEstimate({ projectType, area, units, tier }) : null;
+  const pricingEstimate = projectType
+    ? (() => {
+        const serviceLine = projectType === "smart_home"
+          ? "smart-home"
+          : projectType === "cctv"
+            ? "cctv-network"
+            : projectType === "commercial"
+              ? "commercial"
+              : "industrial";
+        return computePricingEstimate({
+          serviceLine,
+          areaM2: area,
+          quantity: units,
+          tier: tier === "economic" ? "economy" : tier === "professional" ? "premium" : "standard",
+          wilaya: city,
+          detailLevel,
+          includeVat,
+          options: selectedOptions,
+          renovation,
+          accessDifficulty,
+        });
+      })()
+    : null;
+  const estimate = pricingEstimate
+    ? {
+        base: pricingEstimate.expected,
+        min: pricingEstimate.min,
+        max: pricingEstimate.max,
+      }
+    : null;
+
+  useEffect(() => {
+    if (!open) return;
+    track("started");
+    try {
+      const encodedSelections = new URLSearchParams(window.location.search).get("pricing");
+      if (encodedSelections) {
+        const shared = shareSelectionSchema.safeParse(JSON.parse(encodedSelections) as unknown);
+        if (shared.success) {
+          setProjectType(shared.data.projectType);
+          setArea(shared.data.area);
+          setUnits(Math.min(shared.data.units, PROJECTS[shared.data.projectType].unitMax));
+          setTier(shared.data.tier);
+          setIncludeVat(shared.data.includeVat);
+          setDetailLevel(shared.data.detailLevel);
+          setSelectedOptions(shared.data.options);
+          setRenovation(shared.data.renovation);
+          setAccessDifficulty(shared.data.accessDifficulty);
+          setShareZone(shared.data.zone);
+          setStep(4);
+          setShareMessage("تم تحميل إعدادات التقدير المشتركة.");
+          return;
+        }
+      }
+      const saved = sessionStorage.getItem("voltix-pricing-draft");
+      if (!saved) return;
+      const parsed = calculatorDraftSchema.safeParse(JSON.parse(saved) as unknown);
+      if (!parsed.success) {
+        sessionStorage.removeItem("voltix-pricing-draft");
+        return;
+      }
+      const draft = parsed.data;
+      setProjectType(draft.projectType);
+      setArea(draft.area);
+      setUnits(draft.units);
+      setTier(draft.tier);
+      setCity(draft.city);
+      setIncludeVat(draft.includeVat);
+      setDetailLevel(draft.detailLevel);
+      setSelectedOptions(draft.options);
+      setRenovation(draft.renovation);
+      setAccessDifficulty(draft.accessDifficulty);
+      requestIdRef.current = draft.requestId ?? "";
+    } catch {
+      sessionStorage.removeItem("voltix-pricing-draft");
+    }
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) return;
+    try {
+      sessionStorage.setItem("voltix-pricing-draft", JSON.stringify({ projectType, area, units, tier, city, includeVat, detailLevel, options: selectedOptions, renovation, accessDifficulty, ...(requestIdRef.current ? { requestId: requestIdRef.current } : {}) }));
+    } catch {
+      // Draft persistence is best-effort; calculator use remains available.
+    }
+  }, [open, projectType, area, units, tier, city, includeVat, detailLevel, selectedOptions, renovation, accessDifficulty]);
 
   const reset = () => {
     setStep(1);
@@ -82,6 +227,16 @@ export default function CostCalculatorModal({ open, onClose }: { open: boolean; 
     setStatus("idle");
     setMessage("");
     setServerEstimate(null);
+    setIncludeVat(true);
+    setDetailLevel("unknown");
+    setReferenceId("");
+    setSelectedOptions([]);
+    setRenovation(false);
+    setAccessDifficulty("normal");
+    setAddress("");
+    setPreferredWindow("anytime");
+    setShareZone(null);
+    requestIdRef.current = "";
   };
 
   const handleClose = () => {
@@ -93,27 +248,48 @@ export default function CostCalculatorModal({ open, onClose }: { open: boolean; 
     if (type !== projectType) {
       setProjectType(type);
       setUnits(PROJECTS[type].unitDefault);
+      setSelectedOptions([ADDONS_BY_TYPE[type][0]]);
     }
   };
 
-  const goNext = () => setStep((s) => (s < 4 ? ((s + 1) as Step) : s));
+  const goNext = () => {
+    track("step_completed");
+    setStep((s) => (s < 4 ? ((s + 1) as Step) : s));
+    if (step === 3) track("result_viewed");
+  };
   const goBack = () => setStep((s) => (s > 1 ? ((s - 1) as Step) : s));
+  const selectTier = (value: Tier) => {
+    setTier(value);
+    track("tier_selected");
+  };
 
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (status === "submitting" || !projectType) return;
+    track("inspection_requested");
 
     const found: Record<string, string> = {};
     if (fullName.trim().length < 2) found.fullName = "أدخل اسمك الكامل";
     if (!isValidPhone(phone)) found.phone = "أدخل رقم هاتف / واتساب صالحاً";
     if (city.trim().length < 2) found.city = "أدخل اسم المدينة";
     setErrors(found);
-    if (Object.keys(found).length > 0) return;
+    if (Object.keys(found).length > 0) {
+      if (found.city) setStep(2);
+      return;
+    }
 
     setStatus("submitting");
     setMessage("");
+    if (!requestIdRef.current) requestIdRef.current = crypto.randomUUID();
 
     const result = await postJson("/api/quote", {
+      requestId: requestIdRef.current,
+      pricingDetailLevel: detailLevel,
+      includeVat,
+      options: selectedOptions,
+      renovation,
+      accessDifficulty,
+      zone: shareZone ?? undefined,
       projectType,
       area,
       units,
@@ -121,11 +297,21 @@ export default function CostCalculatorModal({ open, onClose }: { open: boolean; 
       fullName,
       phone,
       city,
+      address,
+      preferredWindow,
       website: honeypot,
     });
 
     if (result.ok) {
-      setServerEstimate(result.estimate ?? estimate);
+      const parsedEstimate = estimateSubmitSchema.safeParse(result.estimate);
+      if (!parsedEstimate.success) {
+        setStatus("error");
+        setMessage("تعذّر التحقق من التقدير الذي أعاده الخادم. أعد المحاولة.");
+        return;
+      }
+      setServerEstimate(parsedEstimate.data);
+      const parsedReference = z.string().regex(/^EST-\d{6}-[23456789ABCDEFGHJKLMNPQRSTUVWXYZ]{4}$/).safeParse(result.referenceId);
+      setReferenceId(parsedReference.success ? parsedReference.data : "");
       setStatus("success");
       setMessage(result.message ?? "تم استلام طلبك.");
     } else {
@@ -136,26 +322,71 @@ export default function CostCalculatorModal({ open, onClose }: { open: boolean; 
   };
 
   const submitting = status === "submitting";
-  const shownEstimate = serverEstimate ?? estimate;
+  const shownEstimate = serverEstimate
+    ? { base: serverEstimate.expected, min: serverEstimate.min, max: serverEstimate.max }
+    : estimate;
   const whatsappMessage = project && shownEstimate
     ? [
         "سلام عليكم Voltix Dynamics، أرسل لكم طلب استفسار حول عرض السعر الأولي.",
         `المشروع: ${project.label}`,
-        `المساحة: ${formatMoney(area)} م²`,
+        `المساحة: ${formatQuantity(area)} م²`,
         `${project.unitLabel}: ${formatMoney(units)}`,
         `مستوى التجهيز: ${TIERS[tier].label}`,
-        `السعر التقديري: ${formatMoney(shownEstimate.min)} – ${formatMoney(shownEstimate.max)} ${CURRENCY}`,
+        `السعر التقديري: ${formatMoney(shownEstimate.min)} – ${formatMoney(shownEstimate.max)}`,
         "أرجو التواصل معي لتأكيد التفاصيل وموعد المعاينة.",
-        ...(fullName.trim() ? [`الاسم: ${fullName.trim()}`] : []),
-        ...(phone.trim() ? [`رقم الهاتف: ${phone.trim()}`] : []),
-        ...(city.trim() ? [`المدينة: ${city.trim()}`] : []),
       ].join("\n")
     : "";
   const whatsappHref = createWhatsAppHref(WHATSAPP_BUSINESS_NUMBER, whatsappMessage);
 
-  const printEstimate = () => {
-    if (!project || !shownEstimate) return;
+  const refreshServerEstimate = async (): Promise<PricingEstimate | null> => {
+    if (!projectType) return null;
+    if (!requestIdRef.current) requestIdRef.current = crypto.randomUUID();
+    const response = await fetch("/api/quote/estimate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        requestId: requestIdRef.current,
+        serviceLine: projectType === "smart_home" ? "smart-home" : projectType === "cctv" ? "cctv-network" : projectType === "commercial" ? "commercial" : "industrial",
+        quantity: units,
+        areaM2: area,
+        tier: tier === "economic" ? "economy" : tier === "professional" ? "premium" : "standard",
+        wilaya: city,
+        detailLevel,
+        includeVat,
+        options: selectedOptions,
+        renovation,
+        accessDifficulty,
+      }),
+    });
+    const payload: unknown = await response.json().catch(() => null);
+    const parsed = estimatePreviewSchema.safeParse(payload);
+    if (!response.ok || !parsed.success) return null;
+    setServerEstimate(parsed.data.estimate);
+    setReferenceId(parsed.data.referenceId);
+    return parsed.data.estimate;
+  };
+
+  useEffect(() => {
+    if (!open || step !== 4 || !projectType) return;
+    let active = true;
+    void refreshServerEstimate().then((verified) => {
+      if (active && !verified) setMessage("تعذّر تحديث التقدير من الخادم؛ الأرقام تبقى استرشادية.");
+    }).catch(() => {
+      if (active) setMessage("تعذّر تحديث التقدير من الخادم؛ الأرقام تبقى استرشادية.");
+    });
+    return () => { active = false; };
+  }, [open, step, projectType, area, units, tier, city, detailLevel, includeVat, selectedOptions, renovation, accessDifficulty, shareZone]);
+
+  const printEstimate = (
+    estimateForDocument = shownEstimate,
+    detailsForDocument = serverEstimate,
+  ) => {
+    if (!project || !estimateForDocument) return;
     const date = new Intl.DateTimeFormat("ar-DZ", { dateStyle: "long" }).format(new Date());
+    const boqRows = detailsForDocument?.boq.map((line) =>
+      `<tr><td>${line.nameAr}</td><td>${line.quantity}</td><td>${line.unitPriceDzd}</td><td>${line.totalDzd}</td></tr>`,
+    ).join("") ?? "";
+    const assumptions = detailsForDocument?.assumptions.map((item) => `<li>${item}</li>`).join("") ?? "";
     const html = `<!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -183,17 +414,21 @@ export default function CostCalculatorModal({ open, onClose }: { open: boolean; 
 </head>
 <body>
   <header><div><h1>Voltix Dynamics</h1><div class="brand">الهندسة الكهربائية · الأتمتة · الأنظمة الذكية</div></div><div class="date">تاريخ العرض: ${date}</div></header>
-  <h2>العرض الأولي للمشروع</h2>
+  <h2>تقدير أولي · ${referenceId}</h2>
   <table>
     <tbody>
       <tr><th>الخدمة المختارة</th><td>${project.label}</td></tr>
-      <tr><th>المساحة</th><td>${formatMoney(area)} م²</td></tr>
+      <tr><th>المساحة</th><td>${formatQuantity(area)} م²</td></tr>
       <tr><th>${project.unitLabel}</th><td>${formatMoney(units)}</td></tr>
       <tr><th>مستوى التجهيز</th><td>${TIERS[tier].label}</td></tr>
     </tbody>
   </table>
-  <div class="price">السعر التقديري (DZD)<strong>${formatMoney(shownEstimate.min)} – ${formatMoney(shownEstimate.max)} د.ج</strong></div>
-  <p class="legal">ملاحظة قانونية: هذا العرض تقديري أولي وغير ملزم، ولا يُعد عرض سعر نهائياً. يخضع السعر النهائي للمعاينة الميدانية والدراسة الفنية وتحديد نطاق الأعمال والمواد المطلوبة.</p>
+  <h2>جدول الكميات المختصر</h2>
+  <table><thead><tr><th>البند</th><th>الكمية</th><th>سعر الوحدة (دج)</th><th>الإجمالي (دج)</th></tr></thead><tbody>${boqRows}</tbody></table>
+  <h2>الافتراضات والاستثناءات</h2><ul>${assumptions}<li>الأعمال المخفية أو غير الظاهرة لا تدخل في هذا التقدير.</li></ul>
+  <div class="price">تقدير استرشادي غير ملزم · ${includeVat ? "شامل TVA" : "HT"}<strong>${formatMoney(estimateForDocument.min)} – ${formatMoney(estimateForDocument.max)}</strong></div>
+  <p>المتوقع: ${formatMoney(estimateForDocument.base)} · مستوى الثقة: ${pricingEstimate?.confidence ?? "منخفضة"}</p>
+  <p class="legal">${pricingStrings.indicative}، ${pricingStrings.validity}. ${pricingStrings.finalAfterInspection}، بعد الدراسة الفنية وتحديد نطاق الأعمال والمواد المطلوبة.</p>
   <footer>Voltix Dynamics — وثيقة تقدير أولي مولّدة بتاريخ ${date}</footer>
 </body>
 </html>`;
@@ -317,11 +552,13 @@ export default function CostCalculatorModal({ open, onClose }: { open: boolean; 
         <div className="py-2 text-center" role="status">
           <CheckCircle2 className="mx-auto h-14 w-14 text-emerald-400" aria-hidden="true" />
           <p className="mt-4 text-lg font-bold text-white">{message}</p>
+          {referenceId ? <p className="mt-2 text-sm text-slate-300">مرجع التقدير: <bdi dir="ltr">{referenceId}</bdi></p> : null}
           <div className="mt-5 rounded-2xl border border-electric-blue/30 bg-electric-blue/5 p-4">
             <p className="text-sm text-slate-400">النطاق التقريبي المرسل مع طلبك</p>
             <p className="mt-1 text-xl font-extrabold text-electric-blue">
-              <bdi>{formatMoney(shownEstimate.min)}</bdi> – <bdi>{formatMoney(shownEstimate.max)}</bdi> {CURRENCY}
+              <bdi>{formatMoney(shownEstimate.min)}</bdi> – <bdi>{formatMoney(shownEstimate.max)}</bdi>
             </p>
+            {referenceId ? <p className="mt-2 text-sm text-slate-300">مرجع التقدير: <bdi dir="ltr">{referenceId}</bdi></p> : null}
           </div>
           {project ? (
             <a
@@ -381,7 +618,7 @@ export default function CostCalculatorModal({ open, onClose }: { open: boolean; 
                 المساحة الإجمالية
               </label>
               <output htmlFor="calc-area" className="text-xl font-extrabold text-electric-blue">
-                <bdi>{formatMoney(area)}</bdi> م²
+                <bdi>{formatQuantity(area)}</bdi> م²
               </output>
             </div>
             <input
@@ -396,7 +633,7 @@ export default function CostCalculatorModal({ open, onClose }: { open: boolean; 
             />
             <div className="mt-2 flex justify-between text-xs text-slate-500">
               <span>{AREA_MIN} م²</span>
-              <span>{formatMoney(AREA_MAX)} م²</span>
+              <span>{formatQuantity(AREA_MAX)} م²</span>
             </div>
             <p className="mt-2 text-sm text-slate-400">قرّب مساحة المنزل أو المنشأة بالمتر المربع؛ الرقم يساعد على إعداد تقدير أولي فقط.</p>
           </div>
@@ -426,10 +663,59 @@ export default function CostCalculatorModal({ open, onClose }: { open: boolean; 
             </div>
             <p className="mt-2 text-sm text-slate-400">{project.unitHint}</p>
           </div>
+          <label className="flex min-h-12 cursor-pointer items-center gap-3 rounded-xl border border-white/10 bg-page-bg px-4 py-3 text-sm text-slate-200">
+            <input
+              type="checkbox"
+              checked={detailLevel === "unknown"}
+              onChange={(event) => setDetailLevel(event.target.checked ? "unknown" : "known")}
+              className="h-5 w-5 accent-electric-blue"
+            />
+            {pricingStrings.unknown} — وسّع النطاق إذا كانت الكميات تقريبية
+          </label>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <label className="block text-sm font-semibold text-slate-200">
+              <span className="mb-1.5 block">{pricingStrings.siteCondition}</span>
+              <select value={renovation ? "renovation" : "new"} onChange={(event) => setRenovation(event.target.value === "renovation")} className={inputCls}>
+                <option value="new">{pricingStrings.newSite}</option>
+                <option value="renovation">{pricingStrings.renovationSite}</option>
+              </select>
+            </label>
+            <label className="block text-sm font-semibold text-slate-200">
+              <span className="mb-1.5 block">{pricingStrings.access}</span>
+              <select value={accessDifficulty} onChange={(event) => {
+                const parsed = z.enum(["normal", "difficult", "unknown"]).safeParse(event.target.value);
+                if (parsed.success) setAccessDifficulty(parsed.data);
+              }} className={inputCls}>
+                <option value="normal">{pricingStrings.accessNormal}</option>
+                <option value="difficult">{pricingStrings.accessDifficult}</option>
+                <option value="unknown">{pricingStrings.accessUnknown}</option>
+              </select>
+            </label>
+          </div>
+          <div>
+            <label htmlFor="quote-city" className="mb-1.5 block text-sm font-semibold text-slate-200">{pricingStrings.wilaya}</label>
+            <input
+              id="quote-city"
+              name="city"
+              type="text"
+              autoComplete="address-level1"
+              maxLength={60}
+              value={city}
+              onChange={(event) => {
+                setCity(event.target.value);
+                setShareZone(null);
+              }}
+              aria-invalid={Boolean(errors.city)}
+              aria-describedby={errors.city ? "quote-city-err" : undefined}
+              className={inputCls}
+            />
+            {errors.city ? <p id="quote-city-err" className="mt-1 text-sm text-red-300">{errors.city}</p> : null}
+          </div>
         </div>
       ) : null}
 
       {status !== "success" && step === 3 ? (
+        <div className="space-y-5">
         <div role="radiogroup" aria-label="مستوى التجهيز" className="space-y-3">
           {TIER_VALUES.map((value) => {
             const selected = tier === value;
@@ -439,7 +725,7 @@ export default function CostCalculatorModal({ open, onClose }: { open: boolean; 
                 type="button"
                 role="radio"
                 aria-checked={selected}
-                onClick={() => setTier(value)}
+                onClick={() => selectTier(value)}
                 className={`w-full rounded-2xl border p-4 text-right transition ${
                   selected
                     ? "border-electric-blue bg-electric-blue/10 shadow-glow-blue"
@@ -462,36 +748,208 @@ export default function CostCalculatorModal({ open, onClose }: { open: boolean; 
             );
           })}
         </div>
+        {projectType && pricingEstimate ? (
+          <fieldset className="space-y-2 border-t border-white/10 pt-4">
+            <legend className="mb-2 text-base font-bold text-white">إضافات اختيارية</legend>
+            {ADDONS_BY_TYPE[projectType].map((id, index) => {
+              const details = pricingStrings.addons[id];
+              const withAddon = computePricingEstimate({
+                serviceLine: projectType === "smart_home" ? "smart-home" : projectType === "cctv" ? "cctv-network" : projectType === "commercial" ? "commercial" : "industrial",
+                areaM2: area,
+                quantity: units,
+                tier: tier === "economic" ? "economy" : tier === "professional" ? "premium" : "standard",
+                wilaya: city,
+                detailLevel,
+                includeVat,
+                renovation,
+                accessDifficulty,
+                options: [...selectedOptions.filter((option) => option !== id), id],
+              });
+              const withoutAddon = computePricingEstimate({
+                serviceLine: projectType === "smart_home" ? "smart-home" : projectType === "cctv" ? "cctv-network" : projectType === "commercial" ? "commercial" : "industrial",
+                areaM2: area,
+                quantity: units,
+                tier: tier === "economic" ? "economy" : tier === "professional" ? "premium" : "standard",
+                wilaya: city,
+                detailLevel,
+                includeVat,
+                renovation,
+                accessDifficulty,
+                options: selectedOptions.filter((option) => option !== id),
+              });
+              const delta = Math.max(0, withAddon.expected - withoutAddon.expected);
+              return (
+                <label key={id} className="flex min-h-14 cursor-pointer items-start gap-3 rounded-xl border border-white/10 p-3">
+                  <input
+                    type="checkbox"
+                    checked={selectedOptions.includes(id)}
+                    onChange={(event) => setSelectedOptions((previous) =>
+                      event.target.checked ? [...previous, id] : previous.filter((item) => item !== id),
+                    )}
+                    className="mt-1 h-5 w-5 accent-electric-blue"
+                  />
+                  <span className="flex-1">
+                    <span className="block font-bold text-white">{details.label} {index === 0 ? <span className="text-xs text-electric-blue">مقترح</span> : null}</span>
+                    <span className="block text-xs text-slate-400">{details.benefit}</span>
+                  </span>
+                  <bdi dir="ltr" className="text-xs text-electric-blue">+{formatMoney(delta)}</bdi>
+                </label>
+              );
+            })}
+          </fieldset>
+        ) : null}
+        </div>
       ) : null}
 
       {status !== "success" && step === 4 && project && estimate ? (
         <div className="space-y-5">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <p className="text-sm font-bold text-white">{pricingStrings.indicative}</p>
+            <label className="flex min-h-11 items-center gap-2 rounded-lg border border-white/10 px-3 text-sm text-slate-200">
+              <input type="checkbox" checked={includeVat} onChange={(event) => setIncludeVat(event.target.checked)} className="h-5 w-5 accent-electric-blue" />
+              {includeVat ? pricingStrings.includeVat : pricingStrings.excludeVat}
+            </label>
+          </div>
           <div className="estimate-card rounded-2xl border border-electric-blue/30 p-4 text-center">
             <p className="text-sm text-slate-400">النطاق السعري التقريبي</p>
             <p dir="ltr" className="estimate-price mt-1 font-black text-electric-blue">
-              <bdi>{formatMoney(estimate.min)}</bdi> – <bdi>{formatMoney(estimate.max)}</bdi>{" "}
-              <span className="text-lg font-bold">{CURRENCY}</span>
+              <bdi>{formatMoney(estimate.min)}</bdi> – <bdi>{formatMoney(estimate.max)}</bdi>
             </p>
+            <p className="mt-2 text-sm font-bold text-white">
+              {pricingStrings.confidence}: {pricingEstimate?.confidence ?? "منخفضة"} ({pricingEstimate?.confidenceScore ?? 0}%)
+            </p>
+            <div
+              role="meter"
+              aria-label={pricingStrings.confidence}
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-valuenow={pricingEstimate?.confidenceScore ?? 0}
+              className="mx-auto mt-2 h-2 max-w-xs overflow-hidden rounded-full bg-white/10"
+            >
+              <div className="h-full rounded-full bg-electric-blue transition-[width] duration-200" style={{ width: `${pricingEstimate?.confidenceScore ?? 0}%` }} />
+            </div>
             <p className="mt-3 text-xs leading-relaxed text-slate-400">
-              تقدير أولي غير ملزم. يتحدد السعر النهائي بعد المعاينة الميدانية والدراسة الفنية.
+              {pricingStrings.validity}. {pricingStrings.finalAfterInspection}. {pricingStrings.estimateWarning}
             </p>
           </div>
 
+          <div className="grid gap-2 sm:grid-cols-3" role="group" aria-label="مستويات التجهيز">
+            {(["economic", "advanced", "professional"] as const).map((value) => {
+              const tierKey = value === "economic" ? "economy" : value === "professional" ? "premium" : "standard";
+              const tierEstimate = pricingEstimate?.tiers[tierKey];
+              return (
+                <button
+                  key={value}
+                  type="button"
+                  onClick={() => setTier(value)}
+                  aria-pressed={tier === value}
+                  className={`min-h-24 rounded-xl border p-3 text-right transition ${tier === value ? "border-electric-blue bg-electric-blue/10" : "border-white/10 bg-page-bg"}`}
+                >
+                  {value === "advanced" ? <span className="mb-1 block text-xs font-bold text-electric-blue">{pricingStrings.requested}</span> : null}
+                  <span className="block text-sm font-bold text-white">{TIERS[value].label}</span>
+                  {tierEstimate ? <span dir="ltr" className="mt-1 block text-xs text-electric-blue">{formatMoney(tierEstimate.min)} – {formatMoney(tierEstimate.max)}</span> : null}
+                </button>
+              );
+            })}
+          </div>
+          {pricingEstimate ? (
+            <div className="space-y-3 rounded-xl border border-white/10 bg-page-bg p-4">
+              <h3 className="font-bold text-white">{pricingStrings.drivers}</h3>
+              <div className="flex flex-wrap gap-2">
+                {pricingEstimate.priceDrivers.map((driver) => <span key={driver} className="rounded-full border border-white/10 px-3 py-1 text-xs text-slate-300">{driver}</span>)}
+              </div>
+              <div className="grid grid-cols-2 gap-2 text-sm">
+                {Object.entries(pricingEstimate.breakdown).map(([key, amount]) => (
+                  <p key={key} className="rounded-lg bg-white/5 p-2 text-slate-300">
+                    {key === "materials" ? "المواد" : key === "labor" ? "التركيب" : key === "transport" ? "النقل" : "الاحتياط"}: <bdi>{formatMoney(amount)}</bdi>
+                  </p>
+                ))}
+              </div>
+              <div className="flex items-center gap-3 text-sm text-slate-300">
+                <svg viewBox="0 0 36 36" className="h-14 w-14" role="img" aria-label="توزيع تكاليف المشروع">
+                  <circle cx="18" cy="18" r="15.9" fill="none" stroke="currentColor" strokeWidth="5" className="text-electric-blue" />
+                  <circle cx="18" cy="18" r="15.9" fill="none" stroke="#22c55e" strokeWidth="5" strokeDasharray="25 75" strokeDashoffset="25" />
+                  <circle cx="18" cy="18" r="15.9" fill="none" stroke="#f59e0b" strokeWidth="5" strokeDasharray="15 85" strokeDashoffset="50" />
+                </svg>
+                <span>مدة التنفيذ: {pricingEstimate.durationRangeDays.min}–{pricingEstimate.durationRangeDays.max} يوم</span>
+              </div>
+              <p className="text-sm font-bold text-white">{pricingStrings.phasePlan}</p>
+              <p className="text-sm text-slate-400">المرحلة الأولى: تحديد المسارات والأحمال — {formatMoney(Math.round(estimate.base * 0.4))}</p>
+              <p className="text-sm text-slate-400">المرحلة الثانية: التوريد والتركيب والاختبار — {formatMoney(Math.round(estimate.base * 0.6))}</p>
+            </div>
+          ) : null}
           <button
             type="button"
-            onClick={printEstimate}
+            className="min-h-12 w-full rounded-xl border border-white/15 px-4 py-3 text-sm font-bold text-slate-200 transition hover:bg-white/5"
+            onClick={() => {
+              const shareSelection = shareSelectionSchema.safeParse({
+                projectType,
+                area,
+                units,
+                tier,
+                includeVat,
+                detailLevel,
+                options: selectedOptions,
+                renovation,
+                accessDifficulty,
+                zone: shareZone ?? pricingEstimate?.zone ?? "other",
+              });
+              if (!shareSelection.success) {
+                setShareMessage("تعذّر تجهيز رابط صالح للإعدادات الحالية.");
+                return;
+              }
+              const shareUrl = new URL(window.location.href);
+              shareUrl.searchParams.set("pricing", JSON.stringify(shareSelection.data));
+              void navigator.clipboard.writeText(shareUrl.toString()).then(
+                () => setShareMessage("نُسخ رابط الإعدادات فقط؛ لا يتضمن بيانات شخصية."),
+                () => setShareMessage("تعذّر النسخ. تحقق من إذن الحافظة في المتصفح."),
+              );
+            }}
+          >
+            نسخ رابط بالإعدادات فقط
+          </button>
+          {shareMessage ? <p role="status" className="text-sm text-slate-300">{shareMessage}</p> : null}
+
+          <button
+            type="button"
+            onClick={() => {
+              void refreshServerEstimate().then((verified) => {
+                if (verified) printEstimate({ base: verified.expected, min: verified.min, max: verified.max }, verified);
+                else setMessage("تعذّر تأكيد التقدير من الخادم. أعد المحاولة قبل إنشاء الوثيقة.");
+              }).catch(() => setMessage("تعذّر الاتصال بالخادم لتأكيد التقدير."));
+            }}
             className="primary-action flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-bold text-electric-blue transition"
           >
             📄 تحميل العرض الأولي (Devis PDF)
           </button>
-          <a
-            href={whatsappHref}
-            target="_blank"
-            rel="noopener noreferrer"
+          <button
+            type="button"
+            onClick={() => {
+              const shareWindow = window.open("about:blank", "_blank");
+              void refreshServerEstimate().then((verified) => {
+                if (!verified || !shareWindow) {
+                  shareWindow?.close();
+                  setMessage("تعذّر تأكيد التقدير لمشاركته. أعد المحاولة.");
+                  return;
+                }
+                shareWindow.location.href = createWhatsAppHref(
+                  WHATSAPP_BUSINESS_NUMBER,
+                  [
+                    `تقدير استرشادي غير ملزم: ${project?.label ?? ""}`,
+                    `النطاق: ${formatMoney(verified.min)} – ${formatMoney(verified.max)}`,
+                    pricingStrings.validity,
+                    pricingStrings.finalAfterInspection,
+                  ].join("\n"),
+                );
+              }).catch(() => {
+                shareWindow?.close();
+                setMessage("تعذّر الاتصال بالخادم لتأكيد التقدير.");
+              });
+            }}
             className="flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-[#25D366]/40 bg-[#25D366]/10 px-4 py-2.5 text-sm font-bold text-[#75f0a2] transition hover:bg-[#25D366]/20"
           >
             💬 إرسال عرض السعر والطلب عبر واتساب
-          </a>
+          </button>
 
           <dl className="grid grid-cols-2 gap-2 text-sm">
             <div className="readout rounded-xl p-3">
@@ -501,7 +959,7 @@ export default function CostCalculatorModal({ open, onClose }: { open: boolean; 
             <div className="readout rounded-xl p-3">
               <dt className="text-slate-400">المساحة</dt>
               <dd className="mt-0.5 font-semibold text-white">
-                <bdi>{formatMoney(area)}</bdi> م²
+                <bdi>{formatQuantity(area)}</bdi> م²
               </dd>
             </div>
             <div className="readout rounded-xl p-3">
@@ -517,7 +975,7 @@ export default function CostCalculatorModal({ open, onClose }: { open: boolean; 
           </dl>
 
           <form id="quote-form" onSubmit={onSubmit} noValidate className="space-y-4 border-t border-white/10 pt-5">
-            <p className="text-base font-bold text-white">أرسل طلب الدراسة الفنية</p>
+            <p className="text-base font-bold text-white">احجز معاينة ميدانية</p>
 
             {status === "error" && message ? (
               <div
@@ -587,26 +1045,40 @@ export default function CostCalculatorModal({ open, onClose }: { open: boolean; 
             </div>
 
             <div>
-              <label htmlFor="quote-city" className="mb-1.5 block text-sm font-semibold text-slate-200">
-                المدينة
+              <label htmlFor="quote-address" className="mb-1.5 block text-sm font-semibold text-slate-200">
+                {pricingStrings.inspectionAddress}
               </label>
               <input
-                id="quote-city"
-                name="city"
+                id="quote-address"
+                name="address"
                 type="text"
-                autoComplete="address-level2"
-                maxLength={60}
-                value={city}
-                onChange={(e) => setCity(e.target.value)}
-                aria-invalid={Boolean(errors.city)}
-                aria-describedby={errors.city ? "quote-city-err" : undefined}
+                autoComplete="street-address"
+                maxLength={160}
+                value={address}
+                onChange={(event) => setAddress(event.target.value)}
                 className={inputCls}
+                aria-describedby="quote-address-hint"
               />
-              {errors.city ? (
-                <p id="quote-city-err" className="mt-1 text-sm text-red-300">
-                  {errors.city}
-                </p>
-              ) : null}
+              <p id="quote-address-hint" className="mt-1 text-xs text-slate-400">{pricingStrings.inspectionAddressHint}</p>
+            </div>
+            <div>
+              <label htmlFor="quote-window" className="mb-1.5 block text-sm font-semibold text-slate-200">
+                {pricingStrings.preferredWindow}
+              </label>
+              <select
+                id="quote-window"
+                name="preferredWindow"
+                value={preferredWindow}
+                onChange={(event) => {
+                  const parsed = preferredWindowSchema.safeParse(event.target.value);
+                  if (parsed.success) setPreferredWindow(parsed.data);
+                }}
+                className={inputCls}
+              >
+                {(["anytime", "morning", "afternoon", "evening"] as const).map((value) => (
+                  <option key={value} value={value}>{pricingStrings.preferredWindows[value]}</option>
+                ))}
+              </select>
             </div>
 
             {/* Honeypot: invisible to people, tempting to bots. */}

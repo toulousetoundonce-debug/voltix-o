@@ -2,6 +2,11 @@ import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
 import { computeEstimate, PROJECTS, TIERS } from "@/lib/pricing";
 import { normalizeDigits, normalizePhoneNumber, isValidPhone } from "@/lib/validation";
 import { chatSchema, quoteSchema, sosSchema, callbackSchema } from "@/lib/schemas";
+import { createMapsCoordinatesHref } from "@/lib/site";
+import {
+  GPS_TARGET_ACCURACY_METERS,
+  isFreshAccurateGpsFix,
+} from "@/lib/geolocation";
 import { POST as chatPost } from "@/app/api/chat/route";
 import { POST as quotePost } from "@/app/api/quote/route";
 import { POST as sosPost } from "@/app/api/sos/route";
@@ -53,6 +58,24 @@ describe("lib/validation", () => {
     }
     expect(isValidPhone("12345")).toBe(false);
     expect(isValidPhone("+111111111111111111")).toBe(false);
+  });
+});
+
+describe("lib/site map links", () => {
+  it("opens Google Maps at the exact GPS coordinates with a close zoom", () => {
+    expect(createMapsCoordinatesHref(36.752887, 3.042048)).toBe(
+      "https://www.google.com/maps?q=36.752887,3.042048&z=20",
+    );
+  });
+});
+
+describe("lib/geolocation", () => {
+  it("only treats recent, sufficiently accurate fixes as ready for early completion", () => {
+    const now = 1_798_000_000_000;
+    expect(isFreshAccurateGpsFix(GPS_TARGET_ACCURACY_METERS, now - 1_000, now)).toBe(true);
+    expect(isFreshAccurateGpsFix(GPS_TARGET_ACCURACY_METERS + 1, now - 1_000, now)).toBe(false);
+    expect(isFreshAccurateGpsFix(5, now - 5_001, now)).toBe(false);
+    expect(isFreshAccurateGpsFix(5, now + 1, now)).toBe(false);
   });
 });
 
@@ -108,7 +131,7 @@ describe("route contracts", () => {
           ok: true,
           status: 200,
           headers: new Headers({ "content-type": "application/json" }),
-          json: async () => ({ ok: true, result: true }),
+          json: async () => ({ ok: true, result: { message_id: 42 } }),
         } as Response;
       }
       if (target.includes("webhook")) {

@@ -4,9 +4,9 @@
 // >>> All monetary constants below are PLACEHOLDERS. Adjust CURRENCY and the rates to your
 // >>> real price list before going live.
 
-export const CURRENCY = "د.ج";
+export const CURRENCY = "دج";
 
-export const PROJECT_TYPE_VALUES = ["smart_home", "industrial_electrical", "cctv"] as const;
+export const PROJECT_TYPE_VALUES = ["smart_home", "industrial_electrical", "commercial", "cctv"] as const;
 export type ProjectType = (typeof PROJECT_TYPE_VALUES)[number];
 
 export const TIER_VALUES = ["economic", "advanced", "professional"] as const;
@@ -56,6 +56,18 @@ export const PROJECTS: Record<ProjectType, ProjectConfig> = {
     fixed: 160_000,
     perM2: 3_800,
     perUnit: 14_000,
+  },
+  commercial: {
+    label: "كهرباء تجارية ومكاتب",
+    description: "إنارة ومخارج ولوحات توزيع وتجهيزات كهربائية للمحلات والمكاتب.",
+    unitLabel: "عدد النقاط والدوائر",
+    unitHint: "مخارج الإنارة والطاقة والدوائر الرئيسية",
+    unitMin: 5,
+    unitMax: 200,
+    unitDefault: 24,
+    fixed: 95_000,
+    perM2: 2_500,
+    perUnit: 8_500,
   },
   cctv: {
     label: "نظام كاميرات مراقبة وأمان شبكي (CCTV)",

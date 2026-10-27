@@ -9,6 +9,9 @@
     "start": "next start",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
+    "telegram:preview": "node scripts/telegram-preview.mjs",
+    "pricing:check": "node scripts/pricing-check.mjs",
+    "pricing:calibrate": "node scripts/pricing-calibrate.mjs",
     "smoke": "node ./scripts/smoke.mjs"
   },
   "dependencies": {

@@ -1,6 +1,8 @@
 import { z } from "zod";
 import { AREA_MAX, AREA_MIN, PROJECTS, PROJECT_TYPE_VALUES, TIER_VALUES } from "./pricing";
 import { sanitize } from "./security";
+import { emergencyPhoneSchema } from "./emergency-voice";
+import { PRICING_OPTION_IDS } from "./pricing/types";
 import {
   AI_DIAGNOSIS_MAX_LENGTH,
   EMERGENCY_VALUES,
@@ -39,10 +41,11 @@ const honeypot = z.string().max(200).optional();
 
 export const sosSchema = z.object({
   fullName: optionalText(80, "الاسم طويل جداً"),
-  phone: phoneField,
+  phone: emergencyPhoneSchema,
   description: optionalText(SOS_DESCRIPTION_MAX_LENGTH, "وصف العطل طويل جداً"),
   aiDiagnosis: optionalText(AI_DIAGNOSIS_MAX_LENGTH, "التشخيص طويل جداً"),
   voiceTranscript: optionalText(VOICE_TRANSCRIPT_MAX_LENGTH, "النص الصوتي طويل جداً"),
+  requestId: z.string().uuid().optional(),
   imageBase64: z.preprocess(
     (value) => (typeof value === "string" && value.trim() === "" ? undefined : value),
     z
@@ -55,7 +58,7 @@ export const sosSchema = z.object({
       .optional(),
   ),
   imageUrl: z.string().url("رابط صورة البلاغ غير صالح").max(2_048).optional(),
-  emergencyType: z.enum(EMERGENCY_VALUES, { error: "اختر نوع الطوارئ" }),
+  emergencyType: z.enum(EMERGENCY_VALUES).optional(),
   location: z
     .object({
       lat: z.number().min(-90).max(90),
@@ -68,6 +71,12 @@ export const sosSchema = z.object({
 
 export const quoteSchema = z
   .object({
+    requestId: z.string().uuid().optional(),
+    pricingDetailLevel: z.enum(["known", "estimated", "unknown"]).optional(),
+    includeVat: z.boolean().optional(),
+    options: z.array(z.enum(PRICING_OPTION_IDS)).max(12).optional(),
+    renovation: z.boolean().optional(),
+    accessDifficulty: z.enum(["normal", "difficult", "unknown"]).optional(),
     projectType: z.enum(PROJECT_TYPE_VALUES, { error: "اختر نوع المشروع" }),
     area: z
       .number({ error: "المساحة غير صالحة" })
@@ -84,6 +93,8 @@ export const quoteSchema = z
     phone: phoneField,
     aiDiagnosis: optionalText(AI_DIAGNOSIS_MAX_LENGTH, "التشخيص طويل جداً"),
     city: cleanText(2, 60, "المدينة مطلوبة"),
+    address: optionalText(160, "العنوان طويل جداً"),
+    preferredWindow: z.enum(["anytime", "morning", "afternoon", "evening"]).optional(),
     website: honeypot,
   })
   .superRefine((data, ctx) => {
