@@ -30,7 +30,7 @@ export default function WhyUsSection() {
     <section
       id="why-us"
       aria-labelledby="why-title"
-      className="border-y border-white/10 bg-gradient-to-b from-grid-card/60 to-grid-dark py-16 sm:py-24"
+      className="vx-fx-divider vx-fx-reveal border-y border-white/10 bg-gradient-to-b from-grid-card/60 to-grid-dark py-16 sm:py-24"
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="max-w-2xl">
@@ -46,7 +46,7 @@ export default function WhyUsSection() {
           {PILLARS.map((pillar) => {
             const Icon = pillar.icon;
             return (
-              <article key={pillar.title} className="rounded-3xl border border-white/10 bg-grid-card p-6 sm:p-8">
+              <article key={pillar.title} className="vx-fx-card rounded-3xl border border-white/10 bg-grid-card p-6 sm:p-8">
                 <span className="flex h-14 w-14 items-center justify-center rounded-2xl border border-electric-blue/30 bg-electric-blue/10 text-electric-blue">
                   <Icon className="h-7 w-7" aria-hidden="true" />
                 </span>

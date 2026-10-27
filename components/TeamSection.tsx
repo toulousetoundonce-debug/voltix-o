@@ -33,7 +33,7 @@ export default function TeamSection() {
   const [failedImages, setFailedImages] = useState<Record<string, boolean>>({});
 
   return (
-    <section id="team" className="mx-auto max-w-7xl px-4 py-20 sm:px-6">
+    <section id="team" className="vx-fx-divider vx-fx-reveal mx-auto max-w-7xl px-4 py-20 sm:px-6">
       <div className="mb-10 text-center">
         <p className="text-sm font-bold uppercase tracking-[0.22em] text-electric-blue">Team</p>
         <h2 className="mt-3 text-3xl font-black text-white sm:text-4xl">عقول هندسية تقف خلف كل سلك</h2>
@@ -43,7 +43,7 @@ export default function TeamSection() {
         {MEMBERS.map((member) => (
           <article
             key={member.name}
-            className="team-card surface surface-interactive group rounded-3xl p-5 shadow-soft transition duration-300 hover:-translate-y-1 hover:border-electric-blue/40"
+            className="team-card surface surface-interactive vx-fx-card group rounded-3xl p-5 shadow-soft transition duration-300 hover:-translate-y-1 hover:border-electric-blue/40"
           >
             <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-page-bg/90 p-3">
               <Image

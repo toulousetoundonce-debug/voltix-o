@@ -74,7 +74,7 @@ export default function ServicesBentoGrid() {
     <section
       id="services"
       aria-labelledby="services-title"
-      className="relative isolate overflow-hidden py-16 sm:py-24"
+      className="vx-fx-divider vx-fx-reveal relative isolate overflow-hidden py-16 sm:py-24"
     >
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
         <div className="absolute -right-40 top-12 h-96 w-96 rounded-full bg-electric-blue/[0.07] blur-3xl" />
@@ -111,7 +111,7 @@ export default function ServicesBentoGrid() {
           return (
             <article
               key={service.id}
-              className={`surface surface-interactive group relative flex min-h-[260px] flex-col overflow-hidden rounded-3xl border border-white/[0.08] bg-gradient-to-br from-white/[0.045] via-grid-dark/90 to-grid-dark p-5 shadow-[0_16px_40px_rgba(0,0,0,0.12)] transition duration-300 hover:-translate-y-1 hover:border-electric-blue/35 hover:shadow-[0_20px_50px_rgba(0,229,255,0.09)] sm:min-h-72 sm:p-7 ${service.className}`}
+              className={`surface surface-interactive vx-fx-card group relative flex min-h-[260px] flex-col overflow-hidden rounded-3xl border border-white/[0.08] bg-gradient-to-br from-white/[0.045] via-grid-dark/90 to-grid-dark p-5 shadow-[0_16px_40px_rgba(0,0,0,0.12)] transition duration-300 hover:-translate-y-1 hover:border-electric-blue/35 hover:shadow-[0_20px_50px_rgba(0,229,255,0.09)] sm:min-h-72 sm:p-7 ${service.className}`}
             >
               <div aria-hidden="true" className="pointer-events-none absolute -left-12 -top-16 h-44 w-44 rounded-full bg-electric-blue/[0.08] blur-3xl transition duration-300 group-hover:bg-electric-blue/[0.16]" />
               <div aria-hidden="true" className="absolute inset-x-7 top-0 h-px bg-gradient-to-l from-transparent via-electric-blue/45 to-transparent opacity-60 transition group-hover:opacity-100" />

@@ -83,9 +83,9 @@ export default function PortfolioSection() {
   );
 
   return (
-    <section id="portfolio" aria-labelledby="portfolio-title" className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24">
+    <section id="portfolio" aria-labelledby="portfolio-title" className="vx-fx-divider vx-fx-reveal mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24">
       {!isOpen ? (
-        <div className="relative isolate overflow-hidden rounded-[2rem] border border-cyan-400/20 bg-grid-card shadow-[0_24px_80px_rgba(0,0,0,0.12)]">
+        <div className="vx-fx-card relative isolate overflow-hidden rounded-[2rem] border border-cyan-400/20 bg-grid-card shadow-[0_24px_80px_rgba(0,0,0,0.12)]">
           <div
             aria-hidden="true"
             className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_20%_30%,rgba(34,211,238,0.12),transparent_40%),linear-gradient(115deg,transparent_35%,rgba(16,185,129,0.05)_100%)]"
@@ -222,7 +222,7 @@ export default function PortfolioSection() {
               const Icon = meta.icon;
               return (
                 <li key={project.id}>
-                  <article className="surface surface-interactive flex h-full flex-col overflow-hidden transition hover:border-electric-blue/40">
+                  <article className="surface surface-interactive vx-fx-card flex h-full flex-col overflow-hidden transition hover:border-electric-blue/40">
                     <div className="relative flex h-32 items-center justify-center overflow-hidden border-b border-white/10 bg-page-bg">
                       <div aria-hidden="true" className="bg-grid-pattern absolute inset-0 opacity-70" />
                       <Icon className="relative h-12 w-12 text-electric-blue" aria-hidden="true" />

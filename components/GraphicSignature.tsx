@@ -21,6 +21,42 @@ export default function GraphicSignature() {
 
   useEffect(() => {
     const root = document.documentElement;
+    if (
+      root.dataset.fx !== "on" ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
+      !("IntersectionObserver" in window)
+    ) {
+      return;
+    }
+
+    const targets = document.querySelectorAll<HTMLElement>(".vx-fx-reveal, .vx-fx-divider");
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          (entry.target as HTMLElement).dataset.fxVisible = "true";
+          observer.unobserve(entry.target);
+        });
+      },
+      { threshold: 0.08 },
+    );
+
+    targets.forEach((target) => {
+      target.dataset.fxReady = "true";
+      observer.observe(target);
+    });
+
+    return () => {
+      observer.disconnect();
+      targets.forEach((target) => {
+        delete target.dataset.fxReady;
+        delete target.dataset.fxVisible;
+      });
+    };
+  }, []);
+
+  useEffect(() => {
+    const root = document.documentElement;
     if (root.dataset.fx !== "on" || window.matchMedia("(max-width: 767px)").matches) return;
 
     const sectionIds = [

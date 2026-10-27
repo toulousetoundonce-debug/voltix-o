@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import Script from "next/script";
 import "./globals.css";
 import "./fx.css";
+import "./fx-cards.css";
 import { SITE } from "@/lib/site";
 import GraphicSignature from "@/components/GraphicSignature";
 

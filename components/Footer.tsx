@@ -53,7 +53,7 @@ export default function Footer() {
   const { openSos, openCalculator } = useSiteActions();
 
   return (
-    <footer id="contact" className="relative isolate overflow-hidden border-t border-white/10 bg-page-bg">
+    <footer id="contact" className="vx-fx-divider vx-fx-reveal relative isolate overflow-hidden border-t border-white/10 bg-page-bg">
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_83%_45%,rgba(0,229,255,0.1),transparent_34%),linear-gradient(105deg,transparent_43%,rgba(8,145,178,0.045)_100%)]"

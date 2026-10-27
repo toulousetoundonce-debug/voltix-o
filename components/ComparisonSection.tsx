@@ -36,7 +36,7 @@ export default function ComparisonSection() {
         const sub = isVoltix ? domain.voltSub : domain.tradSub;
         const points = isVoltix ? domain.voltPts : domain.tradPts;
         return (
-          <article key={domain.title} className={`cyber-glass-card rounded-3xl border p-6 ${isVoltix ? "border-electric-blue/40" : "border-sos-red/40"}`}>
+          <article key={domain.title} className={`cyber-glass-card vx-fx-card rounded-3xl border p-6 ${isVoltix ? "border-electric-blue/40" : "border-sos-red/40"}`}>
             <div className="cyber-spotlight" />
             <h3 className="relative text-lg font-black text-white">{domain.title}</h3>
             <p className={`relative mt-2 text-sm font-extrabold ${isVoltix ? "text-electric-blue" : "text-red-300"}`}>{sub}</p>
@@ -52,7 +52,7 @@ export default function ComparisonSection() {
   );
 
   return (
-    <section id="comparison" className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24">
+    <section id="comparison" className="vx-fx-divider mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24">
       <div className="mx-auto max-w-3xl text-center">
         <h2 className="text-2xl font-black text-white sm:text-4xl">لماذا لا تقبل مشاريعنا المقارنة مع التركيب التقليدي؟</h2>
         <div className="mx-auto mt-8 inline-flex flex-wrap items-center justify-center gap-2 rounded-2xl border border-white/10 bg-grid-card p-2">

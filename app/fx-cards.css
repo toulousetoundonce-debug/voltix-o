@@ -1,0 +1,175 @@
+@property --vx-fx-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@keyframes vx-fx-edge-turn {
+  to {
+    --vx-fx-angle: 360deg;
+  }
+}
+
+html[data-fx="on"] .vx-fx-divider {
+  position: relative;
+}
+
+html[data-fx="on"] .vx-fx-divider::before,
+html[data-fx="on"] .vx-fx-divider::after {
+  position: absolute;
+  z-index: 1;
+  pointer-events: none;
+  content: "";
+}
+
+html[data-fx="on"] .vx-fx-divider::before {
+  inset-block-start: 0;
+  inset-inline-start: calc(50% - 34px);
+  inline-size: 68px;
+  block-size: 1px;
+  background: linear-gradient(90deg, transparent, rgb(var(--electric) / 0.58), transparent);
+  opacity: 0.55;
+}
+
+html[data-fx="on"] .vx-fx-divider::after {
+  inset-block-start: -1px;
+  inset-inline-start: 50%;
+  inline-size: 3px;
+  block-size: 3px;
+  border-radius: 50%;
+  background: var(--vx-fx-accent);
+  opacity: 0.72;
+}
+
+html[data-fx="on"] .vx-fx-divider[data-fx-ready="true"]::before,
+html[data-fx="on"] .vx-fx-divider[data-fx-ready="true"]::after {
+  opacity: 0;
+  transform: scaleX(0.65);
+  transition: opacity 360ms ease, transform 520ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+html[data-fx="on"] .vx-fx-divider[data-fx-visible="true"]::before {
+  opacity: 0.55;
+  transform: scaleX(1);
+}
+
+html[data-fx="on"] .vx-fx-divider[data-fx-visible="true"]::after {
+  opacity: 0.8;
+  transform: scaleX(1);
+}
+
+html[data-fx="on"] .vx-fx-card {
+  position: relative;
+  isolation: isolate;
+}
+
+html[data-fx="on"] .vx-fx-card::before {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  border: 1px solid rgb(var(--electric) / 0.44);
+  border-radius: inherit;
+  content: "";
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 180ms ease;
+}
+
+html[data-fx="on"] .vx-fx-card::after {
+  background-image:
+    linear-gradient(var(--vx-fx-accent), var(--vx-fx-accent)),
+    linear-gradient(var(--vx-fx-accent), var(--vx-fx-accent)),
+    linear-gradient(var(--vx-fx-accent), var(--vx-fx-accent)),
+    linear-gradient(var(--vx-fx-accent), var(--vx-fx-accent)),
+    linear-gradient(var(--vx-fx-accent), var(--vx-fx-accent)),
+    linear-gradient(var(--vx-fx-accent), var(--vx-fx-accent)),
+    linear-gradient(var(--vx-fx-accent), var(--vx-fx-accent)),
+    linear-gradient(var(--vx-fx-accent), var(--vx-fx-accent));
+  background-position:
+    top 8px left 8px,
+    top 8px left 8px,
+    top 8px right 8px,
+    top 8px right 8px,
+    bottom 8px left 8px,
+    bottom 8px left 8px,
+    bottom 8px right 8px,
+    bottom 8px right 8px;
+  background-repeat: no-repeat;
+  background-size:
+    13px 1px,
+    1px 13px,
+    13px 1px,
+    1px 13px,
+    13px 1px,
+    1px 13px,
+    13px 1px,
+    1px 13px;
+  border-radius: inherit;
+}
+
+html[data-fx="on"] .vx-fx-card:not(.surface-interactive)::after {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  content: "";
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 180ms ease;
+}
+
+html[data-fx="on"] .vx-fx-card.surface-interactive::after {
+  z-index: 1;
+  inset: 0;
+}
+
+html[data-fx="on"] .vx-fx-card:is(:hover, :focus-within)::before,
+html[data-fx="on"] .vx-fx-card:is(:hover, :focus-within)::after {
+  opacity: 0.72;
+}
+
+html[data-fx="on"] .vx-fx-card:is(:hover, :focus-within)::before {
+  box-shadow: 0 0 18px -8px rgb(var(--electric) / 0.5);
+}
+
+@supports (mask-composite: exclude) {
+  html[data-fx="on"] .vx-fx-card::before {
+    border: 0;
+    padding: 1px;
+    background: conic-gradient(
+      from var(--vx-fx-angle),
+      transparent 0 70%,
+      rgb(var(--electric) / 0.58) 84%,
+      transparent 96% 100%
+    );
+    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    mask-composite: exclude;
+  }
+}
+
+@media (hover: hover) {
+  html[data-fx="on"] .vx-fx-card:hover::before {
+    animation: vx-fx-edge-turn 7s linear infinite;
+  }
+}
+
+@media (max-width: 767px) {
+  html[data-fx="on"] .vx-fx-card:hover::before {
+    animation: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-fx="on"] .vx-fx-divider::before,
+  html[data-fx="on"] .vx-fx-divider::after,
+  html[data-fx="on"] .vx-fx-card::before,
+  html[data-fx="on"] .vx-fx-card::after {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  html[data-fx="on"] .vx-fx-divider::before,
+  html[data-fx="on"] .vx-fx-divider::after {
+    opacity: 0.55 !important;
+    transform: none !important;
+  }
+}
