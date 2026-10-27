@@ -4,6 +4,7 @@ import Script from "next/script";
 import "./globals.css";
 import "./fx.css";
 import "./fx-cards.css";
+import "./fx-details.css";
 import { SITE } from "@/lib/site";
 import GraphicSignature from "@/components/GraphicSignature";
 
